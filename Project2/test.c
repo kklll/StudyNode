@@ -112,12 +112,24 @@ node *creat()
 	}
 	return h;
 }
+node *reverse(node *head)
+{
+	node *p = head, *q; head= NULL;
+	while (p)
+	{
+		q = p;
+		p = p->next;
+		q->next = head;
+		head = q;
+	}
+	return head;
+}
 int main()
 {
 	int i, j;
 	node *head = NULL;
 	head = creat();
-	display(head);
+	/*display(head);
 	printf("请输入插入数值:\n");
 	scanf_s("%d", &i);
 	printf("请输入插入位置:\n");
@@ -130,5 +142,7 @@ int main()
 	printf("请输入要删除数值:\n");
 	scanf_s("%d", &i);
 	head = dele(head, i);
+	display(head);*/
+	reverse(head);
 	display(head);
 }
