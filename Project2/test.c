@@ -1,227 +1,1 @@
-////编译环境vs2017，内容为单链表。
-//
-//#include<stdio.h>
-//#include<stdlib.h>
-//typedef int datatype;
-//typedef struct  link_node
-//{
-//	datatype info;
-//	struct link_node *next;
-//}node;							//定义结构体
-//void *init()
-//{
-//	return NULL;
-//}
-//void display(node *head)		//链表显示函数
-//{
-//	node *p;
-//	p = head;
-//	if (!p)
-//		printf("此链表为空，无法输入\n");
-//	else
-//	{
-//		printf("此链表各节点值为:\n");
-//		while (p)
-//		{
-//			printf("%5d", p->info);
-//			p = p->next;
-//		}
-//		printf("\n");
-//	}
-//}
-//node *find(node *head, int i)		//查找结点i位置处的数据地址
-//{
-//	int j = 1;
-//	node *p = head;
-//	if (i < 1)
-//		return NULL;
-//	while (p&&i != j)
-//	{
-//		p = p->next;
-//		j++;
-//	}
-//	return p;
-//}
-//node *insert(node *head, datatype x, int i)			//数据插入，（在节点i处后插）
-//{
-//	node *p, *q;
-//	q = find(head, i);
-//	if (!q&&i != 0)
-//		printf("找不到第%d节点,不能插入%d!\n", i, x);
-//	else
-//	{
-//		p = (node*)malloc(sizeof(node));	//分配内存
-//		p->info = x;
-//		if (i == 0)		//如果插入位置为第一个节点之后
-//		{
-//			p->next = head;
-//			head = p;
-//		}
-//		else
-//		{
-//			p->next = q->next;
-//			q->next = p;
-//		}
-//	}
-//	return head;
-//}
-////
-////node *function1(node *head,datatype y, int i)	////数据插入，（在节点i处前插）
-////{
-////	node *p, *q, *abc;
-////	q = find(head, i);
-////	if (!q&&i != 0)
-////		printf("找不到第%d节点,不能插入%d!\n", i, x);
-////	else
-////	{
-////		abc = head;
-////		while (abc->next != q)
-////		{
-////			abc = abc->next;
-////		}
-////		insert(head,x)
-////}
-//node *dele(node *head, datatype x)		//删除一个值为x的节点
-//{
-//	node *pre = NULL, *p = NULL;
-//	if (!head)
-//	{
-//		printf("链表为空！");
-//		return head;
-//	}
-//	p = head;
-//	while (p&&p->info != x)
-//	{
-//		pre = p;
-//		p = p->next;
-//	}
-//	if (p)
-//	{
-//		if (!pre)		//如果删除节点为开始的head节点
-//			head = head->next;
-//		else            //如果删除键点为中间节点
-//			pre->next = p->next;
-//		free(p);
-//	}
-//	return head;
-//}
-//node *creat()
-//{
-//	node *h = NULL, *q = NULL, *p = NULL;
-//	int a, n, i;
-//	printf("输入链表节点个数:\n");
-//	scanf_s("%d", &n);
-//	for (i = 1; i <= n; i++)
-//	{
-//		printf("输入第%d个数据:\n", i);
-//		scanf_s("%d", &a);
-//		p = (node *)malloc(sizeof(node));
-//		p->info = a; p->next = NULL;
-//		if (i == 1)
-//		{
-//			h = p; q = p;
-//		}
-//		else
-//		{
-//			q->next = p; q = p;
-//		}
-//	}
-//	return h;
-//}
-//node *reverse(node *head)
-//{
-//	node *p = head->next, *q = NULL;
-//	node *pre;
-//	p = p->next;
-//	q = NULL;
-//	head->next = NULL;
-//	while (p)
-//	{
-//		pre = p->next;
-//		p->next = q;
-//		q = p;
-//		p = pre;
-//	}
-//	head->next = q;
-//	return head;
-//}
-//int *count(node *head)
-//{
-//	int i = 0;
-//	node *p = head;
-//	while (p)
-//	{
-//		p = p->next;
-//		i++;
-//	}
-//	return i;
-//}
-//node function2(node *head)
-//{
-//	node *p, *q;
-//	int i = 1,j=1;
-//	p = head;
-//	q = head;
-//	if (head->next == NULL)
-//	{
-//		printf("该链表只有一个节点！");
-//		exit(0);
-//	}
-//	else
-//	{
-//		p = p->next;
-//	}
-//	if(p->info>=q->info)
-//	{
-//		while (p)
-//		{
-//			if (p->info >= q->info)
-//				i++;
-//			q = p;
-//			p = p->next;
-//		}
-//	}
-//	p = head;
-//	q = head;
-//	if (p->info < q->info)
-//	{
-//		while (p)
-//		{
-//			if (p->info < q->info)
-//				j++;
-//			q = p;
-//			p = p->next;
-//		}
-//	}
-//	if (count(head)==i||count(head)==j)
-//	{
-//		printf("该链表是有序的！");
-//	}
-//	else
-//	{
-//		printf("该链表无序！");
-//	}
-//}
-//int main()
-//{
-//	int i, j;
-//	node *head = NULL;
-//	head = creat();
-//	/*display(head);
-//	printf("请输入插入数值:\n");
-//	scanf_s("%d", &i);
-//	printf("请输入插入位置:\n");
-//	scanf_s("%d", &j);
-//	head = insert(head, i, j);
-//	display(head);
-//	printf("请输入查找结点:\n");
-//	scanf_s("%d", &i);
-//	printf("该结点值为:\n%5d\n", *find(head, i));
-//	printf("请输入要删除数值:\n");
-//	scanf_s("%d", &i);
-//	head = dele(head, i);
-//	display(head);*/
-//	/*reverse(head);*/
-//	display(head);
-//	function2(head);
-//}
+#include<stdlib.h>#include<stdio.h>#include<string.h>#define MAXSIZE 100typedef int datatype;typedef struct link_node{	datatype a[MAXSIZE];	char name[20];	char qqnum[15];	char phonenum[11];	struct link_node*next;}node;node*init(){	return NULL;}//node *create()//{//	int i, x;//	node*head = NULL;//	node *p = NULL;//	node *q = NULL;////	printf("输入要存储的人数：\n");//	scanf("%d", &x);//	printf("姓名            qq                      电话                      \n");//	for (i = 1; i <= x; i++)//	{//		p = (node*)malloc(sizeof(node));//		scanf("%s", p->name);//		scanf("%s", p->qqnum);//		scanf("%s", p->phonenum);//		if (i == 1)//		{//			head = p;//			q = p;//		}//		else//		{//			q->next = p;//			q = p;//		}//	}//	return head;//}//void display(node *head)//{//	node *p;//	p = head;//	if (!p)//		printf("\n该通讯录是空的！");//	else//	{//		printf("姓名：%s           qq:%s                       电话：%s               \n", p->name, p->qqnum, p->phonenum);//		p = p->next;////	}//}////node *find(node *head, char name[20])//{//	node *q;//	if (!head)//	{//		printf("该通讯录是空的！\n");//		return NULL;//	}//	q = head;//	while (q->next&&q->name != name)//		q = q->next;//	if (q->name == name)//		return q;//	else  NULL;//}////node *insert(node *head)//{//	node *p, *q = head;//	char a[15];//	int n, i;//	printf("请输入要插入的人数：\n");//	scanf("%d", &n);//	printf("姓名            qq                      电话                      \n");//	for (i = 1; i <= n; i++)//	{//		p = (node*)malloc(sizeof(node));//		scanf("%s", p->name);//		scanf("%s", p->qqnum);//		scanf("%s", p->phonenum);//		p->next = head;//		head = p;//	}//	return head;//}//node *dele(node *head)//{//	node *pre = head, *q = head->next;//	char name[15];//	printf("请输入要删除的人：\n");//	scanf("%s", name);//	if (strcmp(q->name, name) == 0)//	{//		head = head->next;//		free(pre);//	}//	else//	{//		while (q)//		{//			if (strcmp(q->name, name) == 0)//			{//				pre->next = q->next;//				free(q);//				break;//			}//			else//			{//				pre = q;//				q = q->next;//			}//		}//	}//	return head;//}//int main()//{//	int i;//	char a[20], b[20], c[20];//	node *list;//	node *p;//	p = init();//	list = create();//	display(list);//	scanf("%d%s%s%s", &i, &a, &b);//	list = insert(list);//	display(list);//	printf("输入删除名字");//	scanf("%s", &a);//	list = dele(list);//	display(list);//	return 0;//}

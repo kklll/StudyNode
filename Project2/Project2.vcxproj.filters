@@ -24,5 +24,11 @@
     <ClCompile Include="x.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="dayi.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="suijishu.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

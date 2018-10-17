@@ -118,6 +118,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dayi.c" />
+    <ClCompile Include="suijishu.c" />
     <ClCompile Include="test.c" />
     <ClCompile Include="head_node.c" />
     <ClCompile Include="x.c" />
