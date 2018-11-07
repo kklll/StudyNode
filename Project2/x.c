@@ -1,4 +1,4 @@
-:////编译环境vs2017
+////编译环境vs2017
 //#include<stdio.h>
 //#include<stdlib.h>
 //#include<string.h>
