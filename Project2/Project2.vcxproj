@@ -124,7 +124,7 @@
     <ClCompile Include="head_node.c" />
     <ClCompile Include="tree.c" />
     <ClCompile Include="work.c" />
-    <ClCompile Include="work2.cpp" />
+    <ClCompile Include="work2.c" />
     <ClCompile Include="x.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

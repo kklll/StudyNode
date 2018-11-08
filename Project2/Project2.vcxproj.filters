@@ -36,7 +36,7 @@
     <ClCompile Include="work.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="work2.cpp">
+    <ClCompile Include="work2.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
