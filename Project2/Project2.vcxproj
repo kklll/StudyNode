@@ -118,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bighomework.c" />
     <ClCompile Include="dayi.c" />
     <ClCompile Include="suijishu.c" />
     <ClCompile Include="test.c" />

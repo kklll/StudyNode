@@ -39,5 +39,8 @@
     <ClCompile Include="work2.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="bighomework.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
