@@ -76,6 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,7 +88,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -120,6 +125,8 @@
   <ItemGroup>
     <ClCompile Include="bighomework.c" />
     <ClCompile Include="dayi.c" />
+    <ClCompile Include="drawing.c" />
+    <ClCompile Include="drawing_test.c" />
     <ClCompile Include="suijishu.c" />
     <ClCompile Include="test.c" />
     <ClCompile Include="head_node.c" />
@@ -127,6 +134,9 @@
     <ClCompile Include="work.c" />
     <ClCompile Include="work2.c" />
     <ClCompile Include="x.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

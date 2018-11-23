@@ -42,5 +42,16 @@
     <ClCompile Include="bighomework.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="drawing.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing_test.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data.txt">
+      <Filter>头文件</Filter>
+    </Text>
   </ItemGroup>
 </Project>
