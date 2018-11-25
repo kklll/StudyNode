@@ -27,9 +27,6 @@
     <ClCompile Include="dayi.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="suijishu.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="tree.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="drawing_test.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sort.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

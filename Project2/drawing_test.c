@@ -83,7 +83,6 @@ LinkedGraph * dfs(LinkedGraph *g, int i)
 		p = p->next;
 	}
 }
-
 void dfstraverse(LinkedGraph *g)
 {/* 深度优先遍历图g*/
 	int i;

@@ -127,7 +127,7 @@
     <ClCompile Include="dayi.c" />
     <ClCompile Include="drawing.c" />
     <ClCompile Include="drawing_test.c" />
-    <ClCompile Include="suijishu.c" />
+    <ClCompile Include="sort.c" />
     <ClCompile Include="test.c" />
     <ClCompile Include="head_node.c" />
     <ClCompile Include="tree.c" />
