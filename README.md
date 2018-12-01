@@ -27,3 +27,5 @@
 - work.c	数据结构递归与非递归求叶子节点个数。
 
 [work.c](https://github.com/kklll/Project2/blob/master/Project2/work.c) 
+
+## 新的数据结构代码移步到project2文件下的c文件夹
