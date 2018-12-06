@@ -119,9 +119,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sys.c" />
     <ClCompile Include="topsort.c" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="sort.txt" />
     <Text Include="sortdata.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -18,9 +18,15 @@
     <ClCompile Include="topsort.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="sys.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sortdata.txt">
+      <Filter>源文件</Filter>
+    </Text>
+    <Text Include="sort.txt">
       <Filter>源文件</Filter>
     </Text>
   </ItemGroup>
