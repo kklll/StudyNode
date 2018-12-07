@@ -21,6 +21,9 @@
     <ClCompile Include="sys.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="mysql_test.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sortdata.txt">

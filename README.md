@@ -519,6 +519,21 @@ int creat(char file[30],info info[m])
 	}
 	return n;
 }
+void find_id(char id[20],int n,info info[m])
+{
+	int i, j=0;
+	printf("检索ID为：%s\n", id);
+	for (i = 0; i < n; i++)
+	{
+		if (strcmp(info[i].id, id) == 0)
+		{
+			printf("%6s %s %s %s \n", info[i].name, info[i].id, info[i].department, info[i].classid);
+			j++;
+		}
+	}
+	if (j == 0)
+		printf("未检索到该ID！\n");
+}
 void QuickSort(info y[m],int left,int right,int n)
 {
 	info x;
@@ -548,13 +563,18 @@ int main()
 {
 	info x[m];
 	int n,i;
+	char tmp[30];
 	n=creat("sort.txt", x);
 	printf("\n\n排序后的结果为:\n");
-	QuickSort(x,0,7,n);
+	QuickSort(x,0,n-1,n);
 	for (i = 0; i < n; i++)
 	{
 		printf("%6s %s %s %s \n", x[i].name, x[i].id, x[i].department, x[i].classid);
 	}
+	printf("\n\n\n\n");
+	printf("输入您要检索的ID：\n");
+	scanf("%s", &tmp);
+	find_id(tmp, n, x);
 	return 0;
 }
 ```
