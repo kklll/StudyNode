@@ -1,5 +1,186 @@
 # <center>Java学习笔记</center>
 
+# javastudy
+## &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java学习笔记
+
+#### 注意
+>【1】使用时应该注意文件名要与class名一样。（当类被public修饰时）  
+>【2】main方法只能用public和static来修饰.  
+>【3】面向对象的三个特征：继承、多态、封装。  
+>【4】数据类型：基本类型和引用类型 基本类型：布尔类型、数值类型。引用类型：类、接口、数组。
+对象：实例和数组  
+>【5】\b退格符，\r回车符  
+>【6】byte：1字节（内存八位），short：2，int：4，long：8，char：2，float：4，double：8  
+#### 面向对象：  
+
+
+
+
+>[1]static修饰的类方法属于类，不属于实例。  
+>[2]方法可以作为返回值（this的使用）  
+>[3]可变参数定义的方法：  
+>``public static void main（int a，String[] ... books``)  
+>或者：  
+>``public static void main(int a, String[] books)``  
+>下面这种方法在调用时为:  
+>``main(5,new String []{"疯狂java讲义","小王子","谁的青春不迷茫"})``  
+><font color=#ff0000 >推荐使用第一种。 </font>   
+>类变量在建立类的
+>
+>
+>
+>
+>
+>
+>
+>
+>时候就会初始化，与实例变量不同，实例变量实在创建实例的时候才分配内存，且实例变量随新建变量会在堆区储存，而类变量不会随对象的新建而变化。
+>- 创建处于其包下的实例，在调用构造器的时候要指定包名，或者直接使用import语句  
+ 
+
+
+## import
+### java常用包:
+* java.lang:Java的核心库文件String，Math，System，Thread。无需导入
+* java.util：Java工具和接口框架等，Arrays，List，Set等。
+* java.net：java网络编程的类和接口。
+* java.io：输入输出。
+* java.text：java格式化的类
+* java.sql:包含了java进行JBDC编程的类
+* java.awt：抽象窗口工具集（GUI）
+* java.swing：swing图形用户界面编程的相关类。  
+  
+## extends  
+### 继承
+* 关键字：extends（扩展)
+* java的子类不能得到父类的构造器
+* super父类    
+
+
+### 转型
+* 父类变量可以引用任何一个子类对象,而子类变量不能引用父类对象 
+* 向上转型可能会丢失子类中多余的方法，特征（向上转型为子类对象赋值给父类引用变量）
+* 向下转型（将父类实例转换为子类类型），那么这个对象的实际类型必须是子类类型。  
+
+
+### instanceof运算符  
+
+* 前面的类与后面的类相同或者有继承关系  
+* Object类是所有类的父类。
+---
+### 类的复用
+1. 可以使用类的继承，子类继承父类的特性形成复用。
+2. 将原来的父类组合到原来的子类，作为子类的一个组成部分  
+```java    
+public class test1 {
+    static class Animal {
+        private void beat() {
+            System.out.println("心脏在跳动");
+        }
+
+        public void breath() {
+            beat();
+            System.out.println("正在呼吸");
+        }
+    }
+
+    class Bird {
+        private Animal a;
+
+        public Bird(Animal a) {
+            this.a = a;
+        }
+
+        public void breath() {
+            a.breath();
+        }
+
+        public void fly() {
+            System.out.println("我在天空飞!");
+        }
+    }
+
+    public static void main(String[] args) {
+        Animal a1=new Animal();
+        a1.breath();
+    }
+}
+```
+
+### 包装类
+----
+-  功能：  
+
+    	将基本变量类型转换为对象类型（装箱）
+		将对象类型转换为基本变量类型（拆箱） 
+
+- 进行两个封装类的实例比较比较复杂，因为类实例实际是引用类型，两个包装类指向同一个对象才会TRUE。
+- int类型中系统向-128——127的数字计入缓存，不会出现上述现象。
+- compare方法（所有包装类都具有的类），参数为两个比较值。以此来比较基本数据类型是否相同
+
+### ==和equal方法
+
+
+-  ==如果为基本类型变量则比较数值，引用类型的话比较地址
+-  equal判断两个引用变量的值是否相等（所有引用变量都可以调用）。
+
+- <font color=#8470FF >推荐使用第一种。 </font>
+
+### final修饰符
+-  final修饰符修饰的成员变量必须显式的初始值，初始化后其值不能改变。
+-  java不允许直接访问final访问的成员变量，需要使用方法来访问。
+
+### 抽象类
+- 抽象类和抽象方法的不同点
+   - 抽象类和方法用abstract修饰，抽象类不能被实例化，只能通过被其他子类继承来定义方法。
+   - private和abstract不能同时使用。
+
+## 接口
+- 接口的定义使用关键字interface 接口名 extends 父接口1，父接口2···
+- 接口内不能含有构造器和初始化定义模块。（允许抽象方法，类方法和默认方法，私有方法。）
+* 接口描述类具有什么功能,而不给出每个功能的具体实现.
+* 一个类可以实现多个接口
+- 接口中定义默认方法需要用default来修饰
+- 接口的功能可以用来定义常量，被其它类实现。
+- 接口的实现使用implement关键字，格式为
+   ```java
+    [修饰符] class 类名 extends 父类 implement 接口1，2···
+    {
+
+    }
+    ```
+```JAVA
+package dataandvar.test;
+   public interface output{
+       int max=50;
+       void out();
+       void getdata();
+       default void print(String []msgs)
+       {
+           for (String msg:msgs) {
+               System.out.println(msg);
+           }
+       }
+       default void test(){
+           System.out.println("默认的test方法");
+       }
+       static String staticTest(){
+           return ("接口类的test方法");
+       }
+   }
+```
+```JAVA
+package dataandvar;
+
+import dataandvar.test.output;
+
+public class DataType {
+    public static void main(String[] args) {
+        System.out.println(output.max);
+        System.out.println(output.staticTest());
+    }
+}
+```
 
 
 
@@ -7,7 +188,7 @@
 
 
 
-###接口与内部类
+### 接口与内部类
 ## 接口
 
 * 接口描述类具有什么功能,而不给出每个功能的具体实现.
