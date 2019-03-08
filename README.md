@@ -19,3 +19,7 @@
 
 ### C++学习
 - [C++笔记](https://github.com/kklll/Project2/blob/master/C++/C++.md)
+
+### Android学习
+
+- [Android笔记](https://github.com/kklll/Project2/blob/master/Android/AndroidNode.md)

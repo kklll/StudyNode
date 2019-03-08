@@ -491,4 +491,23 @@ public static void main(String[] args) {
         });
     }
 ```
+#### this关键词的使用
+* 当定义类中功能时，该函数内部要用到该函数的对象时使用this来表示这个对象。
+* this语句用于构造函数之间互相调用。
+* this语句只能在构造函数的第一行。
+```
+package object.test1;
 
+class Test {
+    private String name;
+    private int age;
+
+    Test(String name) {
+        this.name = name;
+    }
+
+    Test(String name, int age) {
+        this(name);
+        this.age=age;
+    }
+```
