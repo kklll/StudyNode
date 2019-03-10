@@ -129,3 +129,5 @@ public class MainActivity extends AppCompatActivity {
 }
 
 ```
+
+### RelativeLayout（相对布局）

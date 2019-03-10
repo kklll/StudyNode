@@ -1,4 +1,4 @@
-# git commit 时 图标使用 --- emoji 指南
+Inflater# git commit 时 图标使用 --- emoji 指南
 
 ## Git在提交时添加Emoji有什么好处
 
@@ -66,7 +66,6 @@ git commit -m ":tada: Initialize Repo"
 ***
 ![一些图标](https://upload-images.jianshu.io/upload_images/9140378-6caa71c98d668309.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/640)
 ***
-
 | emoji | emoji 代码 | commit 说明 |
 | :-- | :-- | :-- |
 | :art: (调色板) | `:art:` | 改进代码结构/代码格式 |
