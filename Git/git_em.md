@@ -1,4 +1,4 @@
-Inflater# git commit 时 图标使用 --- emoji 指南
+#  git commit 时 图标使用 --- emoji 指南
 
 ## Git在提交时添加Emoji有什么好处
 
