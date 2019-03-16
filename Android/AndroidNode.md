@@ -14,7 +14,7 @@
 * AlertDialog  
 
 ![实例](http://www.runoob.com/wp-content/uploads/2015/09/79141888.jpg)
-```
+```java
 package com.myapplication;
 
 import android.content.DialogInterface;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 * ProgressDialog
-```
+``` java
 package com.myapplication;
 
 import android.app.ProgressDialog;

@@ -47,7 +47,7 @@ re.findall()
 
 ## python小实践
 ### trutle库绘制日期
-```
+```python
 import turtle, datetime
 def drawgap():
     turtle.penup()
@@ -99,7 +99,7 @@ main()
 ````
 
 ### 文本进度条刷新版
-```
+``` python
 import time
 scale=10
 print('--------执行开始---------')
