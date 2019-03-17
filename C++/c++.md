@@ -145,4 +145,147 @@ values.fill(3.1415926)
     第一个 resize() 调用会把元素的个数变为参数指定的值，所以会增加两个用默认值初始化的元素。如果添加了一个元素，导致超过当前容器的容景，容量会自动增加。
 
     第二个 resize() 调用将元素增加到第一个参数指定的个数，并用第二个参数初始化增加的新元素。第三个 resize() 凋用将容器大小设为 6，小于当前元素的个数。当需要减小容器的大小时，会移除多余的元素，这就好像重复调用了几次 pop_back() 函数。在本章的后面，会对此做一些解释。减少容器的大小不会影响容器的容量。
+
+    vector 的成员函数 front() 和 back() 分別返回序列中第一个和最后一个元素的引用。
+- vector添加（增加）元素
+
+    - 可以通过使用容器对象的 push_back() 函数，在序列的末尾添加一个元素。
+    ```c++
+    std::vector<double> values;
+    values.push_back(3.1415926);
+    ```
+    通过使用成员函数 emplace()，可以在 vector 序列中插入新的元素。对象会在容器中直接生成，而不是先单独生成对象，然后再把它作为参数传入。
+
+    emplace() 的第一个参数是一个迭代器，它确定了对象生成的位置。对象会被插入到迭代器所指定元素的后面。第一个参数后的参数，都作为插入元素的构造函数的参数传入。
+    ```c++
+    std::vector<std::string> words {"first", "second"};
+    // Inserts string(5,'A') as 2nd element
+    auto iter = words.emplace(++std::begin(words),5,'A');
+    //Inserts string ("$$$$") as 3rd element
+    words.emplace(++iter, "$$$$");\
+    ```
+    这段代码执行后，vector 中的字符串对象如下:
+    "first" "AAAAA" "$$$$" "second"
+- vector删除元素(需要引入头文件#include <algorithm>)
+    - 可以通过使用 vector 的成员函数 clear() 来删除所有的元素。
+    ```c++
+    //#include <algorithm>
+    std::vector<int> data(100, 99);// Contains 100 elements initialized to 99
+    data.clear(); // Remove all elements
+    ```
+    - 可以使用 vector 的成员函数 pop_back() 来删除容器尾部的元素
+    ```c++
+    std::vector<int> data(100, 99); // Contains 100 elements initialized to 99
+    data.pop_back(); // Remove the last element
+    ```
+    可以使用成员函数 erase() 来删除容器中的一个或多个元素。如果只删除单个元素，那么只需要提供一个参数，
+    ```c++
+    auto iter = data.erase(std::begin(data)+1); //Delete the second element
+    ```
+    删除一个元素后，vector 的大小减 1；但容量不变。会返回一个迭代器，它指向被删除元素后的一个元素。这里的返回值和表达式 std::begin(data)+1 相关；如果移除了最后一个元素，会返回 std::end(data)。
+#### C++ deque使用、创建及初始化详解
+
+```
+deque<T>，一个定义在 deque 头文件中的容器模板，可以生成包含 T 类型元素的容器，它以双端队列的形式组织元素。可以在容器的头部和尾部高效地添加或删除对象，这是它相对于 vector 容器的优势。当需要这种功能时，可以选择这种类型的容器。(队列)
+```
+- 生成 deque 容器
+    ```c++
+    std::deque<int> a_deque;
+    std::deque<int> my_deque(10);  //指定大小
+    ```
+    ![pic](http://c.biancheng.net/uploads/allimg/180912/2-1P912112354246.jpg)
+    deque 容器也有拷贝构造函数，可以生成现有容器的副本
+    ```c++
+    std::deque<std::string> words_copy { words };// Makes a copy of the words container
+    ```
+    可以用下标运算符来访问元素，但是索引并没有进行边界检查。为了用进行边界检查的索引来访问元素，可以选择使用成员函数 at(),如果数据超出索引会抛出outofrange（）异常。
+- deque添加和删除元素
+
+    + deque 也有成员函数 push_front() 和 pop_front()，可以在序列头部执行相似的操作。
+
+- deque修改（替换、更改）元素
+    - deque 的成员函数 assign() 可以替换现有的所有元素。它有三个重版版本；替换的新内容可以是由初始化列表指定的元素，也可以是由迭代器指定的一段元素，或是一个特定对象的多个副本。
+
+    assign() 函数只需要输入迭代器，因此可以使用任何类别的迭代器。
+    ```c++
+    std::deque<std::string> words {"one", "two", "three", "four"};
+    auto init_list = {std::string{"seven"}, std::string{ "eight"}, std::string{"nine"}};
+    words.assign(init_list);
+    //或者
+    words.assign({"seven”，"eight","nine"});
+    words.assign(8,"eight"); //Assign eight instances of string("eight")将eight替换8次
+    ```
+    下面是一个使用 deque 容器的完整示例：
+    ```c++
+    // Using a deque container
+    #include <iostream> // For standard streams
+    #include <algorithm> // For copy()
+    #include <deque> // For deque container
+    #include <string> // For string classes
+    #include <iterator> // For front_insert_iterator & stream iterators
+
+    using std::string;
+
+    int main()
+    {
+        std::deque<string> names;
+        std::cout << "Enter first names separated by spaces. Enter Ctrl+Z on a new line to end:\n";
+        std::copy(std::istream_iterator < string > {std::cin}, std::istream_iterator < string > {}, std::front_inserter(names));
+        std::cout << "\nIn reverse order, the names you entered are:\n";
+        std::copy(std::begin(names), std::end(names), std::ostream_iterator < string > {std::cout, "  "});
+        std::cout << std::endl;
+    }
+    /*
+    该程序读入几个任意长度的字符串，然后把它们存储在 names 容器中。copy() 算法将从 istream_iterator<string> 获取到的序列，输入到 names 容器的 front_insert_itemtor 中，这个迭代器是由函数 front_inserter() 返回的。
+
+    copy() 的第一个参数是用来输入的开始迭代器，第二个参数是对应的结束迭代器。当使用键盘输入 Ctrl+Z 时，输入迭代器会对应为结束迭代器；如果是从文件流中读取数据，当读到 EOF 时，也会产生一个结束迭代器。因为 deque 容器有成员函数 push_front()，可以用来在序列的头部添加元素，所以我们这里可以使用 front_insert_iterator； front_insert_iterator 通过调用 push_front()在容器中添加元素，因此它适用于有成员函数 push_front() 的任何容器。
+
+    输出也是由 copy() 算法生成的。前两个参数是用来指定元素范围的迭代器，这些元素被复制到第三个参数所指定的位置。因为前两个参数正好是 deque 容器的开始和结束迭代器，因此会复制 deque 容器的全部元素。目的地是一个接收字符串对象的 ostream_iterator，它会将这些字符串对象写入标准输出流。*/
+    ```
+#### list(STL list)使用、创建和初始化
+
+- list 容器具有一些 vector 和 deque 容器所不具备的优势，它可以在常规时间内，在序列已知的任何位置插入或删除元素。这是我们使用 list，而不使用 vector 或 deque 容器的主要原因。list 的缺点是无法通过位置来直接访问序列中的元素，也就是说，不能索引元素。为了访问 list 内部的一个元素，必须一个一个地遍历元素，通常从第一个元素或最后一个元素开始遍历。
+![pic](http://c.biancheng.net/uploads/allimg/180912/2-1P912134314345.jpg)
+- list 容器的使用、创建和初始化
+    ```c++
+    std::list<std::string> words;//未指定大小与初始值
+    std::list<std::string> sayings {20}; // A list of 20 empty strings
+    std::list<double> values(50, 3.14159265);//初始化一定数量的相同元素
+    ```
+    list容器可以使用拷贝构造函数来初始化。
+    ```c++
+    std::list<double> save_values {values}; // Duplicate of values
+    ```
+- list（STL list）增加和插入元素
+    - 可以使用 list 容器的成员函数 push_front() 在它的头部添加一个元素。调用 push_back() 可以在 list 容器的末尾添加一个元素。
     
+        成员函数 emplace_front() 和 emplace_back() 可以做得更好，他们将它们消除了 pushJfront() 和 push_back() 不得不执行的右值移动运算。（creat ！= add）
+    ```c++
+    std::list<std::string> names { "Jane", "Jim", "Jules", "Janet"};
+    names.push_front("Ian"); // Add string ("Ian") to the front of the list
+    names.push_back("Kitty"); // Append string ("Kitty") to the end of the list
+    
+    names.emplace_front("Ian");//Create string ("Ian") in place at the front of the list
+    names.emplace_back("Kitty");// Create string ("Kitty") in place at the end of the list
+    ```
+    1) 可以在迭代器指定的位置插入一个新的元素：
+    ```c++
+    std::list<int> data(10, 55); // List of 10 elements with value 55
+    data.insert(++begin(data), 66); // Insert 66 as the second element
+    ```
+    insert() 的第一个参数是一个指定插入点的迭代器，第二个参数是被插入的元素。begin() 返回的双向迭代器自增后，指向第二个元素。上面的语句执行完毕后，list 容器的内容如下：
+    55 66 55 55 55 55 55 55 55 55 55
+
+        list 容器现在包含 11 个元素。插入元素不必移动现有的元素。生成新元素后，这个过程需要将 4 个指针重新设为适当的值。第一个元素的 next 指针指向新的元素，原来的第二个元素的 pre 指针也指向新的元素。新元素的 pre 指针指向第一个元素，next 指针指向序列之前的第二个元素。和 vector、deque 容器的插入过程相比，这个要快很多，并且无论在哪里插入元素，花费的时间都相同。
+
+    2) 可以在给定位置插入几个相同元素的副本：
+    ```c++
+    auto iter = begin(data);
+    std::advance(iter, 9); // Increase iter by 9
+    data.insert(iter, 3, 88);// Insert 3 copies of 88 starting at the 10th
+    ```
+    iter 是 list<int>::iterator 类型。insert() 函数的第一个参数是用来指定插入位置的迭代器，第二个参数是被插入元素的个数，第三个参数是被重复插入的元素。为了得到第 10 个元素，可以使用定义在 iterator 头文件中的全局函数 advance()，将迭代器增加 9。只能增加或减小双向迭代器。因为迭代器不能直接加 9，所以 advance() 会在循环中自增迭代器。
+
+    执行完上面的代码后，list 容器的内容如下：
+    55 66 55 55 55 55 55 55 55 88 88 88 55 55
+
