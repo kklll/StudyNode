@@ -18,8 +18,7 @@
 - [MarkDown](https://github.com/kklll/Project2/blob/master/markdown.md) 
 
 ### C++学习
-- [C++笔记](https://github.com/kklll/Project2/blob/master/C++/C++.md)
+- [C++笔记](https://github.com/kklll/Project2/blob/master/C++/c++.md)
 
 ### Android学习
-
 - [Android笔记](https://github.com/kklll/Project2/blob/master/Android/AndroidNode.md)

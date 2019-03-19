@@ -65,11 +65,6 @@
     rfind() 函数的原型和find()函数的原型类似，参数情况也类似。只不过 rfind() 函数适用于实现逆向查找。
 
 
-
-
-
-
-
 ### STL序列式容器：
 序列容器以线性序列的方式存储元素。它没有对元素进行排序，元素的顺序和存储它们的顺序相同。以下有5种标准的序列容器，每种容器都具有不同的特性：
 - array<T,N>(数组容器)是一个长度固定的序列，有 N 个 T 类型的对象，不能增加或删除元素。
@@ -78,23 +73,7 @@
 - list<T>(链表容器)是一个长度可变的、由 T 类型对象组成的序列，它以双向链表的形式组织元素，在这个序列的任何地方都可以高效地增加或删除元素。访问容器中任意元素的速度要比前三种容器慢，这是因为 list<T> 必须从第一个元素或最后一个元素开始访问，需要沿着链表移动，直到到达想要的元素。
 - forward list<T>(正向链表容器)是一个长度可变的、由 T 类型对象组成的序列，它以单链表的形式组织元素，是一类比链表容器快、更节省内存的容器，但是它内部的元素只能从第一个元素开始访问。
 
-
 - ![pic](http://c.biancheng.net/uploads/allimg/180911/2-1P911110REB.jpg)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #### (STL array)的用法
     模板实例的元素被内部存储在标准数组中。和标准数组相比，array 容器的额外幵销很小，但提供了两个优点：如果使用 at()，当用一个非法的索引访问数组元素时，能够被检测到，因为容器知道它有多少个元素，这也就意味着数组容器可以作为参数传给函数，而不再需要单独去指定数组元素的个数。
@@ -289,3 +268,165 @@ deque<T>，一个定义在 deque 头文件中的容器模板，可以生成包�
     执行完上面的代码后，list 容器的内容如下：
     55 66 55 55 55 55 55 55 55 88 88 88 55 55
 
+    3) 有三个函数可以在 list 容器中直接构造元素：
+    
+        emplace() 在迭代器指定的位置构造一个元素；emplace_front() 在 list 的第一个元素之前构造元素；emplace_back() 在 list 的尾部元素之后构造元素。
+        ```c++
+        std::list<std:: string> names {"Jane", "Jim", "Jules", "Janet"};
+        names.emplace_back("Ann");
+        std:: string name ("Alan");
+        names.emplace_back(std::move(name));
+        names.emplace_front("Hugo");
+        names.emplace(++begin(names), "Hannah");
+        ```
+        第 4 行代码用 std::move() 函数将 name 的右值引用传入 emplace_back() 函数。这个操作执行后，names 变为空，因为它的内容已经被移到 list 中。执行完这些语句后，names 中的内容如下：
+
+
+        "Hugo” "Hannah" "Jane" "Jim" "Jules" "Janet" "Ann" "Alan"
+- list(STL list)删除元素
+    - list 容器的成员函数 remove() 则移除和参数匹配的元素。
+    ```c++
+    std::list<int> numbers { 2, 5, 2, 3, 6, 7, 8, 2, 9};
+    numbers.remove(2); // List is now 5 3 6 7 8 9
+    //移除所有2.
+    ```
+    -  remove_if() 期望传入一个一元断言作为参数。一元断言接受一个和元素同类型的参数或引用，返回一个布尔值。断言返回 true 的所有元素都会被移除。例如：
+    ```c++
+    numbers.remove_if([](int n){return n%2 == 0;});// Remove even numbers. Result 5 3 7 9 "此处使用lambda表达式"
+    ```
+    - 成员函数 unique() 非常有意思，它可以移除连续的重复元素，只留下其中的第一个。
+    ```c++
+    std::list<std::string> words { "one", "two", "two", "two","three", "four", "four"};
+    words.unique () ; // Now contains "one" "two" "three" "four"
+    ```
+- List排序
+    - ist 模板定义了自己的 sort() 函数。sort() 有两个版本：无参 sort() 函数将所有元素升序排列。第二个版本的 sort() 接受一个函数对象或 lambda 表达式作为参数，这两种参数都定义一个断言用来比较两个元素。
+
+        假设我们想对 names 中的元素进行排序，但是不想使用字符串对象标准的 std::greater<> 来比较，而是想将相同初始字符的字符串按长度排序。可以如下所示定义一个类：
+        ```c++
+            // Order strings by length when the initial letters are the same
+        class my_greater
+        {
+            public:
+            bool operator () (const std::strings s1, const std::strings s2)
+            {
+                if (s1[0] == s2 [0])
+                    return si.length() > s2.length();
+                else
+                    return s1 > s2;
+            }
+        };
+        names.sort(my_greater()); // Sort using my_greater
+        ```
+        lambda表达式
+        ```c++
+        names.sort([](const std::strings s1, const std::strings s2)
+        {
+            if (s1[0] == s2[0])
+                return s1.length() > s2.length();
+            else
+                return s1 > s2;
+        });
+        ```
+- 元素合并
+    list 的成员函数 merge() 以另一个具有相同类型元素的 list 容器作为参数。两个容器中的元素都必须是升序。参数 list 容器中的元素会被合并到当前的 list 容器中。例如：
+    ```c++
+    std::list<int> my_values {2, 4, 6, 14};
+    std::list<int> your_values{ -2, 1, 7, 10};
+    my_values.merge (your_values);//my_values contains: -2 1 2 4 6 7 10 14
+    your_values.empty(); // Returns true
+    ```
+    元素从 your_values 转移到 my_values，因此，在执行完这个操作后，your_values 中就没有元素了。改变每个 list 节点的指针，在适当的位置将它们和当前容器的元素链接起来，这样就实现了元素的转移。list 节点在内存中的位置不会改变；只有链接它们的指针变了。在合并的过程中，两个容器中的元素使用 operator()() 进行比较。
+
+#### forward_list用法详解
+
+
+forward_list 的单向链接性也意味着它会有一些其他的特性：
+无法使用反向迭代器。只能从它得到const或non-const前向迭代器，这些迭代器都不能解引用，只能自增；
+没有可以返回最后一个元素引用的成员函数back();只有成员函数front();
+因为只能通过自增前面元素的迭代器来到达序列的终点，所以push_back()、pop_back()、emplace_back()也无法使用。
+- 单链表的size
+    forward_list 容器的构造函数的使用方式和 list 容器相同。forward_list 的迭代器都是前向迭代器。它没有成员函数 size()，因此不能用一个前向迭代器减去另一个前向迭代器，但是可以通过使用定义在头文件 iterator 中的 distance() 函数来得到元素的个数。
+    ```c++
+    std::forward_list<std::string> my_words {"three", "six", "eight"};
+    auto count = std::distance(std::begin(my_words),std::end(my_words));
+    // Result is 3
+    ```
+#### stack(STL stack)用法详解
+stack<T>容器适配器中的数据是以 LIFO 的方式组织的，这和自助餐馆中堆叠的盘子、箱子中的一堆书类似。图 1 展示了一个理论上的 stack 容器及其一些基本操作。只能访问 stack 顶部的元素；只有在移除 stack 顶部的元素后，才能访问下方的元素。
+
+- stack的创建
+    ```c++
+    std::stack<std::string> words;
+    ```
+    stack 容器适配器的模板有两个参数。第一个参数是存储对象的类型，第二个参数是底层容器的类型。stack<T> 的底层容器默认是 deque<T> 容器，因此模板类型其实是 stack<typename T, typename Container=deque<T>>。通过指定第二个模板类型参数，可以使用任意类型的底层容器，只要它们支持 back()、push_back()、pop_back()、empty()、size() 这些操作。
+    ```c++
+    std::stack<std::string,std::list<std::string>> fruit;//使用list容器来进行栈的构建
+    ```
+- stack的初始化
+    ```c++
+    std::stack<double,std::list<double>> my_stack (values);
+    ```
+
+- 堆栈操作
+    - top()：返回一个栈顶元素的引用，类型为 T&。如果栈为空，返回值未定义。
+    - push(const T& obj)：可以将对象副本压入栈顶。这是通过调用底层容器的 push_back() 函数完成的。
+    - push(T&& obj)：以移动对象的方式将对象压入栈顶。这是通过调用底层容器的有右值引用参数的 push_back() 函数完成的。
+    - pop()：弹出栈顶元素。
+    - size()：返回栈中元素的个数。
+    - empty()：在栈中没有元素的情况下返回 true。
+    - emplace()：用传入的参数调用构造函数，在栈顶生成对象。
+    - swap(stack<T> & other_stack)：将当前栈中的元素和参数中的元素交换。参数所包含元素的类型必须和当前栈的相同。对于 stack 对象有一个特例化的全局函数 swap() 可以使用。
+#### queue(STL queue)用法
+许多程序都使用了 queue 容器。queue 容器可以用来表示超市的结账队列或服务器上等待执行的数据库事务队列。对于任何需要用 FIFO 准则处理的序列来说，使用 queue 容器适配器都是好的选择
+- 创建及初始化
+```c++
+std::queue<std::string> words;
+std::queue<std::string, std::list<std::string>>words;//使用其他模型初始化队列
+//底层容器必须提供这些操作：front()、back()、push_back()、pop_front()、empty() 和 size()。
+```
+- queue的操作
+
+- front()：返回 queue 中第一个元素的引用。如果 queue 是常量，就返回一个常引用；如果 queue 为空，返回值是未定义的。
+- back()：返回 queue 中最后一个元素的引用。如果 queue 是常量，就返回一个常引用；如果 queue 为空，返回值是未定义的。
+- push(const T& obj)：在 queue 的尾部添加一个元素的副本。这是通过调用底层容器的成员函数 push_back() 来完成的。
+- push(T&& obj)：以移动的方式在 queue 的尾部添加元素。这是通过调用底层容器的具有右值引用参数的成员函数 push_back() 来完成的。
+- pop()：删除 queue 中的第一个元素。
+- size()：返回 queue 中元素的个数。
+- empty()：如果 queue 中没有元素的话，返回 true。
+- emplace()：用传给 emplace() 的参数调用 T 的构造函数，在 queue 的尾部生成对象。
+- swap(queue<T> &other_q)：将当前 queue 中的元素和参数 queue 中的元素交换。它们需要包含相同类型的元素。也可以调用全局函数模板 swap() 来完成同样的操作。
+#### priority_queue(STL priority_queue)(优先队列)用法
+priority_queue 容器适配器定义了一个元素有序排列的队列。默认队列头部的元素优先级最高。因为它是一个队列，所以只能访问第一个元素，这也意味着优先级最高的元素总是第一个被处理。但是如何定义“优先级”完全取决于我们自己。如果一个优先级队列记录的是医院里等待接受急救的病人，那么病人病情的严重性就是优先级。如果队列元素是银行的借贷业务，那么借记可能会优先于信贷。
+- priority_queue 模板有 3 个参数，其中两个有默认的参数；第一个参数是存储对象的类型，第二个参数是存储元素的底层容器，第三个参数是函数对象，它定义了一个用来决定元素顺序的断言。因此模板类型是：
+```c++
+template <typename T, typename Container=std::vector<T>, typename Compare=std::less<T>> class priority_queue
+```
+![pic](http://c.biancheng.net/uploads/allimg/180913/2-1P913134031947.jpg)
+- 创建 priority_queue
+```c++
+std::priority_queue<std::string> words; 
+std::string wrds[] { "one", "two", "three", "four"};
+std::priority_queue<std::string> words { std::begin(wrds),std:: end(wrds)}; // "two" "three" "one" "four" 
+```
+优先级队列可以使用任何容器来保存元素，只要容器有成员函数 front()、push_back()、pop_back()、size()、empty()。
+- priority_queue 操作
+    - push(const T& obj)：将obj的副本放到容器的适当位置，这通常会包含一个排序操作。
+    - push(T&& obj)：将obj放到容器的适当位置，这通常会包含一个排序操作。
+    - emplace(T constructor a rgs...)：通过调用传入参数的构造函数，在序列的适当位置构造一个T对象。为了维持优先顺序，通常需要一个排序操作。
+    - top()：返回优先级队列中第一个元素的引用。
+    - pop()：移除第一个元素。
+    - size()：返回队列中元素的个数。
+    - empty()：如果队列为空的话，返回true。
+    - swap(priority_queue<T>& other)：和参数的元素进行交换，所包含对象的类型必须相同。
+### map容器（STL map容器）
+- map<K，T>容器，保存的是 pair<const K，T> 类型的元素。pair<const K,T> 封装了一对键对象，键的类型是 K，对象的类型是 T。每个键都是唯一的，所以不允许有重复的键；但可以保存重复的对象，只要它们的键不同。map 容器中的元素都是有序的，元素在容器内的顺序是通过比较键确定的。默认使用 less<K> 对象比较。
+- multimap<K，T> 容器和 map<K，T> 容器类似，也会对元素排序。它的键必须是可比较的，元素的顺序是通过比较键确定的。和 map<K，T> 不同的是，multimap<K，T> 允许使用重复的键。因此，一个 multimap 容器可以保存多个具有相同键值的 <const K,T> 元素。
+- unordered_map<K，T> 中 pair< const K，T>元素的顺序并不是直接由键值确定的，而是由键值的哈希值决定的。哈希值是由一个叫作哈希的过程生成的整数，本章后面会解释这一点。unordered_map<K，T>不允许有重复的键。
+- unordered_multimap<K,T> 也可以通过键值生成的哈希值来确定对象的位置，但它允许有重复的键。
+#### map的创建
+map 类模板有 4 个类型参数，但一般只需要指定前两个模板参数的值。第 1 个是键的类型，第 2 个是所保存对象的类型，第 3 个和第 4 个模板参数分别定义了用来比较键的函数对象的类型以及为 map 分配内存的对象的类型。最后两个参数有默认值。例如我们可以这样定义：
+```c++
+std::map<std::string, size_t> people;//string 为键，size_t为值
+std::map<std::string, size_t> people{{"Ann", 25}, {"Bill", 46},{"Jack", 32},{"Jill", 32}};
+```
