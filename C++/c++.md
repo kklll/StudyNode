@@ -162,6 +162,13 @@ values.fill(3.1415926)
     auto iter = data.erase(std::begin(data)+1); //Delete the second element
     ```
     删除一个元素后，vector 的大小减 1；但容量不变。会返回一个迭代器，它指向被删除元素后的一个元素。这里的返回值和表达式 std::begin(data)+1 相关；如果移除了最后一个元素，会返回 std::end(data)。
+- c++中sort的使用
+    sort使用需要引入算法库（<algorithm>，如果要指定元素通过降序排列需要引入#include<functional>）
+    - functional中指定greater<type>()和less<type>()来进行升序与降序的指定。
+    ```c++
+    sort(test.begin(),test.end(),greater<>());//对vector进行升序排序
+    sort(test.begin(),test.end(),less<>());//对vector进行降序排序
+    ```
 #### C++ deque使用、创建及初始化详解
 
 ```
@@ -424,9 +431,79 @@ std::priority_queue<std::string> words { std::begin(wrds),std:: end(wrds)}; // "
 - multimap<K，T> 容器和 map<K，T> 容器类似，也会对元素排序。它的键必须是可比较的，元素的顺序是通过比较键确定的。和 map<K，T> 不同的是，multimap<K，T> 允许使用重复的键。因此，一个 multimap 容器可以保存多个具有相同键值的 <const K,T> 元素。
 - unordered_map<K，T> 中 pair< const K，T>元素的顺序并不是直接由键值确定的，而是由键值的哈希值决定的。哈希值是由一个叫作哈希的过程生成的整数，本章后面会解释这一点。unordered_map<K，T>不允许有重复的键。
 - unordered_multimap<K,T> 也可以通过键值生成的哈希值来确定对象的位置，但它允许有重复的键。
-#### map的创建
+#### map
 map 类模板有 4 个类型参数，但一般只需要指定前两个模板参数的值。第 1 个是键的类型，第 2 个是所保存对象的类型，第 3 个和第 4 个模板参数分别定义了用来比较键的函数对象的类型以及为 map 分配内存的对象的类型。最后两个参数有默认值。例如我们可以这样定义：
 ```c++
 std::map<std::string, size_t> people;//string 为键，size_t为值
 std::map<std::string, size_t> people{{"Ann", 25}, {"Bill", 46},{"Jack", 32},{"Jill", 32}};
 ```
+- map插入数据
+插入单个数据：
+```c++
+std::map<std:: string,size_t> people {std::make_pair ("Ann",25),std::make_pair("Bill",46) , std::make_pair ("Jack",32), std::make_pair("Jill",32)};
+auto pr = std::make_pair("Fred",22); //Create a pair element and insert it
+auto ret_pr = people.insert(pr);
+std::cout << ret_pr.first->first << " "<< ret_pr.first->second<< "" << std:: boolalpha <<ret_pr.second << "\n"; // Fred 22 true
+```
+可通过make_pair方法来创建key-value对象。通过insert()方法将数据插入到map容器中。
+当需要遍历容器中的元素时需要使用map中的迭代器生成迭代器对象
+```c++
+map<T,P>::iterator it;
+```
+- map获取（访问）元素
+at() 返回的是参数键对应的对象。如果这个键不存在，就会拋出 out_of_range 异常。
+```c++
+Name key;
+try
+{
+    key = Name {"Dan”, ”Druff"};
+    auto value = people.at(key);
+    std:: cout << key << "is aged " << value << std:: endl;
+    key = Name {"Don", "Druff"};
+    value = people.at(key);
+    std::cout << key << " is aged " << value << std::endl;
+}
+catch(const std::out_of_range& e)
+{
+    std::cerr << e.what() << '\n'<< key << " was not found." <<std::endl;
+}
+```
+- map删除元素
+map 的成员函数 erase() 可以移除键和参数匹配的元素，然后返回所移除元素的个数
+```c++
+std::map<std::string, size_t> people {{ "Fred", 45}, {"Joan", 33},{"Jill", 22}};
+std::string name{"Joan"};
+if(people.erase(name))
+    std::cout << name << " was removed." << std::endl;
+else
+    std::cout << name << " was not found" << std::endl;
+/*或者可以使用这种方式
+std::map<std::string, size_t> people{ { "Fred", 45}, {"Joan", 33},{"Jill", 22} };
+	//std::string name{ "Joan" };
+	if (people.erase("Jill"))
+		std::cout << " was removed." << std::endl;
+	else
+		std::cout << " was not found" << std::endl;
+*/
+```
+#### C++ hash(STL hash)及其函数模板用法
+如果在容器中保存对象及其关联的键，并且不用键来决定 键/对象 对的顺序，那就必须对键值釆用其他方式来确定元素在内存中的位置。如果使用像 string 这样的对象作为键，就会遇到一些问题，可能的变量的数目是巨大的。具有 10 个字符的字母字符串可能的个数是 2610。这个索引范围没有多大用处。我们需要一种机制来将它变为可接受的范围；而且理想情况下，这个机制可以为每个键生成唯一的值。这也是哈希需要做的事情之一。
+
+哈希是用给定范围的基本类型的数据项，或者用像 string 这样的对象，生成整数值的过程。哈希产生的值叫作哈希值或哈希码，它们通常被用在容器中，用来确定表中对象的位置。像前面所说的那样，理想情况下，每个对象应该产生唯一的哈希值，但这一般是不可能的。当不同键值的个数大于可能的哈希值个数时，显然就会出现上面所说的这种情况，我们早晚会得到重复的哈希值。重复的哈希值也叫作碰撞。
+
+哈希不仅可以在容器中保存对象，它也被应用到很多其他地方，例如密码和加密数据的安全系统中，密码识别有时也包含哈希。在系统中保存明文密码是有很大风险的。保存密码的哈希值要比保存明文密码更安全，更能防范黑客。得到哈希值的黑客需要将哈希值转换为对他们有用的原始密码，而这是一个不可能完成的任务。因此STL提供的对不同类型数据哈希的能力不仅可以用在关联容器上，也可以被用在更加广阔的场景中。
+
+虽然理解容器的哈希机制没在必要，但是这能让我们对它们能做些什么有一个基本的了解。哈希算法有很多，但却没有可以通用的。为某个场景确定合适的哈希算法并不总是简单。通常都需要对数据分割后再计算。这可能是最简单的处理键的算法了，不管什么类型的键，都会作为数值处理。所以哈希值可能是表达式k%m产生的。
+- 生成哈希值的函数
+functional 头文件中定义了无序关联容器使用的特例化 hash<K> 模板。hash<K> 模板定义了可以从 K 类型的对象生成哈希值的函数对象的类型。hash<K> 实例的成员函数  operator()() 接受 K 类型的单个参数，然后返回 size_t 类型的哈希值。对于基本类型和指针类型，也定义了特例化的 hash<K> 模板。
+hash函数必须满足一些具体的要求：
+    - 不能拋出异常
+    - 对于相等的键必须产生相等的哈希值
+    - 对于不相等的键产生碰撞的可能性必须最小接近 size_t 最大值的倒数
+- 生成哈希值的实例
+```c++
+std::hash<int> hash_int;// Function object to hash int
+std::vector<int> n{-5, -2, 2, 5, 10};
+std::transform(std::begin(n), std::end(n),std::ostream_iterator<size_t> (std:: cout," "),hash_int);
+```
+参考地址: [http://c.biancheng.net/view/526.html](http://c.biancheng.net/view/526.html)
