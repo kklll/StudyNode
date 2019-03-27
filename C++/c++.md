@@ -68,7 +68,7 @@
 ### STL序列式容器：
 序列容器以线性序列的方式存储元素。它没有对元素进行排序，元素的顺序和存储它们的顺序相同。以下有5种标准的序列容器，每种容器都具有不同的特性：
 - array<T,N>(数组容器)是一个长度固定的序列，有 N 个 T 类型的对象，不能增加或删除元素。
-- vector<T>(向量容器)是一个长度可变的序列，用来存放 T 类型的对象。必要时，可以自动增加容量，但只能在序列的末尾高效地增加或删除元素。
+- vector<T>(向量容器)是一个长度可变的序列，用来存放 T 类型的对象。必要时，可以自动增加容量，但只能在序列的  末尾高效地增加或删除元素。
 - deque<T>(双向队列容器)是一个长度可变的、可以自动增长的序列，在序列的两端都不能高效地增加或删除元素。
 - list<T>(链表容器)是一个长度可变的、由 T 类型对象组成的序列，它以双向链表的形式组织元素，在这个序列的任何地方都可以高效地增加或删除元素。访问容器中任意元素的速度要比前三种容器慢，这是因为 list<T> 必须从第一个元素或最后一个元素开始访问，需要沿着链表移动，直到到达想要的元素。
 - forward list<T>(正向链表容器)是一个长度可变的、由 T 类型对象组成的序列，它以单链表的形式组织元素，是一类比链表容器快、更节省内存的容器，但是它内部的元素只能从第一个元素开始访问。
@@ -145,7 +145,7 @@ values.fill(3.1415926)
     ```
     这段代码执行后，vector 中的字符串对象如下:
     "first" "AAAAA" "$$$$" "second"
-- vector删除元素(需要引入头文件#include <algorithm>)
+- vector删除元素(需要引入头文件algorithm)
     - 可以通过使用 vector 的成员函数 clear() 来删除所有的元素。
     ```c++
     //#include <algorithm>
@@ -507,3 +507,108 @@ std::vector<int> n{-5, -2, 2, 5, 10};
 std::transform(std::begin(n), std::end(n),std::ostream_iterator<size_t> (std:: cout," "),hash_int);
 ```
 参考地址: [http://c.biancheng.net/view/526.html](http://c.biancheng.net/view/526.html)
+
+
+## c++常见算法及使用
+- find的使用
+```c++
+#include<iostream>
+#include<vector>
+using namespace std;
+int main()
+{
+	std::vector<int> numbers{ 5, 46, -5, -6, 23, 17, 5, 9, 6, 5 };
+	int value{ 23 };
+	auto iter = std::find(std::begin(numbers), std::end(numbers), value);
+	if (iter != std::end(numbers))
+		std::cout << value << " was found. \n";
+}
+```
+- binary_search()算法(二分查找)
+```c++
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	std::vector<int> numbers{ 5, 46, -5, -6, 23, 17, 5, 9, 6, 5 };
+	sort(numbers.begin(), numbers.end());
+	int x= binary_search(numbers.begin(), numbers.end(), 200);
+	cout << x;
+
+}
+```
+- string中的字符串查找
+```c++
+#include<iostream>
+#include<vector>
+#include<string>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	char *i = "you are so beautiful!";
+	char  *find = "ok";
+	if (strstr(i, find))
+	{
+		cout << "1"<<endl;
+	}
+	else
+	{
+		cout << "0" << endl;
+	}
+
+}
+```
+### C++格式化输出
+在输出数据时，为简便起见，往往不指定输出的格式，由系统根据数据的类型采取默认的格式，但有时希望数据按指定的格式输出，如要求以十六进制或八进制形式 输出一个 整数，对输出的小数只保留两位小数等。有两种方法可以达到此目的。
+- 1）使用控制符的方法；
+- 2）使用流对象的有关成员函数。分别叙述如下。
+```c++
+#include <iostream>
+#include <cstdio>
+#include <iomanip>
+using namespace std;
+ 
+int main()
+{
+	int a;
+	cout << "input a:";
+	cin >> a;
+	cout << "dec:" << dec << a << endl; //以十进制形式输出整数
+	cout << "hex:" << hex << a << endl; //以十六进制形式输出整数a
+	cout << "oct:" << setbase(8) << a << endl; //以八进制形式输出整数a
+	char *pt = "China"; //pt指向字符串"China"
+	cout << setw(10) << pt << endl; //指定域宽为,输出字符串
+	cout << setfill('*') << setw(10) << pt << endl; //指定域宽,输出字符串,空白处以'*'填充
+	double pi = 22.0 / 7.0; //计算pi值
+	//按指数形式输出,8位小数
+	cout << setiosflags(ios::scientific) << setprecision(8);
+	cout << "pi=" << pi << endl; //输出pi值
+	cout << "pi=" << setprecision(4) << pi << endl; //改为位小数
+	cout << "pi=" << setiosflags(ios::fixed) << pi << endl; //改为小数形式输出
+	system("pause");
+	return 0;
+}
+```
+ cout << fixed << setprecision(4) << value << endl; // 加了fixed意味着是固定点方式显示，所以这里的精度指的是小数位，输出为12.3457
+![pic](https://img-blog.csdn.net/20150707141709578)
+
+
+| 格式标志 | 作用 |
+| ---------- | :----------- |
+| ios::left | 输出数据在本域宽范围内向左对齐 |  
+| ios::right | 输出数据在本域宽范围内向右对齐 |  
+| ios::internal| 数值的符号位在域宽内左对齐，数值右对齐，中间由填充字符填充 |  
+| ios::dec | 设置整数的基数为10 |  
+| ios::oct | 设置整数的基数为8 |  
+| ios::hex | 设置整数的基数为16 |  
+| ios::showbase | 强制输出整数的基数(八进制数以0打头，十六进制数以0x打头) |  
+| ios::showpoint | 强制输出浮点数的小点和尾数0 |  
+| ios::uppercase | 在以科学记数法格式E和以十六进制输出字母时以大写表示 |  
+| ios::showpos | 对正数显示“+”号 |  
+| ios::scientific | 浮点数以科学记数法格式输出 |  
+| ios::fixed  | 浮点数以定点格式(小数形式)输出 |  
+| ios::unitbuf | 每次输出之后刷新所有的流 |  
+| ios::stdio  | 每次输出之后清除stdout, stderr |  
