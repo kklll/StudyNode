@@ -110,3 +110,128 @@ for i in range(scale+1):
     time.sleep(0.1)
 print('\n--------执行结束---------')
 ```
+
+#### 爬取国家医药卫生科学数据共享网--药学科学数据中心药物
+    最近做项目需要一些关于药品适应症，用法用量，禁忌，注意事项等数据，于是去药学数据中心药物爬取了一些数据，就是用最简单的requests请求数据，
+    使用BeautifulSoup进行数据的解析。
+效果如图：  
+![pic](https://github.com/kklll/Project2/blob/master/python/pic.png)
+
+下面附上源代码。
+
+```python
+# -*- coding: utf-8 -*-
+import pymysql
+import requests,re
+from bs4 import BeautifulSoup
+headers={
+    'Host' : 'pharm.ncmi.cn',
+    'Upgrade-Insecure-Requests' : '1',
+    'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36',
+    'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'Referer' : 'http://pharm.ncmi.cn/pharm/jsp/index_site_on.jsp',
+    'Accept-Encoding' : 'gzip, deflate',
+    'Accept-Language' : 'zh-CN,zh;q=0.9',
+    'Connection' : 'close',
+}
+cookie={'Hm_lpvt_3849dadba32c9735c8c87ef59de6783c':"1554378019",
+        'Hm_lvt_3849dadba32c9735c8c87ef59de6783c':"1554300692,1554344080",'JSESSIONID':'0000hY5m6IInAB6E8CEWHivi9Ku:-1'}
+db=pymysql.connect("127.0.0.1","root","root","med")
+if(db):
+    print("连接成功！")
+else:
+    print("连接失败！")
+cursor = db.cursor()
+cursor.execute("use med")
+for i in range(198644,200058):
+    requests_url="http://pharm.ncmi.cn/dataContent/dataSearch.do?method=viewpage&id="+str(i)+"&did=28"
+    id=i
+    print(id)
+    # print(requests_url)
+    # s=requests.Session()
+    result=requests.get(requests_url,cookies=cookie).text
+    soup=BeautifulSoup(result,"lxml")
+    # res=soup.find_all("td","tdtilte")
+    res2=soup.find_all("td","tdcontent")
+    commit=[]
+    # print(res)
+    # for i in res:
+    #     jieguo=i.get_text()
+    #     jieguo=re.sub('[\r\n\t]', '', jieguo)
+    #     if (jieguo == ''):
+    #         jieguo = 'x'
+    #     print(jieguo)
+    for i in res2:
+        jieguo2=i.get_text()
+        jieguo2=re.sub('[\r\n\t]', '', jieguo2)
+        commit.append(jieguo2)
+    # print(commit)
+    sql="set names utf8"
+    cursor.execute(sql)
+
+    try:
+        sql="INSERT INTO `med`"+ \
+        " VALUES (%d,'%s', '%s', '%s','%s', '%s','%s', '%s',  '%s',  '%s',  '%s','%s', '%s',  '%s',  " \
+        "'%s',  '%s','%s', '%s',  '%s',  '%s',  '%s','%s', '%s', ' %s',  '%s',  '%s')" % \
+        (id,commit[0],commit[1],commit[2],commit[3],commit[4],commit[5],commit[6],commit[7],commit[8],
+         commit[9],commit[10],commit[11],commit[12],commit[13],commit[14],commit[15],
+         commit[16],commit[17],commit[18],commit[19],commit[20],commit[21],commit[22],commit[23],commit[24])
+        # 执行sql语句
+        cursor.execute(sql)
+        # 执行sql语句
+        db.commit()
+        print(str(id)+"Done")
+    except:
+        # 发生错误时回滚
+        db.rollback()
+# 关闭数据库连接
+db.close()
+```
+
+#### 与此关联的图片信息
+需要一些图片的链接于是又写了一个爬虫，原理更简单，使用百度图片的链接进行获取，从网页源代码中使用正则表达式匹配图片url,将图片的URL存到数据库内。
+效果如图。  
+![pic2](https://github.com/kklll/Project2/blob/master/python/pi2.png)
+
+附上代码：
+```python
+import pymysql
+import requests
+import re
+from bs4 import BeautifulSoup
+try:
+    db=pymysql.connect("127.0.0.1","root","root","med")
+    print("连接成功！")
+except:
+    print("连接失败！")
+    exit(0)
+cursor = db.cursor()
+cursor.execute("select id,药品名称 from med where id > 198255;")
+data=cursor.fetchall()
+print(data)
+for i in data:
+    id=i[0]
+    i=i[1]
+    print(id)
+    print(i)
+    # print("https://image.baidu.com/search/index?tn=baiduimage&ipn=r&ct="
+    #              "201326592&cl=2&lm=-1&st=-1&fm=result&fr=&sf=1&fmq=1554433360821_R&pv="
+    #              "&ic=&nc=1&z=&hd=&latest=&copyright=&se=1&showtab=0&fb=0&width=&height=&fa"
+    #              "ce=0&istype=2&ie=utf-8&word="+i)
+    a=requests.get("https://image.baidu.com/search/index?tn=baiduimage&ipn=r&ct="
+                 "201326592&cl=2&lm=-1&st=-1&fm=result&fr=&sf=1&fmq=1554433360821_R&pv="
+                 "&ic=&nc=1&z=&hd=&latest=&copyright=&se=1&showtab=0&fb=0&width=&height=&fa"
+                 "ce=0&istype=2&ie=utf-8&word="+i)
+    # print(a.text)
+    result=re.findall('"thumbURL":"(.*?)"',a.text)
+
+    try:
+        sql = "UPDATE med SET image1= '%s', image2 = '%s',image3 = '%s' WHERE id = %d" \
+              % (result[0],result[1],result[2],id)
+        cursor.execute(sql)
+        db.commit()
+        print(result[0]+"-"+result[1]+"-"+result[2]+"上传数据完成！")
+    except:
+        print("上传数据失败！")
+    #     db.rollback()
+```
