@@ -191,7 +191,7 @@ db.close()
 #### 与此关联的图片信息
 需要一些图片的链接于是又写了一个爬虫，原理更简单，使用百度图片的链接进行获取，从网页源代码中使用正则表达式匹配图片url,将图片的URL存到数据库内。
 效果如图。  
-![pic2](https://github.com/kklll/Project2/blob/master/python/pi2.png)
+![pic2](https://github.com/kklll/Project2/blob/master/python/pic2.png)
 
 附上代码：
 ```python
