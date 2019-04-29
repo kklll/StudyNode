@@ -521,3 +521,40 @@ class Test {
 + 每一个类型参数声明部分包含一个或多个类型参数，参数间用逗号隔开。一个泛型参数，也被称为一个类型变量，是用于指定一个泛型类型名称的标识符。
 + 类型参数能被用来声明返回值类型，并且能作为泛型方法得到的实际参数类型的占位符。
 + 泛型方法体的声明和其他方法一样。注意类型参数只能代表引用型类型，不能是原始类型（像int,double,char的等）。
+
+#### JAVA多线程
+
+使用多线程时的同步函数如果是静态的，那么其使用的锁为该类的字节码文件，如Person类则为：Person.class
+
+```java
+//单例设计模式
+package Test;
+//懒汉式，延迟加载
+class Single {
+    private static Single s = null;
+
+    private Single() {
+    }
+
+    public static Single getInstance() {
+        if (s == null) {
+            synchronized (Single.class) {
+                if (s == null)
+                    s = new Single();
+            }
+        }
+        return s;
+    }
+}
+//饿汉式，此方法可以解决在多线程中出现的安全问题
+class Single {
+    private static final Single s = new Single();
+
+    private Single() {
+    }
+
+    public static Single getInstance() {
+        return s;
+    }
+}
+```
