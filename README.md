@@ -22,3 +22,5 @@
 
 ### Android学习
 - [Android笔记](https://github.com/kklll/Project2/blob/master/Android/AndroidNode.md)
+
+### 如有谬误，希望大家批评指出！
