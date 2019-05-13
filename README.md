@@ -23,4 +23,7 @@
 ### Android学习
 - [Android笔记](https://github.com/kklll/Project2/blob/master/Android/AndroidNode.md)
 
+### Ubuntu的踩坑记录
+- [Ubuntu的踩坑记录](https://github.com/kklll/Project2/blob/master/Tools/ubuntu.md)
+
 ### 如有谬误，希望大家批评指出！
