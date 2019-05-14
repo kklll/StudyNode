@@ -558,3 +558,44 @@ class Single {
     }
 }
 ```
+
+#### StingBuffer
+
+```java 
+class Test
+{
+
+    public static void main(String[] args) {
+        StringBuffer sb=new StringBuffer("abcdef");
+        sb.append(123);
+        sb.append(true);
+        sb.insert(1,"x");
+        System.out.println(sb);
+
+    }
+}
+```
+缓冲区为一个容器，直接对容器进行操作
+
+- 添加
+    - append()
+    - insert()
+
+- 删除
+```java
+class Test
+{
+
+    public static void main(String[] args) {
+        StringBuffer sb=new StringBuffer("abcdef");
+        sb.append(123);
+        sb.delete(1,3);//删除包含头不包含尾部
+        System.out.println(sb);
+        sb.deleteCharAt(0);//删除指定位置的字符
+        System.out.println(sb);
+    }
+}
+```
+StingBuffer和StringBuilder的区别：
+- StringBuffer是线层安全的，而StingBuilder是线程不安全的，但是StringBuilder的执行效率更高。
+建议使用：StingBuilder

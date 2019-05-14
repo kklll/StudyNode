@@ -25,6 +25,14 @@ export PATH="/home/deepblue/anaconda3/bin:$PATH"
     - jetbrains Develop Tool安装 地址：https://www.jetbrains.com/toolbox/app/
     - 下载后直接双击打开即可以安装以上所有IDE
 
+### 安装mysql
+```shell
+sudo apt-get install mysql-server
+```
+运行安全脚本设置密码
+```shell
+sudo mysql_secure_installation
+```
 #### Android Studio 无法打开虚拟机的解决方法
 - 问题：创建和运行时都提示："/dev/kvm device: permission denied" 或者 "/dev/kvm device: open failed"
 
@@ -34,3 +42,7 @@ export PATH="/home/deepblue/anaconda3/bin:$PATH"
 sudo chown <你系统当前的登陆用户名> -R /dev/kvm
 ```
 - 如果提醒是VT错误需要在主板开启虚拟服务，具体操作参见 https://zhidao.baidu.com/question/55662873.html
+
+### CLion导包方法
+
+参见 https://blog.csdn.net/u013870094/article/details/78153408
