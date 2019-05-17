@@ -46,3 +46,10 @@ sudo chown <你系统当前的登陆用户名> -R /dev/kvm
 ### CLion导包方法
 
 参见 https://blog.csdn.net/u013870094/article/details/78153408
+
+### ssh的连接方法
+
+```shell
+ ssh ubuntu@deepblue.datsec.cn -p 8887
+```
+-p指定端口号，Ubuntu为用户名，deepblue.datsec.cn为ip地址 

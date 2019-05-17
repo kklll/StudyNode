@@ -599,3 +599,74 @@ class Test
 StingBuffer和StringBuilder的区别：
 - StringBuffer是线层安全的，而StingBuilder是线程不安全的，但是StringBuilder的执行效率更高。
 建议使用：StingBuilder
+
+#### 基本数据类型包装类
+```Java
+public class test1 {
+    public static void sop(String str){
+        System.out.println(str);
+    }
+    public static void main(String[] args) {
+        sop("int_max:  "+Integer.MAX_VALUE);
+        sop("int :"+Integer.toString(34));
+        int a=Integer.parseInt("32");
+        System.out.println("123"+a);
+        sop(Integer.toBinaryString(-6));//转换二进制
+        sop(Integer.toHexString(60));//转换16进制
+        //十进制转换为其他进制
+        Integer.toBinaryString(1);
+        Integer.toHexString(1);
+        Integer.toOctalString(1);
+        //其他进制转换为十进制
+        int x=Integer.parseInt("110",8); //8进制的110转换为十进制
+        int y=Integer.parseInt("110",10);//同理
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(Integer.parseInt("3c",16));
+    }
+}
+
+```
+parseInt()//转换为INT
+```Java
+public class test1 {
+    public static void sop(String str){
+        System.out.println(str);
+    }
+    public static void main(String[] args) {
+        Integer x=new Integer("123");
+        Integer y=new Integer("123");
+        sop("x==y:"+(x==y));       //两个对象，所以不同
+        sop("x,,y  "+x.equals(y));  //覆写了equals方法，判断值是否相同
+        Integer x=4;//也可以这样写，自动装箱
+        x=x+2;//自动拆箱后自动装箱
+    }
+}
+```
+
+```Java
+public class test1 {
+    public static void sop(String str){
+        System.out.println(str);
+    }
+    public static void main(String[] args) {
+        Integer x=new Integer("123");
+        Integer y=new Integer("123");
+        sop("x==y:"+(x==y));       //两个对象，所以不同
+        sop("x,,y  "+x.equals(y));  //覆写了equals方法，判断值是否相同
+        Integer m=128;
+        Integer n=128;
+        sop("m==n:"+(m==n));
+        //返回false
+        Integer a=127;
+        Integer b=127;
+        sop("a==b:"+(a==b));
+        //返回true，因为a和b指向了同一个Integer对象如果值在byte
+        // 范围内，如果该值存在那么不开辟新的空间
+    }
+}
+```
+#### 集合框架
+
+集合用于存储对象，长度可变，可以存储不同类型的数据
+
