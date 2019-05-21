@@ -522,7 +522,7 @@ class Test {
 + 类型参数能被用来声明返回值类型，并且能作为泛型方法得到的实际参数类型的占位符。
 + 泛型方法体的声明和其他方法一样。注意类型参数只能代表引用型类型，不能是原始类型（像int,double,char的等）。
 
-#### JAVA多线程
+### JAVA多线程
 
 使用多线程时的同步函数如果是静态的，那么其使用的锁为该类的字节码文件，如Person类则为：Person.class
 
@@ -555,6 +555,252 @@ class Single {
 
     public static Single getInstance() {
         return s;
+    }
+}
+```
+多线程的实现方式：
+- 1.`继承Thread类，复写run方法后start方法`
+```java
+public class test1 {
+
+    public static void main(String[] args) {
+        Test1 test1 = new Test1();
+        Test1 test2 = new Test1();
+        Thread thread = new Thread(test1);
+        Thread thread2 = new Thread(test2);
+        thread.start();
+        thread2.run();
+    }
+}
+
+class Test1 extends Thread {
+    @Override
+    public void run() {
+        for (int i=0;i<=100;i++)
+            System.out.println("x"+i);
+    }
+}
+
+```
+- 2.`实现Runnable接口来实现`
+```java
+
+public class test1 {
+
+    public static void main(String[] args) {
+        Test1 test1 = new Test1();
+        Test1 test2 = new Test1();
+        Thread thread = new Thread(test1);
+        Thread thread2 = new Thread(test2);
+        thread.start();
+        thread2.run();
+    }
+}
+
+class Test1 implements Runnable {
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 100; i++) {
+            System.out.println(Thread.currentThread().getName()+"--"+"hehe");
+        }
+    }
+}
+```
+- 生产者消费者问题（单个锁对象，没有用到新特性）
+```java
+//生产者消费者问题
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class Resource { //商品
+    private String name;
+    private int count = 0;
+    private boolean flag = false;
+    private Lock lock = new ReentrantLock();  //先建立一个锁
+
+    private Condition condition = lock.newCondition(); //建立锁对象
+
+    public void set(String name) {
+        lock.lock();
+        try {
+            while (flag)
+                condition.await();
+            this.name = name + "--" + count++;
+
+            System.out.println(Thread.currentThread().getName() + "生产者" + this.name);
+            flag = true;
+            condition.signalAll();//唤醒所有线程
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void out() {//消费者
+        lock.lock();
+        try {
+            while (!flag)
+                condition.await();
+            System.out.println(Thread.currentThread().getName() + "消费者" + this.name);
+            flag = false;
+            condition.signal();//
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+
+}
+
+class Producer implements Runnable {
+    @Override
+    public void run() {
+        while (true) {
+            res.set("+商品+");
+        }
+    }
+
+    private Resource res;
+
+    Producer(Resource res) {
+        this.res = res;
+    }
+}
+
+class Consumer implements Runnable {
+
+    @Override
+    public void run() {
+
+        while (true) {
+            res.out();
+        }
+    }
+
+    private Resource res;
+
+    Consumer(Resource res) {
+        this.res = res;
+    }
+}
+
+class Demo {
+    public static void main(String[] args) {
+        Resource r = new Resource();
+        Producer pro = new Producer(r);
+        Consumer con = new Consumer(r);
+        Thread t1 = new Thread(pro);
+        Thread t2 = new Thread(pro);
+        Thread t4 = new Thread(con);
+        Thread t5 = new Thread(con);
+        t1.start();
+        t2.start();
+        t4.start();
+        t5.start();
+    }
+}
+```
+- 生产者消费者问题（多个锁对象，用到新特性）
+```java
+//生产者消费者问题
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+class Resource { //商品
+    private String name;
+    private int count = 0;
+    private boolean flag = false;
+    private Lock lock = new ReentrantLock();  //先建立一个锁
+
+    private Condition condition_pro = lock.newCondition(); //建立锁对象
+    private Condition condition_con = lock.newCondition(); //建立锁对象
+
+    /*
+    生产者的await和signal一个为等待一个为唤醒
+    实现了唤醒对方
+     */
+    public void set(String name) {
+        lock.lock();
+        try {
+            while (flag)
+                condition_pro.await();
+            this.name = name + "--" + count++;
+
+            System.out.println(Thread.currentThread().getName() + "生产者" + this.name);
+            flag = true;
+            condition_con.signal();//唤醒所有线程
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void out() {//消费者
+        lock.lock();
+        try {
+            while (!flag)
+                condition_con.await();
+            System.out.println(Thread.currentThread().getName() + "消费者" + this.name);
+            flag = false;
+            condition_pro.signal();//
+        } catch (Exception e) {
+        } finally {
+            lock.unlock();
+        }
+    }
+
+}
+
+class Producer implements Runnable {
+    @Override
+    public void run() {
+        while (true) {
+            res.set("+商品+");
+        }
+    }
+
+    private Resource res;
+
+    Producer(Resource res) {
+        this.res = res;
+    }
+}
+
+class Consumer implements Runnable {
+
+    @Override
+    public void run() {
+
+        while (true) {
+            res.out();
+        }
+    }
+
+    private Resource res;
+
+    Consumer(Resource res) {
+        this.res = res;
+    }
+}
+
+class Demo {
+    public static void main(String[] args) {
+        Resource r = new Resource();
+        Producer pro = new Producer(r);
+        Consumer con = new Consumer(r);
+        Thread t1 = new Thread(pro);
+        Thread t2 = new Thread(pro);
+        Thread t4 = new Thread(con);
+        Thread t5 = new Thread(con);
+        t1.start();
+        t2.start();
+        t4.start();
+        t5.start();
     }
 }
 ```
@@ -666,7 +912,221 @@ public class test1 {
     }
 }
 ```
-#### 集合框架
+### 集合框架
 
 集合用于存储对象，长度可变，可以存储不同类型的数据
 
+#### collecttions Framework接口
+
+方法摘要：
+
+```java
+import java.util.*;
+
+public class test1 {
+
+    public static void main(String[] args) {
+        method_2();
+    }
+    public static void base_method() {
+        ArrayList al = new ArrayList();
+        al.add("java01");
+        al.add("java02");
+        al.add("java03");
+        al.add("java04");
+        al.add("java05");
+        Object o = new Object();
+        al.add(o);
+        //获取集合长度
+        System.out.println("size:" + al.size());
+        //打印集合
+        System.out.println(al);
+        //删除元素
+        al.remove("java02");
+        System.out.println("size:" + al.size());
+        //判断元素
+        System.out.println("java03是否存在：" + al.contains("java03"));
+        System.out.println("集合是否为空：" + al.isEmpty());
+        System.out.println(al);
+        al.clear();//清空集合
+        System.out.println("size:" + al.size());
+        System.out.println(al);
+    }
+
+    public static void method_2() {
+        ArrayList al1 = new ArrayList();
+        al1.add("java01");
+        al1.add("java02");
+        al1.add("java03");
+        al1.add("java04");
+        ArrayList al2 = new ArrayList();
+        al2.add("java01");
+        al2.add("java02");
+        al2.add("java05");
+        al2.add("java06");
+        al2.retainAll(al1);//取交集，al2中只存在和al1相同的元素
+        System.out.println(al2);
+        al1.retainAll(al2);
+        System.out.println(al1);//删除相同的元素
+    }
+}
+
+```
+- 集合中只存对象的地址值，不储存对象
+ 
+
+ ### 迭代器
+ 用于取出元素的方式一个东西。
+ - ArrayList：数组结构
+ - LinkedLIst：链表结构（增删速度快，索引慢）
+ - Vector：数组结构（线程同步，被ArrayList替代了）
+
+```java
+import java.util.*;
+
+public class test1 {
+
+    public static void main(String[] args) {
+        methon_get();
+    }
+
+    public static void methon_get() {
+        ArrayList al = new ArrayList();
+        al.add("java01");
+        al.add("java02");
+        al.add("java03");
+        al.add("java04");
+        al.add("java05");
+        Iterator it = al.iterator();//获取迭代器对象
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+    }
+
+}
+```
+#### List（元素是有序的，且可以重复）
+```java
+import java.io.ObjectStreamException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+class ListDemo {
+    public static void main(String[] args) {
+        method_2();
+    }
+    public static void method_2(){
+        //list迭代器
+        /*
+        list特有的迭代器是Iterator的子接口
+        在迭代式不可以通过集合对象操作集合类的对象
+        在迭代器中只能通过迭代器操作元素，如果进行其他的操作
+        需要使用listIterator
+         */
+        ArrayList a1 = new ArrayList();
+        a1.add("java1");
+        a1.add("java2");
+        a1.add("java3");
+        a1.add("java4");
+        ListIterator li= a1.listIterator();
+        while(li.hasNext())
+        {
+            Object obj=li.next();
+            if (obj.equals("java2"))
+            {
+                li.set("javasdas123");
+            }
+        }
+        System.out.println("has next:"+li.hasNext());
+        System.out.println("has next:"+li.hasPrevious());//可以用于逆向遍历元素
+        System.out.println(a1);
+//        Iterator it = a1.iterator();
+//        //在迭代过程中准备添加或删除元素
+//        while(it.hasNext())
+//        {
+//            Object ob=it.next();
+//            if (ob.equals("java2"))
+//                it.remove();
+//        }
+//        System.out.println(a1);
+    }
+    public static void methed() {
+        ArrayList a1 = new ArrayList();
+        a1.add("java1");
+        a1.add("java2");
+        a1.add("java3");
+        a1.add("java4");
+        System.out.println("原集合是" + a1);
+        //指定位置添加元素
+        a1.add(1, "javax");
+        System.out.println(a1);
+        a1.remove(2);
+        System.out.println(a1);
+        a1.set(2, "java007");
+        System.out.println(a1);
+        System.out.println(a1.get(1));
+        //获取所有元素
+        for (int i = 0; i < a1.size(); i++) {
+            System.out.println(a1.get(i));
+        }
+        Iterator it = a1.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+        System.out.println(a1.indexOf("javax"));
+        System.out.println(a1.indexOf("java123"));
+        List list = a1.subList(1, 3);
+        System.out.println(list);
+    }
+
+}
+```
+#### vector
+```java
+import java.util.Enumeration;
+import java.util.Vector;
+
+/*
+枚举是vector特有的取出方式，已经被废弃
+ */
+class ListDemo {
+    public static void main(String[] args) {
+        Vector vector = new Vector();
+        vector.add(123);
+        vector.add(1222);
+        vector.add(23245);
+
+        Enumeration en = vector.elements();
+        while (en.hasMoreElements()) {
+            System.out.println(en.nextElement());
+        }
+    }
+}
+```
+#### LinkedList
+```java
+import java.util.LinkedList;
+
+/*
+LinkList特有方法:
+getFirst()
+getLast()
+removeFirst()
+removeLast()
+ */
+class ListDemo {
+    public static void main(String[] args) {
+        LinkedList link=new LinkedList();
+        link.addFirst("123");
+        link.addFirst(123);
+        link.addFirst("12333");
+        link.addFirst(123123);
+        link.peekFirst();//获取但不移除第一个元素
+        System.out.println(link.pollFirst());//获取并移除第一个元素
+    }
+}
+```
+
+#### Set（元素不可以重复）

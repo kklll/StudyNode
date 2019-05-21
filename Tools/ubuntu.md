@@ -52,4 +52,5 @@ sudo chown <你系统当前的登陆用户名> -R /dev/kvm
 ```shell
  ssh ubuntu@deepblue.datsec.cn -p 8887
 ```
--p指定端口号，Ubuntu为用户名，deepblue.datsec.cn为ip地址 
+-p指定端口号，Ubuntu为用户名，deepblue.datsec.cn为ip地址
+ 
