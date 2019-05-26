@@ -379,11 +379,11 @@ public class JDBCObject {
 
 * 现在我们可以看到,save方法要求传入一个实现了`SaveListener`的类对象.我们有许多种方法可以实现
 
-##### 方法1: 每次调用save,创建一个类实现SaveListener方法,对响应信息进行处理.
+- 方法1: 每次调用save,创建一个类实现SaveListener方法,对响应信息进行处理.
 
 * 特别麻烦
 
-##### 方法2: 内部类(定义在一个类中的类)
+- 方法2: 内部类(定义在一个类中的类)
 
 我们可以在Main中定义一个静态的`ResponseHandler`,实现SaveListener接口.
 
@@ -1106,9 +1106,9 @@ class ListDemo {
 }
 ```
 #### LinkedList
+- LinkList模拟队列
 ```java
 import java.util.LinkedList;
-
 /*
 LinkList特有方法:
 getFirst()
@@ -1128,5 +1128,538 @@ class ListDemo {
     }
 }
 ```
+```java
+import java.util.LinkedList;
+//Arraylist模拟队列
+class ListDemo {
+    public static void main(String[] args) {
+        Queue my=new Queue();
+        my.myAdd(123);
+        my.myAdd(1234);
+        my.myAdd(12345);
+        my.myAdd(123456);
+        my.myAdd(12345678);
+        while (!my.isnull())
+        {
+            System.out.println(my.myGet());
+        }
+    }
+}
 
+class Queue {
+    private LinkedList link;
+
+    Queue() {
+        link = new LinkedList();
+    }
+
+    public void myAdd(Object obj) {
+        link.addFirst(obj);
+    }
+
+    public Object myGet() {
+        return link.removeLast();
+    }
+
+    public boolean isnull() {
+        if (link.isEmpty())
+            return true;
+        else
+            return false;
+    }
+}
+```
+- 无重复的ArrayList
+- List集合判断元素是否相同，依据是元素的equals方法
+```java
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class ListDemo {
+    public static void main(String[] args) {
+        ArrayList al=new ArrayList();
+        al.add(123);
+        al.add(123);
+        al.add(1234);
+        al.add(1234);
+        al.add(12345);
+        al.add(12345);
+        System.out.println(al);
+        al=singleElement(al);
+        System.out.println(al);
+        Iterator it=al.iterator();
+        while (it.hasNext())
+        {
+            System.out.println(it.next());
+        }
+
+    }
+    public static ArrayList singleElement(ArrayList al)
+    {
+        ArrayList newal=new ArrayList();
+        Iterator it=al.iterator();
+        while(it.hasNext())
+        {
+            Object obj = it.next();
+            if (!newal.contains(obj))
+            {
+                newal.add(obj);
+            }
+        }
+        return newal;
+    }
+}
+```
+- 使用ArrayList储存对象（需要用到多态）
+```java
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class ListDemo {
+    public static void main(String[] args) {
+        ArrayList al = new ArrayList();
+        al.add(new Person("lisi1", 12));
+        al.add(new Person("lisi2", 12));
+        al.add(new Person("lisi3", 12));
+        al.add(new Person("lisi4", 12));
+        al.add(new Person("lisi5", 12));
+        al.add(new Person("lisi6", 12));
+        al.add(new Person("lisi7", 12));
+        al.add(new Person("lisi8", 12));
+//        System.out.println(al);
+        Iterator it = al.iterator();
+        while (it.hasNext()) {
+            Object obj=new Object();
+            Person p= (Person) it.next();
+            System.out.println(p.getName()+"...."+p.getAge());
+        }
+    }
+}
+class Person {
+    private String name;
+    private int age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+
+```
 #### Set（元素不可以重复）
+
+##### HashSet
+- 无序，元素不可以重复（set集合的功能和Collection功能差不多）
+    - 常见子类`HashSet` `TreeSet` 
+- HashSet无序性验证
+```java
+import java.util.HashSet;
+import java.util.Iterator;
+/*
+HashSet使用hashcode和equals的方法来来保证元素的唯一性，
+如果传入对象的话需要自定义hashcode方法和equals方法
+在删除时也会调用对象的hashcode方法和equals方法，
+ */
+class ListDemo {
+
+    public static void main(String[] args) {
+        HashSet hs = new HashSet();
+        hs.add(new Person("lisi1", 12));
+        hs.add(new Person("lisi2", 12));
+        hs.add(new Person("lisi3", 12));
+        hs.add(new Person("lisi4", 12));
+        hs.add(new Person("lisi4", 12));
+        hs.remove(new Person("lisi1",12));
+        Iterator it = hs.iterator();
+
+        while (it.hasNext()) {
+            Person p = (Person) it.next();
+            System.out.println(p.getName() + "----" + p.getAge());
+        }
+    }
+}
+
+class Person {
+    private String name;
+    private int age;
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public int hashCode() {
+        System.out.println(this.name + "---hashcode");
+        return name.hashCode() + age;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Person))
+            return false;
+        Person p = (Person) o;
+        System.out.println(this.getName() + "--equ--" + p.getAge());
+        return this.name.equals(p.name) && this.age == p.age;
+    }
+}
+```
+##### TreeSet
+可以对set集合内的元素进行排序，可指定顺序（类似二叉排序树）
+```java
+import java.util.Iterator;
+import java.util.TreeSet;
+/*
+自定义TreeSet需要注意：
+           需要具备比较性(实现Compareable接口)
+*/
+//排序时，如果主要条件相同的话需要判断一下次要条件
+
+class ListDemo {
+
+    public static void main(String[] args) {
+        TreeSet ts = new TreeSet();
+        ts.add(new Person("lisi02", 10));
+        ts.add(new Person("lisi004", 11));
+        ts.add(new Person("lisi123", 17));
+        ts.add(new Person("lisi123", 17));
+        ts.add(new Person("lisi1223", 17));
+        Iterator it = ts.iterator();
+        while (it.hasNext()) {
+            Person p = (Person) it.next();
+            System.out.println(p.getName() + "---" + p.getAge());
+        }
+    }
+}
+
+class Person implements Comparable {
+    private String name;
+    private int age;
+
+    Person(String name, int age) {
+        this.age = age;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof Person))
+            throw new RuntimeException("不是人类对象");
+        Person p = (Person) o;
+        System.out.println(this.name + "...compareTo..." + p.name);
+        if (this.age > p.age)
+            return 1;
+        if (this.age==p.age)
+            return this.name.compareTo(p.name);
+        else
+            return -1;
+    }
+}
+```
+当两种比较器都存在时，优先使用`比较器对象`
+你比较可以通过`implement comparetor`接口或者让对象`implement Compareable` 重写`compareTo`方法。
+```java
+import java.util.*;
+
+/*自定义ThreeSet的第二种排序方式，当自身不具备比较性时，
+      或者具备的比较性不是所需要的。
+      那么就要让集合具备比较性.定义比较器，
+      将比较器对象作为参数传递给ThreeSet集合的构造函数
+
+      当两种比较器都存在时，优先使用比较器对象。
+*/
+public class ThreeSetDemo {
+    public static void main(String[] args) {
+        TreeSet ts = new TreeSet(new Mycompare());
+        ts.add(new Person("lisi02", 10));
+        ts.add(new Person("lisi004", 11));
+        ts.add(new Person("lisi123", 15));
+        ts.add(new Person("lisi123", 16));
+        ts.add(new Person("lisi1223", 18));
+        Iterator it = ts.iterator();
+        while (it.hasNext()) {
+            Person p = (Person) it.next();
+            System.out.println(p.getName() + "---" + p.getAge());
+        }
+    }
+}
+
+class Person implements Comparable {
+    private String name;
+    private int age;
+
+    Person(String name, int age) {
+        this.age = age;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof Person))
+            throw new RuntimeException("不是人类对象");
+        Person p = (Person) o;
+//        System.out.println(this.name + "...compareTo..." + p.name);
+        if (this.age > p.age)
+            return 1;
+        if (this.age == p.age)
+            return this.name.compareTo(p.name);
+        else
+            return -1;
+    }
+}
+
+class Mycompare implements Comparator {
+
+    @Override
+    public int compare(Object o1, Object o2) {
+        Person p1 = (Person) o1;
+        Person p2 = (Person) o2;
+        if (p1.getName()==p2.getName())
+        return p1.getName().compareTo(p2.getName());
+        return new Integer(p1.getAge()).compareTo(new Integer(p2.getAge()));
+    }
+}
+```
+
+#### 泛型
+
+
+```java
+import java.util.*;
+/*
+泛型，用来解决安全问题，是一个安全机制。
+
+好处：
+1：将运行时候的时期，转移到了编译时期，更安全
+2：避免了强制类型转换麻烦
+*/
+class GenericDemo{
+    public static void main(String[] args) {
+        ArrayList <String> al=new <String> ArrayList();
+        al.add("abc");
+        al.add("213");
+        al.add("avf");
+        al.add("nvd");
+        Iterator <String>it=al.iterator();
+        while (it.hasNext())
+        {
+            String s=  it.next();
+            System.out.println(s+":"+s.length());
+        }
+    }
+} 
+```
+```java
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
+
+class Demo2 {
+    public static void main(String[] args) {
+        TreeSet<String> ts = new <String>TreeSet(new compare() );
+        ts.add("a");
+        ts.add("213");
+        ts.add("avf");
+        ts.add("nvd4");
+        Iterator<String> it = ts.iterator();
+        while (it.hasNext()) {
+            String s = it.next();
+            System.out.println(s + ":" + s.length());
+        }
+    }
+}
+class compare implements Comparator<String> {
+
+    @Override
+    public int compare(String t1, String t2) {
+        int num = new Integer(t1.length()).compareTo(new Integer(t2.length()));
+        if (num == 0) {
+            return t1.compareTo(t2);
+        }
+        return num;
+    }
+}
+```
+
+###### 泛型类
+- 只能定义自定义数据类型，不能定义基本数据类型
+```java
+class Demo2 {
+    public static void main(String[] args) {
+        Util<Worker> u=new Util<Worker>();
+        u.setObject(new Worker());
+        System.out.println(u.getObject());
+    }
+
+}
+class Util<QQ> {        //泛型类的定义
+    private QQ q;
+
+    public void setObject(QQ q) {
+        this.q = q;
+    }
+
+    public QQ getObject() {
+        return q;
+    }
+}
+class Worker {
+}
+```
+
+```java
+//泛型类定义的泛型，在整个类中有效，如果被方法使用
+//那么泛型类的对象明确要操作的具体类型后，所有要操作类型就确定了
+//为了让不同方法可以操作不同类型而且类型不确定
+//那么可以将泛型定义在方法上
+//泛型放在返回值之前
+
+//静态方法不能访问类上定义的泛型，如果静态方法操作的应用数据类型不确定，可以将泛型定义在方法上。
+class Demo2 {
+    public static void main(String[] args) {
+        Demo3 stringDemo3=new Demo3();
+        stringDemo3.show("haha");
+        stringDemo3.print(21);
+    }
+}
+
+class Demo3 {
+    public <T >void show(T t) {
+        System.out.println("show：" + t);
+    }
+
+    public <T >void print(T t) {
+        System.out.println("print:"+t);
+    }
+}
+```
+
+
+```java
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class Demo2 {
+    public static void main(String[] args) {
+        ArrayList<String> al = new ArrayList<String>();
+        al.add("abc");
+        al.add("bcd");
+        al.add("aas");
+        ArrayList<Integer> al1 = new ArrayList<Integer>();
+        al1.add(123);
+        al1.add(32);
+        al1.add(1);
+        al1.add(345);
+        Demo2.Print(al);
+        Demo2.Print(al1);
+    }
+
+    public static void Print(ArrayList<?> al) { //用？来指定不确定的类型
+        Iterator<?> it = al.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+    }
+}
+```
+泛型限定，限定某个类以及其子类
+```java
+import java.rmi.StubNotFoundException;
+import java.security.Permission;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Iterator;
+class Demo2 {
+    public static void main(String[] args) {
+        ArrayList<Person> al = new ArrayList<Person>();
+        al.add(new Person("abc"));
+        al.add(new Person("bcd"));
+        al.add(new Person("aas"));
+        ArrayList<Student> al1 = new ArrayList<Student>();
+        al1.add(new Student("asdd"));
+        al1.add(new Student("as123"));
+        al1.add(new Student("123"));
+        al1.add(new Student("as324dd"));
+        Demo2.Print(al);
+        Demo2.Print(al1);
+    }
+
+    public static void Print(ArrayList<? extends Person> al) { //用？来指定不确定的类型
+        // 用泛型限定来限定指定类 用<? extends xx>
+        //<? extends E>:可以接受E类及其子类，上限
+        //<? super E>：可以接受E类型或者E类型的父类，下限
+        Iterator<? extends Person> it = al.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next().getName());
+        }
+    }
+}
+
+class Person {
+    private String name;
+
+    Person(String name) {
+        this.name = name;
+
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+class Student extends Person {
+    Student(String name) {
+        super(name);
+    }
+}
+```
+### Map集合框架
+`HashMap` `TreeMap` `HashTable`
+    存储键值对，而且要保证键的唯一性
+- 功能
+    - 添加
+    - 删除
+    - 判断
+    - 获取
+#### HashTable(哈希表)
+- 底层哈希表，不能存null，该集合线程同步，效率低
+#### HashMap
+- 底层哈希表，允许null，该集合线程不同步，效率高
+#### TreeMap
+- 二叉树结构，线程不同步，可以用于给map的键进行排序。 HashSet底层为Map
+
