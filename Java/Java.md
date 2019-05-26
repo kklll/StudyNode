@@ -1660,6 +1660,64 @@ class Student extends Person {
 - 底层哈希表，不能存null，该集合线程同步，效率低
 #### HashMap
 - 底层哈希表，允许null，该集合线程不同步，效率高
+
+```java
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+/*
+1:添加
+    put();
+    putAll();
+2:删除
+    clean();
+    remove();
+3:判断
+    containValue();
+    containKey();
+    isEmpty();
+4:获取
+    get(object k);
+    size();
+    values();
+    entrySet();
+ */
+class MapTest {
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<>();
+        //添加
+        System.out.println(map.put("1", "zhansan1"));//储存时返回原有的值，第一次为空
+        System.out.println(map.put("1", "zhansan1"));//第二次为值
+        map.put("2", "zhansan2");
+        map.put("3", "zhansan3");
+        System.out.println(map.containsKey("1"));
+        //获取
+        System.out.println(map.values());
+        System.out.println(map.get("33"));
+        Collection<String> cl = map.values();
+        Iterator it = cl.iterator();
+        System.out.println(cl);
+        while (it.hasNext()) {
+            System.out.println("ok"+it.next());
+        }
+
+        //删除
+        System.out.println(map.remove("1"));
+        System.out.println(map.remove("01"));
+        map.put("李四", null);
+        System.out.println(map.get("李四"));//可以为空
+
+    }
+}
+```
+Map的取出:
+1:keySet：将Map中所有的键存到集合，可以迭代取出
+2:entrySet：
+```java
+
+```
 #### TreeMap
 - 二叉树结构，线程不同步，可以用于给map的键进行排序。 HashSet底层为Map
 
