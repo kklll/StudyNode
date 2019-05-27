@@ -1714,10 +1714,350 @@ class MapTest {
 ```
 Map的取出:
 1:keySet：将Map中所有的键存到集合，可以迭代取出
+```java
+import java.util.*;
+
+class MapTest {
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<>();
+        //添加
+        map.put("4", "zhansan4");
+        map.put("1", "zhansan1");
+        map.put("2", "zhansan2");
+        map.put("3", "zhansan3");
+        //先获取键的方法
+        Set<String> set=map.keySet();
+        Iterator <String>it= set.iterator();
+        while (it.hasNext())
+        {
+            String key= it.next();
+            System.out.println(key);
+            System.out.println(map.get(key));
+        }
+    }
+}
+```
 2:entrySet：
 ```java
+import java.util.*;
 
+/*
+Map取出原理，将map转换成set，然后进行取出。
+set<Map.entry<k,v>> entrySet:将map集合中的映射关系存入到了set集合之中去，
+    这个关系即为:Map.entry
+    Map.Entry其实Entry也是一个借口，它是Map接口中的一个内部接口
+比如：
+interface Map {
+    public static interface Entry {
+        public abstract Object getkey;
+        public abstract Object getValue;
+    }
+}
+class HashMap implements Map.Entry
+{
+
+}
+ */
+class MapTest {
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<>();
+        map.put("01", "张三");
+        map.put("02", "张三2");
+        map.put("03", "张三3");
+        map.put("04", "张三4");
+        Set<Map.Entry<String, String>> entry = map.entrySet();
+        Iterator<Map.Entry<String, String>> it = entry.iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> me = it.next();
+            String key = me.getKey();
+            String value = me.getValue();
+            System.out.println(key + ":" + value);
+        }
+    }
+}
+```
+```java
+import java.util.*;
+
+class Student implements Comparable<Student> {
+    private String name;
+    private int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String toString() {
+        return name + ":" + age;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + age * 34;
+    }
+
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Student))
+            throw new ClassCastException("类型不匹配");
+        Student s = (Student) obj;
+        return this.name.equals(s.name) && this.age == s.age;
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        int a = new Integer(this.age).compareTo(new Integer(new Integer(o.getAge())));
+        if (a == 0)
+            return this.name.compareTo(o.name);
+        return a;
+    }
+}
+
+class Demo3 {
+    public static void main(String[] args) {
+        HashMap<Student, String> map = new HashMap<Student, String>();
+        map.put(new Student("张君宝", 22), "中国人");
+        map.put(new Student("张君军", 23), "中国人");
+        map.put(new Student("张君？", 24), "中国人");
+        map.put(new Student("张包宝", 25), "中国人");
+        map.put(new Student("张君宝", 22), "中国人");
+        //第一种取出方式
+        Set<Student> set = map.keySet();
+        Iterator<Student> it = set.iterator();
+        while (it.hasNext()) {
+            Student s=it.next();
+            System.out.println(s.getName()+":"+s.getAge());
+        }
+        //第二种取出方式
+        Set<Map.Entry<Student,String>> set1=map.entrySet();
+        Iterator <Map.Entry<Student,String>>iterator= set1.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Student,String> me=iterator.next();
+            Student st=me.getKey();
+            System.out.println(st.getName()+":"+st.getAge());
+            System.out.println(me.getValue());
+        }
+    }
+}
 ```
 #### TreeMap
 - 二叉树结构，线程不同步，可以用于给map的键进行排序。 HashSet底层为Map
+```java
+import java.util.*;
 
+//treeMap
+class Student implements Comparable<Student> {
+    private String name;
+    private int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String toString() {
+        return name + ":" + age;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode() + age * 34;
+    }
+
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Student))
+            throw new ClassCastException("类型不匹配");
+        Student s = (Student) obj;
+        return this.name.equals(s.name) && this.age == s.age;
+    }
+
+    @Override
+    public int compareTo(Student o) {
+        int a = new Integer(this.age).compareTo(new Integer(new Integer(o.getAge())));
+        if (a == 0)
+            return this.name.compareTo(o.name);
+        return a;
+    }
+}
+
+class Demo3 {
+    public static void main(String[] args) {
+        TreeMap<Student, String> map = new TreeMap<Student, String>(new comp());
+        map.put(new Student("张君宝", 22), "中国人");
+        map.put(new Student("张君军", 29), "中国人");
+        map.put(new Student("张君？", 21), "中国人");
+        map.put(new Student("张包宝", 35), "中国人");
+        map.put(new Student("张君宝", 32), "中国人");
+        Set<Map.Entry<Student, String>> set1 = map.entrySet();
+        Iterator<Map.Entry<Student, String>> iterator = set1.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Student, String> me = iterator.next();
+            Student st = me.getKey();
+            System.out.println(st.getName() + ":" + st.getAge());
+            System.out.println(me.getValue());
+        }
+    }
+}
+
+class comp implements Comparator<Student> {
+
+    @Override
+    public int compare(Student s1, Student s2) {
+        int num = s1.getName().compareTo(s2.getName());
+        if (num == 0) {
+            return new Integer(s1.getAge()).compareTo(new Integer(s2.getAge()));
+        }
+        return num;
+    }
+}
+```
+- 练习（获取字符串中的字母出现的次数）
+```java
+import java.util.*;
+
+/*
+练习，获取字符串中的字母出现的次数。
+
+ */
+class Demo100 {
+    public static void main(String[] args) {
+        String s = "aaaabbbcsdrd";
+        String st = Demo100.charCount(s);
+        System.out.println(st);
+    }
+
+    public static String charCount(String str) {
+        char[] chars = str.toCharArray();
+        TreeMap<Character, Integer> tm = new TreeMap<Character, Integer>();
+        int count = 0;
+        for (int x = 0; x < chars.length; x++) {
+            Integer value = tm.get(chars[x]);
+            if (value != null)
+                count = value;
+            count++;
+            tm.put(chars[x], count);
+            count=0;
+        }
+        StringBuilder sb = new StringBuilder();
+        Set entrySet = tm.entrySet();
+        Iterator<Map.Entry<Character, Integer>> it = entrySet.iterator();
+        while (it.hasNext()) {
+            Map.Entry<Character, Integer> entry = it.next();
+            Character key = entry.getKey();
+            Integer value2 = entry.getValue();
+            sb.append(key + "(" + value2 + ")");
+        }
+        return sb.toString();
+    }
+}
+```
+###### Collections 工具类
+- 用于对集合的排序等
+ ```java
+ import java.util.*;
+
+/*
+Collections 工具类的使用
+ */
+class Demo100 {
+    public static void main(String[] args) {
+        sortDemo();
+    }
+
+    public static void sortDemo() {
+        List<String> list = new ArrayList<String>();
+        list.add("asd");
+        list.add("asd");
+        list.add("asdsd");
+        list.add("asdqasd");
+        list.add("asdqwqqqq");
+        System.out.println(list);
+        Collections.sort(list,new comp());
+        System.out.println(list);
+    }
+}
+
+class comp implements Comparator<String> {
+
+    @Override
+    public int compare(String s, String t1) {
+        if (s.length()>t1.length())
+            return 1;
+        if (s.length()<t1.length())
+            return -1;
+        return s.compareTo(t1);
+    }
+}
+ ```
+ - 输出集合最大值
+```java
+import java.util.*;
+
+/*
+Collections 工具类的使用
+ */
+class Demo100 {
+    public static void main(String[] args) {
+        sortDemo();
+    }
+
+    public static void sortDemo() {
+        List<String> list = new ArrayList<String>();
+        list.add("asd");
+        list.add("asd");
+        list.add("asdsd");
+        list.add("asdqasd");
+        list.add("asdqwqqqq");
+        System.out.println(list);
+
+        Collections.sort(list,new comp());
+        System.out.println(Collections.max(list,new comp()));
+        System.out.println(list);
+    }
+}
+
+class comp implements Comparator<String> {
+
+    @Override
+    public int compare(String s, String t1) {
+        if (s.length()>t1.length())
+            return 1;
+        if (s.length()<t1.length())
+            return -1;
+        return s.compareTo(t1);
+    }
+}
+```
+- 二分查找
