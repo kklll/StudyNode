@@ -2061,3 +2061,140 @@ class comp implements Comparator<String> {
 }
 ```
 - 二分查找
+
+```java
+import java.util.*;
+
+/*
+Collections 工具类的使用
+ */
+class Demo100 {
+    public static void main(String[] args) {
+//        sortDemo();
+        binarySearchDemo();
+    }
+
+    public static void sortDemo() {
+        List<String> list = new ArrayList<String>();
+        list.add("asd");
+        list.add("asd");
+        list.add("asdsd");
+        list.add("asdqasd");
+        list.add("asdqwqqqq");
+        System.out.println(list);
+        Collections.sort(list,new comp());
+        System.out.println(Collections.max(list,new comp()));
+        System.out.println(list);
+    }
+    public static void binarySearchDemo()
+    {
+        List<String> list = new ArrayList<String>();
+        list.add("asd");
+        list.add("asd");
+        list.add("asdsd");
+        list.add("asdqasd");
+        list.add("asdqwqqqq");
+        Collections.sort(list,new comp());
+        int index=Collections.binarySearch(list,"asd");
+        System.out.println(index);
+    }
+}
+
+class comp implements Comparator<String> {
+
+    @Override
+    public int compare(String s, String t1) {
+        if (s.length()>t1.length())
+            return 1;
+        if (s.length()<t1.length())
+            return -1;
+        return s.compareTo(t1);
+    }
+}
+```
+- 替换反转
+```java
+import java.util.*;
+
+/*
+Collections 工具类的使用
+ */
+class Demo100 {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        list.add("asd");
+        list.add("asd");
+        list.add("asdsd");
+        list.add("asdqasd");
+        list.add("asdqwqqqq");
+        System.out.println(list);
+        Collections.replaceAll(list,"asd","pp");
+        System.out.println(list);
+//        Collections.fill(list,"pp");//将集合中的全部元素替换成指定元素
+        Collections.reverse(list);
+        System.out.println(list);
+
+    }
+}
+```
+```java
+Collections.reversOrder()//生成比较顺序相反的比较器
+```
+```java
+Collections.synchronizedList();
+Collections.synchronizedSet();
+Collections.synchronizedMap();
+//用来返回线程安全的集合
+Collections.shuffle(list);//生成随机的list集合
+```
+###### Arrays（用于操作数组的工具类）
+
+```java
+import java.util.*;
+
+/*
+Arrays 工具类的使用
+ */
+class Demo100 {
+    public static void main(String[] args) {
+//        Arrays.binarySearch();//二分查找；
+//        Arrays.deepEquals();//深层判断两个数组是否相同（从元素是否相同来看）
+//        Arrays.fill();//替换
+//        Arrays.sort();//排序
+//        int [] arr={200,1,3,4,6};
+//        System.out.println(Arrays.toString(arr));
+        String [] str={"123","123123","321894"};
+        List<String>list=Arrays.asList(str);
+        //将数组变成集合，不能使用集合的增删方法，因为数组的长度是一定的
+        /*
+        如果数组中的元素都是对象那么在存入集合的时候就存入相应的对象
+        如果数组中的元素是基本数据类型，那么将会存入这个数组对象
+         */
+        System.out.println(list);
+    }
+}
+```
+```java
+import java.util.*;
+
+/*
+        集合变数组
+*/
+class Demo100 {
+    public static void main(String[] args) {
+        ArrayList<String> list=new ArrayList<String>();
+        list.add("123");
+        list.add("1231");
+        list.add("1231");
+        list.add("1232");
+        list.add("1233");
+        String []arr=list.toArray(new String[20]);
+        System.out.println(Arrays.toString(arr));
+        //类型制定的长度应该为多长？
+        //当指定类型的数组长度小于集合长度，那么数组开辟的空间为size大小。
+        //当指定类型的数组长度大于集合长度，就不重新创建数组，而是使用传递进来的数组大小。
+        //为什么要将集合变成数组呢？
+        //为了限定对元素的操作
+    }
+}
+```
