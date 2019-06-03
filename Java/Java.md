@@ -2198,3 +2198,168 @@ class Demo100 {
     }
 }
 ```
+###### 增强for循环
+
+```java
+import java.util.*;
+
+/*
+        集合变数组
+*/
+class Demo100 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("123");
+        list.add("1231");
+        list.add("1231");
+        list.add("1232");
+        list.add("1233");
+        //增强for循环
+//        for(变量类型 变量名 : 被遍历的集合或者数组)
+//        {
+//        }
+//        对集合进行遍历，不能对集合进行操作，只能获取，而迭代器除了遍历，还可以使用remove
+//        如果使用ArrayIterator可以对集合进行增删改查的操作
+//        高级for局限性:
+//          必须要有可遍历对象
+        for (String s : list) {
+            System.out.println(s);
+        }
+        HashMap<Integer,String>hm=new HashMap<Integer, String>();
+        hm.put(1,"abc");
+        hm.put(2,"ab");
+        hm.put(3,"bv");
+        for(Map.Entry<Integer,String> s:hm.entrySet())
+        {
+            System.out.println(s.getKey()+"++++"+s.getValue());
+        }
+    }
+}
+```
+- 可变长度的参数
+```java
+import java.util.*;
+
+/*
+        集合变数组
+*/
+class Demo100 {
+    public static void main(String[] args) {
+        fun(123,1223,234234,3445345,34534534);
+    }
+
+    public static void fun(int... arr) {
+        System.out.println(arr);
+        for (int i :arr)
+        {
+            System.out.println(i);
+        }
+    }
+//    本质上也是数组
+//    可变参数使用时必须注意可变参数一定要放在最后面
+}
+```
+
+###### 静态导入
+```java
+
+import java.util.Arrays;
+
+import static java.util.Arrays.*;
+
+/*
+        静态导入
+*/
+//当类名重名时，要指定所属的包名，当方法重名时，指定所属的类或对象。
+
+class Demo100 {
+    public static void main(String[] args) {
+        int []arr={1,23,4,5};
+        binarySearch(arr,1);
+        System.out.println(Arrays.toString(arr));
+    }
+}
+```
+###### System类
+```java
+import java.util.Iterator;
+import java.util.Properties;
+
+//system类
+class Demo100 {
+    public static void main(String[] args) {
+        //获取系统信息
+        Properties ps=System.getProperties();
+        for (Object obj:ps.keySet())
+        {
+            String value = (String) ps.get(obj);
+            System.out.println(obj+"::"+value);
+        }
+    }
+}
+```
+###### Runtime对象
+```java
+
+
+//Runtime类
+//本身不具有构造函数，说明其不能通过构造函数来创建对象
+//但是发现其方法都是非静态的方法，而且返回值为本类的类名
+//则其一定有一个方法能返回实例的对象（单例设计模式）
+
+import java.io.IOException;
+
+class Demo100 {
+    public static void main(String[] args) throws InterruptedException, IOException {
+        Runtime r = Runtime.getRuntime();
+        Process p=r.exec("zeal");
+        Thread.sleep(4000);
+        p.destroy();
+    }
+}
+``` 
+
+###### Date类
+```java
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+//Date类
+//可以精确到毫秒
+//DateFormat 日期格式化类，但是为抽象类
+//使用其子类java.text.SimpleDateFormat
+/**
+ SimpleDateFormat函数语法：
+ G 年代标志符
+ y 年
+ M 月
+ d 日
+ h 时 在上午或下午 (1~12)
+ H 时 在一天中 (0~23)
+ m 分
+ s 秒
+ S 毫秒
+ E 星期
+ D 一年中的第几天
+ F 一月中第几个星期几
+ w 一年中第几个星期
+ W 一月中第几个星期
+ a 上午 / 下午 标记符
+ k 时 在一天中 (1~24)
+ K 时 在上午或下午 (0~11)
+ z 时区
+ */
+class Demo100{
+    public static void main(String[] args) {
+        Date d=new Date();
+        System.out.println(d);//打印的时间看不懂，需要格外的格式
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy年MM月dd日 E hh:mm:ss:SS");//指定模式
+        String s=sdf.format(d);//使用模式来格式化日期
+        System.out.println(s);
+
+        long l=System.currentTimeMillis();
+        Date d1=new Date(l);
+        System.out.println("d1 :"+d1);
+    }
+}
+```
