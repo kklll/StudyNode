@@ -2363,3 +2363,168 @@ class Demo100{
     }
 }
 ```
+- Calendar类
+```java
+package Test;
+
+import java.util.Calendar;
+/*
+日历方法
+ */
+class Test{
+    public static void main(String[] args) {
+        Calendar c=Calendar.getInstance();
+        c.set(2012,2,23);//设置时间
+        c.add(Calendar.MONTH,-4);//日期的增加或减少
+        Demo2(c);
+    }
+    public static void Demo2(Calendar c){
+
+        String[] month={"一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"};
+        String[] weeks={"","星期日","星期一","星期二","星期三","星期四","星期五","星期六"};
+        System.out.println(c);
+        System.out.print(c.get(Calendar.YEAR)+"年");
+        System.out.print(month[c.get(Calendar.MONTH)]);
+        System.out.println(c.get(Calendar.DAY_OF_MONTH)+"日");
+        System.out.println(weeks[c.get(Calendar.DAY_OF_WEEK)]);
+
+        //传统方法
+//        Date d= new Date();
+//        SimpleDateFormat si=new SimpleDateFormat("yyyy");
+//        int year=Integer.parseInt(si.format(d));
+//        System.out.println(year);
+    }
+}
+```
+###### Math类
+
+```java
+package Test;
+
+import java.util.Random;
+
+class Test {
+    public static void main(String[] args) {
+        double d = Math.ceil(-12.34);//ceil返回大于指定数据的最小整数
+        System.out.println(d);
+        System.out.println(Math.floor(12.33));//floor返回小于指定数据的最小整数
+        System.out.println(Math.round(12.53));//四舍五入
+        System.out.println(Math.pow(2,16)); //次幂
+        Random r=new Random();
+        for (int i = 0; i < 10; i++) {
+//            int a=(int)(Math.random()*10+1);
+//            System.out.println(a);//伪随机数
+            System.out.println(r.nextInt(10)+1);
+        }
+    }
+}
+```
+#### IO流
+- FileWriter
+    ```java
+    import java.io.FileWriter;
+    import java.io.IOException;
+
+    /*
+    I/O流
+    字节流有两个基类:
+    InputStream OutPutStream
+    */
+    public class Test {
+        public static void main(String[] args) throws IOException {
+            FileWriter fw= new FileWriter("test.txt");
+            fw.write("sakjdbasjkdas");
+            fw.flush();
+            fw.close();
+        }
+    }
+    ```
+    - IO异常处理
+    ```java
+    import java.io.FileWriter;
+    import java.io.IOException;
+
+    /*
+    I/O流
+    I/O异常处理
+    */
+    public class Test {
+        public static void main(String[] args) {
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter("K:\\test.txt");
+                fw.write("sakjdbasjkdas");
+                fw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (fw!=null)
+                    fw.close();
+                    else
+                        System.out.println("目录错了！");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    ```
+    - 追加写
+    ```java
+    import java.io.FileWriter;
+    import java.io.IOException;
+
+    /*
+    I/O流
+    I/O异常处理
+    */
+    public class Test {
+        public static void main(String[] args) {
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter("test.txt",true);
+                fw.write("我哦\n头");
+                fw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (fw!=null)
+                    fw.close();
+                    else
+                        System.out.println("目录错了！");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    ```
+- FileReader
+    ```java
+    import java.io.FileNotFoundException;
+    import java.io.FileReader;
+    import java.io.IOException;
+
+    /*
+    */
+    public class Test {
+        public static void main(String[] args) throws IOException {
+            //第一种方法
+            FileReader fr = new FileReader("test.txt");
+    //        int ch = 0;
+    //        while ((ch = fr.read()) != -1) {
+    //            System.out.print((char) ch);
+    //        }
+            //第二种方法
+            char[] buff = new char[1024];
+            int num = 0;
+            while ((num=fr.read(buff))!=-1) {
+                System.out.print(new String(buff,0,num));
+            }
+            fr.close();
+        }
+    }
+    ```
+- 字符流的缓冲区
