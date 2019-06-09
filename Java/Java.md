@@ -2420,6 +2420,8 @@ class Test {
 }
 ```
 #### IO流
+
+##### 字符流
 - FileWriter
     ```java
     import java.io.FileWriter;
@@ -2527,4 +2529,319 @@ class Test {
         }
     }
     ```
-- 字符流的缓冲区
+- 字符流的缓冲区 
+
+缓冲区的出现提高了数据的读写效率
+对应类
+
+`BufferWriter` 
+
+`BufferReader`
+- BufferWriter
+```java
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/*
+ */
+public class Test {
+    public static void main(String[] args) throws IOException {
+        FileWriter fw=new FileWriter("test.txt");
+        //为了提高写入流的效率加入缓冲技术
+        BufferedWriter bufw=new BufferedWriter(fw);
+        bufw.write("abcdef");
+        bufw.newLine();//换行方法
+        bufw.write("abcdef");
+        bufw.flush();//必须刷新
+        bufw.close();//必须关闭
+    }
+}
+```
+- BufferReader
+```java
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+/*
+ */
+public class Test {
+    public static void main(String[] args) throws IOException {
+        FileReader fr=new FileReader("test.txt");
+        //为了提高流的效率加入缓冲技术
+        BufferedReader bufr=new BufferedReader(fr);
+        String x;
+        while ((x=bufr.readLine())!=null)
+        System.out.println(x);
+    }
+}
+```
+###### 装饰设计模式
+- 当想要对已有对象进行功能增强时,那么可以定义类，将已有对象传入，基于已有的功能并提供加强功能
+
+- 装饰模式比继承灵活。避免了继承体系的臃肿而且降低了类与类之间的关系
+
+- 装饰类因为增强已有对象，具备的功能和已有功能是相同的，只不过扩展的了其功能
+```java
+class Person {
+    public void chifan() {
+        System.out.println("吃饭");
+    }
+}
+
+class SuperPerson {
+    private Person p;
+
+    SuperPerson(Person p) {
+        this.p = p;
+    }
+
+    public void shuijiao() {
+        p.chifan();
+        System.out.println("睡觉");
+    }
+}
+
+class Demo {
+    public static void main(String[] args) {
+        Person p = new Person();
+        p.chifan();
+        SuperPerson sp = new SuperPerson(p);
+        sp.shuijiao();
+    }
+}
+```
+- LineNumberReader
+```java
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+
+class Demo {
+    public static void main(String[] args) throws IOException {
+        FileReader fr=new FileReader("test.txt");
+        LineNumberReader lr=new LineNumberReader(fr);
+        lr.setLineNumber(100);
+        String line=null;
+        while ((line=lr.readLine())!=null)
+            System.out.println(lr.getLineNumber()+":"+line);
+        lr.close();
+    }
+}
+```
+##### 字节流
+`InputStream`  `OutputStream`
+
+FileOutputStream
+```java
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+class Demp {
+    public static void main(String[] args) throws IOException {
+//        write();
+//        readFile();
+        readFile_2();
+        readFile_3();
+    }
+
+    public static void write() throws IOException {
+        FileOutputStream fos = new FileOutputStream("test.txt");
+        fos.write("abcdef".getBytes());
+        fos.close();
+    }
+
+    public static void readFile() throws IOException {
+        FileInputStream fis = new FileInputStream("test.txt");
+        int ch = 0;
+        while ((ch = fis.read()) != -1) {
+            System.out.print((char) ch);
+        }
+        System.out.println();
+        fis.close();
+    }
+
+    public static void readFile_3() throws IOException {
+        FileInputStream fis = new FileInputStream("test.txt");
+        byte[] buf = new byte[1024];//定义一个刚好的缓冲区数组
+        int len = 0;
+        while ((len = fis.read(buf)) != -1)
+            System.out.println(new String(buf, 0, len));
+        fis.close();
+
+    }
+
+    public static void readFile_2() throws IOException {
+        FileInputStream fis = new FileInputStream("test.txt");
+        byte[] buf = new byte[fis.available()];//定义一个刚好的缓冲区数组
+        fis.read(buf);//需要注意内存溢出
+        System.out.println(new String(buf));
+        fis.close();
+    }
+}
+```
+练习：图片复制
+```java
+/*
+复制图片
+ */
+
+import java.io.*;
+class Demo100{
+    public static void main(String[] args) {
+        FileOutputStream fos=null;
+        FileInputStream fis=null;
+        try{
+            fos=new FileOutputStream("2.jpeg");
+            fis=new FileInputStream("C:\\Users\\DeepBlue\\Pictures\\Saved Pictures\\0GBxtiFvzXE.jpg");
+            byte []buf=new byte[1024];
+            int len=0;
+            while ((len=fis.read(buf))!=-1)
+                fos.write(buf,0,len);
+
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("复制文件失败！");
+        }
+        finally {
+            try {
+                fis.close();
+                fos.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            System.out.println("文件复制成功！");
+        }
+    }
+}
+```
+通过缓冲区实现对MP3文件的拷贝
+```java
+/*
+通过字节流完成MP3的拷贝
+
+ */
+
+import java.io.*;
+
+class Demo100 {
+    public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
+        copy_1();
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+    }
+
+    public static void copy_1() throws IOException {
+        BufferedInputStream buffis = new BufferedInputStream(new FileInputStream("E:\\CloudMusic\\崔天琪 - 放过.mp3"));
+        BufferedOutputStream buffos = new BufferedOutputStream(new FileOutputStream("test.mp3"));
+        int by = 0;
+        while ((by = buffis.read()) != -1)
+            buffos.write(by);
+        buffis.close();
+        buffos.close();
+    }
+}
+```
+自己写的缓冲区
+```java
+import java.io.*;
+
+class MyBufferedInputStream {
+    private InputStream in;
+    private byte[] buf = new byte[1024 * 4];
+    private int pos = 0, count = 0;
+
+    MyBufferedInputStream(InputStream in) {
+        this.in = in;
+    }
+
+    //一个字节一个字节读数据
+    public int myRead() throws IOException {
+        //通过in对象读取数据
+        if (count == 0) {
+            count = in.read(buf);
+            if (count < 0) {
+                return -1;
+            }
+            pos = 0;
+            byte b = buf[pos];
+            count--;
+            pos++;
+            return b & 255;
+        } else if (count > 0) {
+            byte b = buf[pos];
+            count--;
+            pos++;
+            return b & 255;//&255的原因是要int和byte之间的类型提升导致前四字节补1，
+            //需要和00000000000000000000000011111111与过后将前三字节的1变成0，
+            //使得判断条件-1变化
+        }
+        return -1;
+    }
+
+    public void myclose() throws IOException {
+        in.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
+        MyBufferedInputStream buffis = new MyBufferedInputStream(new FileInputStream("E:\\CloudMusic\\崔天琪 - 放过.mp3"));
+        BufferedOutputStream buffos = new BufferedOutputStream(new FileOutputStream("test.mp3"));
+        int by = 0;
+        while ((by = buffis.myRead()) != -1)
+            buffos.write(by);
+        buffis.myclose();
+        buffos.close();
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+    }
+}
+```
+
+##### 键盘录入数据
+
+```java
+import java.io.*;
+
+/*
+System.out:输出
+System.in:输入
+ */
+class ReadIn {
+    public static void main(String[] args) throws IOException {
+        InputStream in = System.in;//获取键盘输入流对象
+        InputStreamReader isr=new InputStreamReader(in);//将字节流对象转换为字符流
+        BufferedReader bufr=new BufferedReader(isr);
+        String line=null;
+        while ((line=bufr.readLine())!=null)
+        {
+            if (line.equals("over"))
+                break;
+            System.out.println(line.toUpperCase());
+        }
+    }
+}
+//        StringBuilder sb = new StringBuilder();
+//        while (true) {
+//            int ch = in.read();
+//            if (ch == '\r')
+//                continue;
+//            if (ch == '\n') {
+//                String s = sb.toString();
+//                if (s.equals("over")) {
+//                    break;
+//                }
+//                System.out.println(s.toUpperCase());
+//                sb.delete(0, sb.length());
+//            } else
+//                sb.append((char) ch);
+//        }
+
+```
