@@ -2421,6 +2421,9 @@ class Test {
 ```
 #### IO流
 
+IO流体系
+![io流体系](https://upload-images.jianshu.io/upload_images/3985563-38c3ea4562d6dbe3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/687/format/webp)
+
 ##### 字符流
 - FileWriter
     ```java
@@ -2844,4 +2847,47 @@ class ReadIn {
 //                sb.append((char) ch);
 //        }
 
+```
+利用Scanner类进行录入
+```java
+import java.util.Scanner;
+
+class Main {
+    public static void main(String[] args) {
+        Scanner sc= new Scanner(System.in);
+        while (sc.hasNext())
+        {
+            String s=sc.nextLine();
+            System.out.println(s);
+        }
+    }
+}
+```
+转换流对象
+```java
+import java.io.*;
+/*
+转换流对象
+ */
+class Main {
+    public static void main(String[] args)throws IOException {
+//        InputStream in = System.in;//获取键盘输入流对象
+//        InputStreamReader isr=new InputStreamReader(in);//将字节流对象转换为字符流
+//        BufferedReader bufr=new BufferedReader(isr);
+        BufferedReader bufr=new BufferedReader(new InputStreamReader(System.in));
+//        OutputStream out=System.out;
+//        OutputStreamWriter osw=new OutputStreamWriter(out);
+//        BufferedWriter bufw=new BufferedWriter(osw);
+        BufferedWriter bufw=new BufferedWriter(new OutputStreamWriter(System.out));
+        String line=null;
+        while ((line=bufr.readLine())!=null)
+        {
+            if (line.equals("over"))
+                break;
+            bufw.write(line.toUpperCase());
+            bufw.newLine();
+            bufw.flush();
+        }
+    }
+}
 ```
