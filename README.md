@@ -6,11 +6,14 @@
 ### 算法部分代码
 - [算法](https://github.com/kklll/Project2/blob/master/算法/算法.md) 
 
+### 各种课设以及小项目集合
+- [各种课设以及小项目集合](https://github.com/kklll/Project2/blob/master/Tools/ubuntu.md)
+
 ### Python学习笔记
 - [Python学习笔记](https://github.com/kklll/Project2/blob/master/python/python.md) 
 
 ### Java学习笔记
-- [Java学习笔记](https://github.com/kklll/Project2/blob/master/Java/Java.md) 
+- [Java学习笔记](./Java/Java.md) 
 ### Git学习笔记
 - [Git学习笔记](https://github.com/kklll/Project2/blob/master/Git/Git.md) 
 
