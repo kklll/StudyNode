@@ -2891,3 +2891,516 @@ class Main {
     }
 }
 ```
+- 网络包log4j可以快速完成对日志的建立
+
+
+- 利用IO流实现日志的打印
+```java
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/*
+转换流对象
+ */
+class Main {
+    public static void main(String[] args) throws IOException {
+        try {
+            int arr[] = new int[2];
+            System.out.println(arr[3]);
+        } catch (Exception e) {
+            try {
+                PrintStream ps=new PrintStream("Exception.log");
+                Date d=new Date();
+                SimpleDateFormat sb=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String time=sb.format(d);
+                ps.println(time);
+                System.setOut(ps);
+            } catch (IOException x) {
+                throw new RuntimeException("文件创建失败");
+            }
+            e.printStackTrace(System.out);
+        }
+    }
+}
+```
+- 输出设备信息
+```java
+import java.io.*;
+import java.util.Properties;
+
+class Main {
+    public static void main(String[] args) throws IOException{
+        Properties ps = System.getProperties();
+        System.setOut(new PrintStream("SystemInfo.txt"));
+        ps.list(System.out);
+    }
+}
+```
+###### FIle 类
+```java
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+
+/*
+构造方法和常用方法
+ */
+/*
+1:创建
+    Boolean createNewFile();//指定位置创建文件，如果已经有文件则不创建返回false;
+    createTempFile​(String prefix, String suffix);
+    createTempFile​(String prefix, String suffix, File directory)
+    mkdir();//只能创建一级目录
+    mkdirs();//能创建多级目录
+2:删除
+    boolean delete();
+    void deleteOnExit();
+3:判断
+    boolean canExecute();
+    boolean canRead();
+    boolean canWrite();
+    boolean exists();
+4:获取信息
+    getName();
+    getParent();//返回绝对路径中的父目录，如果为相对路径返回空
+	getParentFile();
+	getPath();
+ */
+class Main {
+    public static void main(String[] args) throws IOException {
+//        listDemo();
+        listfileDemo();
+    }
+
+    public static void listfileDemo() {//listfile返回的类型是类
+        //而list返回String
+        File x = new File("c:\\");
+        File[] files = x.listFiles();
+        for (File f : files) {
+            System.out.println(f.getName() + "::" + f.length());
+        }
+    }
+
+    public static void func() {
+        File dir = new File("F:\\javaCode\\javaLearn");
+        String[] arr = dir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
+            }
+        });
+        for (String name : arr) {
+            System.out.println(name);
+        }
+    }
+
+    public static void function_1() throws IOException {
+        File f = new File("FIle.txt");
+        f.deleteOnExit();
+//        System.out.println(f.createNewFile());
+        System.out.println(f.delete());
+    }
+
+    public static void function_2() {
+        File f2 = new File("test.txt");
+        System.out.println(f2.canExecute());
+        System.out.println(f2.canWrite());
+        System.out.println(f2.canRead());
+    }
+
+    public static void function_3() {
+        File f = new File("File.txt");
+        //都返回false，因为文件不存在，所以必须判断文件是否存在
+        System.out.println(f.isDirectory());
+        System.out.println(f.isFile());
+    }
+
+    public static void function_4() {
+        File f1 = new File("test.txt");
+        File f2 = new File("haha.java");
+        System.out.println(f1.renameTo(f2));
+    }
+
+    public static void function_5() {
+        File[] files = File.listRoots();
+        for (File f :
+                files) {
+            System.out.println(f);
+        }
+
+    }
+
+    public static void listDemo() {//列出目录下所有文件和文件夹（包含隐藏文件）
+        File f = new File("C:\\");//必须封装成目录，该目录必须存在
+        String[] names = f.list();
+        for (String s :
+                names) {
+            System.out.println(s);
+        }
+    }
+
+    public static void gouzaofangfa() {
+        File x = new File("a.txt");//当前文件的创建
+        File f = new File("F\\IOTest", "test.txt");//父与子
+        File f2 = new File("F\\IOTest");
+        File f4 = new File(f2, "tets2.txt");
+        File f5 = new File("F" + File.separator + "IOTest" + File.separator + "testx.txt");
+        System.out.println(x);
+        System.out.println(f);
+        System.out.println(f2);
+        System.out.println(f4);
+    }
+}
+```
+- 递归显示文件夹
+```java
+import java.io.*;
+
+/*
+列出指定目录下的文件或文件夹，包含子目录中的内容
+
+ */
+class Demox {
+    public static void main(String[] args) {
+        File dir = new File("E:\\Dell");
+        showDir(dir,0);
+    }
+
+    public static String getx(int lv) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("|--");
+        for (int x = 0; x < lv; x++) {
+            sb.insert(0,"|  ");
+        }
+        return sb.toString();
+    }
+
+    public static void showDir(File dir,int x) {
+        System.out.println(getx(x)+dir.getName());
+        File[] files = dir.listFiles();
+        x++;
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                showDir(files[i],x);
+            } else {
+                System.out.println(getx(x)+files[i]);
+            }
+        }
+    }
+}
+```
+- 递归删除
+```java
+import java.io.*;
+
+
+class Demox {
+    public static void main(String[] args) {
+        File f=new File("D:\\");
+        del(f);
+    }
+
+    public static void del(File dir) {
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                del(files[i]);
+            } else {
+                System.out.println(files[i].toString() + "::" + files[i].delete());
+            }
+        }
+        dir.delete();
+    }
+}
+```
+##### properties（属性）类
+```java
+import java.io.*;
+import java.util.Properties;
+import java.util.Set;
+/*
+properties 类(属性)
+ */
+
+class Demox {
+    public static void main(String[] args) throws IOException {
+//        setAndGet();
+        load_data_2();
+    }
+
+    public static void setAndGet() {
+        Properties prop = new Properties();
+        prop.setProperty("张三", "100");
+        prop.setProperty("李四", "101");
+//        System.out.println(prop);
+        prop.setProperty("王五", "1000");
+        System.out.println(prop.getProperty("李四"));
+        Set<String> names = prop.stringPropertyNames();
+        for (String s : names) {
+            System.out.println(s + "::" + prop.getProperty(s));
+        }
+    }
+
+    public static void load_data_2() throws IOException {
+        Properties pro = new Properties();
+        FileInputStream fis = new FileInputStream("info.txt");
+        InputStreamReader ss = new InputStreamReader(fis);
+        pro.load(ss);
+        pro.setProperty("王五", "20");
+        FileOutputStream fos = new FileOutputStream("info.txt");
+        OutputStreamWriter ss2=new OutputStreamWriter(fos);
+        pro.store(ss2, "haha");//store方法将更改写到文件中去
+        System.out.println(pro);
+        fos.close();
+        fis.close();
+    }
+
+    public static void load_data() throws IOException {
+        BufferedReader bufr = new BufferedReader(new FileReader("info.txt"));
+        String line = null;
+        Properties ps = new Properties();
+        while ((line = bufr.readLine()) != null) {
+            String[] arr = line.split("=");
+            System.out.println(arr[0] + "::" + arr[1]);
+            ps.setProperty(arr[0], arr[1]);
+        }
+        bufr.close();
+        System.out.println(ps);
+    }
+}
+```
+
+- printStream
+```java
+
+import java.io.*;
+/*
+打印流：
+字符打印流：
+printWrite
+构造函数可以接受的类型：
+1：file对象
+2：字符串路径
+3：字节输出流OutputStream
+字节打印流：
+printStream
+构造函数可以接受的类型：
+1：file对象
+2：字符串路径
+3：字节输出流OutputStream
+4：字符输出流Writer
+ */
+class demox {
+    public static void main(String[] args)throws IOException {
+        BufferedReader bufr=new BufferedReader(new InputStreamReader(System.in));
+        PrintWriter pr=new PrintWriter(System.out,true);
+        String line=null;
+        while ((line=bufr.readLine())!=null)
+        {
+            if("over".equals(line))
+                break;
+            pr.println(line.toUpperCase());
+//            pr.flush();//如果为构造函数中的自动刷新为true可以不刷新
+        }
+        pr.close();
+        bufr.close();
+    }
+}
+```
+- 合并流
+```java
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.SequenceInputStream;
+import java.util.Enumeration;
+import java.util.Vector;
+/*
+合并流，将多个流合并成一个流
+ */
+class SequenceDemo {
+    public static void main(String[] args) throws IOException {
+        Vector<FileInputStream> v=new Vector<>();
+        v.add(new FileInputStream("haha.java"));
+        v.add(new FileInputStream("info.txt"));
+        Enumeration<FileInputStream> en=v.elements();
+        SequenceInputStream sis = new SequenceInputStream(en);
+        FileOutputStream fos=new FileOutputStream("4.txt");
+        byte[]buff=new byte[1024];
+        int len=0;
+        while ((len=sis.read(buff))!=-1)
+        {
+            fos.write(buff,0,len);
+
+        }
+        fos.close();
+        sis.close();
+    }
+
+}
+```
+- 文件的合并
+```java
+
+import java.util.*;
+import java.io.*;
+
+/*
+切割流
+以及合并流
+ */
+class splitFile {
+    public static void main(String[] args) throws IOException {
+//        split();
+        hebing();
+    }
+
+    public static void hebing() throws IOException {
+        ArrayList<FileInputStream> a = new ArrayList<FileInputStream>();
+        for (int i = 1; i <= 10; i++) {
+            a.add(new FileInputStream("F:\\javaCode\\javaLearn\\splitFiles\\" + i + ".part"));
+        }
+        Iterator it = a.iterator();
+        final Enumeration<FileInputStream> em = new Enumeration<FileInputStream>() {
+            @Override
+            public boolean hasMoreElements() {
+                return it.hasNext();
+            }
+
+            @Override
+            public FileInputStream nextElement() {
+                return (FileInputStream) it.next();
+            }
+        };
+        SequenceInputStream seq = new SequenceInputStream(em);
+        FileOutputStream fos = new FileOutputStream("F:\\javaCode\\javaLearn\\splitFiles\\test2.mp3");
+        int len = 0;
+        byte[] buf = new byte[1024 * 1024];
+        while ((len = seq.read(buf)) != -1) {
+            fos.write(buf, 0, len);
+
+        }
+        fos.close();
+        seq.close();
+    }
+
+    public static void split() throws IOException {
+        FileInputStream fis = new FileInputStream("F:\\javaCode\\javaLearn\\test.mp3");
+        FileOutputStream fos = null;
+        byte[] buf = new byte[1024 * 1024];
+        int len = 0;
+        int count = 1;
+        while ((len = fis.read(buf)) != -1) {
+            fos = new FileOutputStream("F:\\javaCode\\javaLearn\\splitFiles\\" + count++ + ".part");
+            fos.write(buf, 0, len);
+            fos.close();
+        }
+        fis.close();
+    }
+}
+```
+- ObjectInputStream和ObjectOutputStream
+```java
+import java.io.*;
+
+class ObjectInputDemo {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        writeObj();
+//        load();
+    }
+
+    public static void writeObj() throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("obj.txt"));
+        Person p = new Person("张三", 2);
+        oos.writeObject(p);
+        oos.close();
+    }
+
+    public static void load() throws IOException, ClassNotFoundException {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream("obj.txt"));
+        Person p = (Person) in.readObject();
+        System.out.println(p.age);
+        in.close();
+
+    }
+}
+
+class Person implements Serializable {//必须实现序列化接口
+    //静态无法被序列化
+
+    private String name;
+    transient int age; //部分成员不想被序列化的话可以加transient
+
+    Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+```
+- 管道流
+```java
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
+/*
+管道输入流和管道输出流：
+
+ */
+class Demox {
+    public static void main(String[] args) throws IOException {
+        PipedOutputStream out = new PipedOutputStream();
+        PipedInputStream in = new PipedInputStream();
+        in.connect(out);
+        Read r = new Read(in);
+        Write w = new Write(out);
+        new Thread(r).start();
+        new Thread(w).start();
+
+    }
+}
+
+class Read implements Runnable {
+    private PipedInputStream in;
+
+    Read(PipedInputStream in) {
+        this.in = in;
+    }
+
+    public void run() {
+        try {
+            byte[] buf = new byte[1024];
+            System.out.println("读取前准备");
+            int len = in.read(buf);
+            String s = new String(buf, 0, len);
+            System.out.println(s);
+            in.close();
+        } catch (IOException e) {
+            throw new RuntimeException("管道读取失败");
+        }
+    }
+}
+
+class Write implements Runnable {
+    private PipedOutputStream out;
+
+    Write(PipedOutputStream out) {
+        this.out = out;
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("正在写，等待六秒");
+            Thread.sleep(6000);
+            out.write("管道".getBytes());
+            out.close();
+        } catch (Exception e) {
+            throw new RuntimeException("管道写入失败");
+        }
+    }
+}
+```
