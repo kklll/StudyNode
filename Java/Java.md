@@ -3404,3 +3404,156 @@ class Write implements Runnable {
     }
 }
 ```
+- RandomAccessFile（随机访问流）
+```java
+
+/*
+RandomAccessFile类:
+直接继承自Object类，具备读写功能，内部封装数组
+通过getFilePointer获取指针位置
+seek改变指针位置
+只能操作文件
+可以实现多线程的下载
+
+ */
+
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
+class Demox {
+    public static void main(String[] args) throws IOException {
+//        writeFile();
+//        read();
+//        randomWrite();
+    }
+
+    public static void writeFile() throws IOException {
+        RandomAccessFile raf = new RandomAccessFile("a.txt", "rw");
+        raf.write("李四".getBytes());
+        raf.writeInt(97);
+        raf.write("李二".getBytes());
+        raf.writeInt(55);
+        raf.close();
+    }
+
+    public static void read() throws IOException {
+        RandomAccessFile raf = new RandomAccessFile("a.txt", "rw");
+        raf.seek(6);//调整指针位置
+        raf.skipBytes(12);//跳过的字节数
+        byte[] buf = new byte[6];
+        raf.read(buf);
+        int age = raf.readInt();
+        String s = new String(buf);
+        System.out.println(s);
+        System.out.println(age);
+        raf.close();
+    }
+
+    public static void randomWrite() throws IOException {
+        RandomAccessFile raf = new RandomAccessFile("a.txt", "rw");
+        raf.seek(8*3);
+        raf.write("周期".getBytes());
+        raf.writeInt(103);
+        raf.close();
+    }
+}
+```
+- DataInputStream和DataOutputStream
+```java
+import java.io.*;
+
+/*
+可以用于操作基本数据类型的流对象。
+
+ */
+class DataStreamDemo {
+    public static void main(String[] args) throws IOException {
+//        write();
+//        read();
+//        write_utf();
+        read_utf();
+    }
+    public static void read() throws IOException
+    {
+        DataInputStream fis=new DataInputStream(new FileInputStream("data.txt"));
+        int num=fis.readInt();
+        boolean n=fis.readBoolean();
+        double x=fis.readDouble();
+        System.out.println(num);
+        System.out.println(n);
+        System.out.println(x);
+        fis.close();
+    }
+    public static void write_utf() throws IOException {
+        DataOutputStream out=new DataOutputStream(new FileOutputStream("UTF.txt"));
+        out.writeUTF("我打算记得那时看见你");
+        out.close();
+    }
+    public static void read_utf() throws IOException {
+        DataInputStream in=new DataInputStream(new FileInputStream("UTF.txt"));
+        String xx=in.readUTF();
+        System.out.println(xx);
+
+    }
+        public static void write() throws IOException{
+        DataOutputStream out=new DataOutputStream(new FileOutputStream("data.txt"));
+        out.writeInt(123);
+        out.writeBoolean(true);
+        out.writeDouble(123.43);
+        out.close();
+    }
+}
+```
+![流体系](..\Java\TIM截图20190620201411.jpg)
+- 操作字节数组的流（byteArrayInputStream和ByteArrayOutputStream）
+```java
+import java.io.*;
+
+/*
+ByteArrayInputStream:在构造的时候。需要接受数据源，而且数据源是一个字节数组
+ByteArrayOutputStream:在构造的时候不用定于数据目的，因为该对象中已经封装了一个可变长度的数组，即为数据目的地
+所以不需要关闭。
+ */
+class Demoxx {
+    public static void main(String[] args) {
+        //数据源
+        ByteArrayInputStream bis = new ByteArrayInputStream("ABHJASBDJAS".getBytes());
+        //数据目的
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int by = 0;
+        while ((by = bis.read()) != -1) {
+            bos.write(by);
+        }
+        bos.writeTo(new FileOutputStream("x.txt"));
+        System.out.println(bos.size());//大小
+        System.out.println(bos.toString());
+    }
+}
+```
+- 编码问题
+
+```java
+import java.io.*;
+
+class Demoxx {
+    public static void main(String[] args) throws IOException{
+//        write();
+        read();
+    }
+
+    public static void read() throws IOException {
+        InputStreamReader isr=new InputStreamReader(new FileInputStream("gbk.txt"),"utf-8");
+        char buf[] =new char[10];
+        int len=isr.read(buf);
+        String str=new String(buf,0,len);
+        System.out.println(str);
+        isr.close();
+    }
+
+    public static void write() throws IOException {
+        OutputStreamWriter osw=new OutputStreamWriter(new FileOutputStream("gbk.txt"),"gbk");
+        osw.write("你好");
+        osw.close();
+    }
+}
+```
