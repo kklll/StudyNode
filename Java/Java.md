@@ -4190,3 +4190,518 @@ class TCPServer
     }
 }
 ```
+
+- TCP的客户端与服务端互访
+
+```java
+package Demo;
+/*
+TCP演示：
+客户端：
+Socket
+服务端：
+serverSocket
+ */
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class TCPClient2 {
+    public static void main(String[] args) throws Exception {
+        Socket s=new Socket("192.168.4.219",10001);
+        OutputStream out=s.getOutputStream();
+        out.write("服务端你好".getBytes());
+        InputStream in =s.getInputStream();
+        byte[] buf=new byte[1024];
+        int len=in.read(buf);
+        System.out.println(new String(buf,0,len));
+        s.close();
+    }
+}
+
+class TCPServer2 {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);//建立服务
+        Socket s = ss.accept();//获取客户端对象
+        String ip = s.getInetAddress().getHostAddress();
+        System.out.println(ip + "is connected");
+        InputStream in = s.getInputStream();
+        byte[] buf = new byte[1024];
+        int len = in.read(buf);
+        System.out.println(new String(buf, 0, len));
+        OutputStream out=s.getOutputStream();
+        out.write("你也好".getBytes());
+        s.close();
+        ss.close();
+    }
+}
+```
+- TCP两端的通信
+```java
+package Demo;
+/*
+TCP演示：
+客户端：
+Socket
+服务端：
+serverSocket
+ */
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class TCPClient2 {
+    public static void main(String[] args) throws Exception {
+        Socket s=new Socket("192.168.4.219",10001);
+        BufferedReader bufr=new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bufout=new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+        BufferedReader bufin=new BufferedReader(new InputStreamReader(s.getInputStream()));
+        String line=null;
+        while ((line=bufr.readLine())!=null)
+        {
+            if (line.equals("over"))
+                break;
+            bufout.write(line);
+            bufout.newLine();
+            bufout.flush();
+            String str=bufin.readLine();
+            System.out.println("Server::"+str);
+        }
+        bufr.close();
+        s.close();
+    }
+}
+
+class TCPServer2 {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);//建立服务
+        Socket s = ss.accept();//获取客户端对象
+        String ip = s.getInetAddress().getHostAddress();
+        System.out.println(ip + "is connected");
+        BufferedReader bfr=new BufferedReader(new InputStreamReader(s.getInputStream()));
+        BufferedWriter bfw=new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+        String line=null;
+        while ((line=bfr.readLine())!=null)
+        {
+            System.out.println(line);
+            bfw.write(line.toUpperCase());
+            bfw.newLine();
+            bfw.flush();
+        }
+        s.close();
+        ss.close();
+    }
+}
+```
+- 上传文字文件
+```java
+package Demo;
+/*
+TCP演示：
+客户端：
+Socket
+服务端：
+serverSocket
+ */
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class TCPClient2 {
+    public static void main(String[] args) throws Exception {
+        Socket s=new Socket("192.168.4.219",10001);
+        BufferedReader bufr=new BufferedReader(new FileReader("F:\\javaCode\\javaLearn\\gbk.txt"));
+        PrintStream out=new PrintStream(s.getOutputStream(),true);
+        BufferedReader bufin=new BufferedReader(new InputStreamReader(s.getInputStream()));
+        String line=null;
+        while ((line=bufr.readLine())!=null)
+        {
+            if (line.equals("over"))
+                break;
+            out.println(line);
+        }
+        s.shutdownOutput();
+        String str = bufin.readLine();
+        System.out.println("Server::" + str);
+        bufr.close();
+        s.close();
+    }
+}
+
+class TCPServer2 {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);//建立服务
+        Socket s = ss.accept();//获取客户端对象
+        String ip = s.getInetAddress().getHostAddress();
+        System.out.println(ip + "is connected");
+        BufferedReader bfr=new BufferedReader(new InputStreamReader(s.getInputStream()));
+        BufferedWriter bfw=new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+        String line=null;
+        while ((line=bfr.readLine())!=null)
+        {
+//            if ("over".equals(line))
+//                break;
+            System.out.println(line);
+        }
+        bfw.write("上传成功");
+        bfw.newLine();
+        bfw.flush();
+        s.close();
+        ss.close();
+    }
+}
+```
+- TCP传输文件
+```java
+package Demo;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class client {
+    public static void main(String[] args) throws Exception {
+        Socket s = new Socket("192.168.4.219", 10001);
+        FileInputStream fis = new FileInputStream("F:\\javaCode\\javaLearn\\src\\my.jar");
+        OutputStream out = s.getOutputStream();
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while ((len = fis.read(buff)) != -1) {
+            out.write(buff, 0, len);
+        }
+        s.shutdownOutput();
+        InputStream in = s.getInputStream();
+        byte[] buffin = new byte[1024];
+        int len2 = in.read(buffin);
+        System.out.println(new String(buffin, 0, len2));
+        fis.close();
+        s.close();
+    }
+}
+
+class Server {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);
+        Socket s = ss.accept();
+        InputStream in = s.getInputStream();
+        FileOutputStream fos = new FileOutputStream("123.jar");
+        byte[] buf = new byte[1024];
+        int len = 0;
+        while ((len = in.read(buf)) != -1) {
+            fos.write(buf, 0, len);
+        }
+        OutputStream out = s.getOutputStream();
+        out.write("上传成功".getBytes());
+        fos.close();
+        s.close();
+        ss.close();
+    }
+}
+```
+- 多线程解决上传问题
+```java
+package Demo;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class client {
+    public static void main(String[] args) throws Exception {
+        Socket s = new Socket("192.168.4.219", 10001);
+        FileInputStream fis = new FileInputStream("F:\\javaCode\\javaLearn\\src\\my.jar");
+        OutputStream out = s.getOutputStream();
+        byte[] buff = new byte[1024];
+        int len = 0;
+        while ((len = fis.read(buff)) != -1) {
+            out.write(buff, 0, len);
+        }
+        s.shutdownOutput();
+        InputStream in = s.getInputStream();
+        byte[] buffin = new byte[1024];
+        int len2 = in.read(buffin);
+        System.out.println(new String(buffin, 0, len2));
+        fis.close();
+        s.close();
+    }
+}
+
+class Server {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);
+        while (true) {
+            Socket s = ss.accept();
+            new Thread(new PicThread(s)).start();
+        }
+
+    }
+}
+
+class PicThread implements Runnable {
+    private Socket s;
+
+    PicThread(Socket s) {
+        this.s = s;
+    }
+    public void run() {
+        String ip = s.getInetAddress().getHostAddress();
+        try {
+            System.out.println(ip+" is connected");
+            InputStream in = s.getInputStream();
+            FileOutputStream fos = new FileOutputStream("123.jar");
+            byte[] buf = new byte[1024];
+            int len = 0;
+            while ((len = in.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+            }
+            OutputStream out = s.getOutputStream();
+            out.write("上传成功".getBytes());
+            fos.close();
+            s.close();
+        } catch (Exception e) {
+            throw new RuntimeException(ip + "上传失败");
+        }
+
+    }
+}
+```
+
+- 模拟多线程登录
+```java
+package Demo;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class Loginclient {
+    public static void main(String[] args) throws Exception {
+        Socket s = new Socket("192.168.4.219", 10001);
+        BufferedReader bfr = new BufferedReader(new InputStreamReader(System.in));
+        PrintStream bufout = new PrintStream(s.getOutputStream(), true);
+        BufferedReader bufin = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        for (int x = 0; x < 3; x++) {
+
+            String line = bfr.readLine();
+            if (line == null) {
+                break;
+            }
+            bufout.println(line);
+            String info = bufin.readLine();
+            System.out.println("info" + info);
+            if (info.contains("欢迎"))
+                break;
+        }
+        bfr.close();
+        s.close();
+    }
+}
+
+class LoginServer {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);
+        while (true) {
+            Socket s = ss.accept();
+            new Thread(new LoginThread(s)).start();
+        }
+    }
+}
+
+class LoginThread implements Runnable {
+    private Socket s;
+
+    LoginThread(Socket s) {
+        this.s = s;
+    }
+
+    public void run() {
+        String ip = s.getInetAddress().getHostAddress();
+        try {
+            System.out.println(ip + " is connected");
+            PrintStream out = new PrintStream(s.getOutputStream(), true);
+            for (int i = 0; i < 3; i++) {
+                BufferedReader bufin = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                String name = bufin.readLine();
+                if (name==null)
+                    break;
+                BufferedReader read = new BufferedReader(new FileReader("user.txt"));
+                String line = null;
+                Boolean flag = false;
+                while ((line = read.readLine()) != null) {
+                    if (line.equals(name)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    System.out.println(name + " 登录");
+                    out.println(name + "欢迎");
+                    break;
+                } else {
+                    System.out.println(name + "尝试登陆");
+                    out.println(name + ",用户名不存在");
+                }
+            }
+            s.close();
+        } catch (Exception e) {
+            throw new RuntimeException(ip + "校验失败");
+        }
+    }
+}
+```
+
+- 浏览器服务端
+```java
+package Demo;
+
+
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class ServerDemo {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(10001);
+        Socket s=ss.accept();
+        System.out.println("ip: "+s.getInetAddress().getHostAddress());
+        PrintWriter out=new PrintWriter(s.getOutputStream(),true);
+        out.println("<font color='red' size='7'>客户端你好</font>");
+        s.close();
+        ss.close();
+    }
+}
+```
+
+- URL类
+
+```java
+package Demo;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
+class URLDemo{
+    public static void main(String[] args) throws Exception {
+        URL url=new URL("https://192.168.1.1:9000/index.html");
+        System.out.println(url.getPort());
+        System.out.println(url.getHost());
+        System.out.println(url.getFile());
+        System.out.println(url.getProtocol());
+        System.out.println(url.getPath());
+        System.out.println(url.getQuery());
+    }
+}
+class URLconnectionDemo{
+    public static void main(String[] args) throws Exception{
+        URL url=new URL("http://www.baidu.com");
+        URLConnection conn=url.openConnection();
+        System.out.println(conn);
+        InputStream in =conn.getInputStream();
+        byte[]buff=new byte[1024*1024*3];
+        int len=in.read(buff);
+        System.out.println(new String(buff,0,len));
+
+
+    }
+}
+```
+
+##### 正则表达式
+
+```java
+package Demo;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/*
+1：匹配
+2：切割
+3：替换
+4：获取
+ */
+class Regexqq {
+    public static void main(String[] args) {
+        String qq = "11921313";
+        String regex = "[1-9][0-9]{4,14}";
+        Boolean flag = qq.matches(regex);
+        if (flag) {
+            System.out.println("yes");
+        } else
+            System.out.println("no");
+    }
+}
+
+class Demo {
+    public static void main(String[] args) {
+//        fun();
+        String s = "weqj123213kjndsa94124";//字符串中的数字替换为#
+//        replace(s,"\\d","#");
+        String s2 = "dsajdhghhsadywqcevvvvjasdsassaakk";//将叠词替换成#
+//        replace(s2, "(.)\\1+", "$1");//$1 可以获取前一个表达式的组
+//        getDemo();
+        checkmail();
+    }
+
+    public static void split() {
+        String str = "zhangsan.lisi.wangwu";
+        String str2 = "c:\\dsa\\qwq";
+        String reg = "\\\\";
+        String[] arr = str.split(reg);
+        String[] arr2 = str2.split(reg);
+        for (String s : arr2) {
+            System.out.println(s);
+        }
+    }
+
+    public static void fun() {
+        re("erkktyqquiozzzzzzzzc", "(.)\\1+");
+        //叠词，可将一个字符串作
+        // 为一个组，组通过\n(n代表组的编号)
+    }
+
+    public static void re(String str, String re) {
+        String[] arr = str.split(re);
+        System.out.println(arr.length);
+        for (String s : arr) {
+            System.out.println(s);
+        }
+    }
+
+    public static void replace(String str, String re, String newString) {
+        str = str.replaceAll(re, newString);
+        System.out.println(str);
+    }
+
+    public static void getDemo() {
+        String str="ming tian jiu yao fang jia le,da jia.";
+        String reg="\\b[a-z]{3}\\b";//      \\b位单词边界
+        //规则封装成对象
+        Pattern p=Pattern.compile(reg);
+        //让正则对象和相对应的字符串相作用
+        Matcher m=p.matcher(str);
+        while (m.find())
+        {
+            System.out.println(m.group());
+            System.out.println("start "+m.start()+"end: "+ m.end());
+        }
+    }
+    public static void checkmail()
+    {
+        String mail="the__depp@193.com.cn";
+        String reg="\\w+@[A-Za-z0-9]+(\\.[A-za-z]+){1,3}";
+        System.out.println(mail.matches(reg));
+    }
+}
+```
