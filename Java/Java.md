@@ -29,7 +29,7 @@
 - [SSM框架](./SSM框架学习.md)
 
 
-![pic](.\javax.jpg)
+![pic](./javax.jpg)
 
 ## import
 ### java常用包:
