@@ -831,3 +831,205 @@ DEBUG 2019-07-13 15:00:43,695 org.apache.ibatis.transaction.jdbc.JdbcTransaction
 DEBUG 2019-07-13 15:00:43,695 org.apache.ibatis.transaction.jdbc.JdbcTransaction :Closing JDBC Connection [com.mysql.jdbc.JDBC4Connection@2f686d1f]
 DEBUG 2019-07-13 15:00:43,695 org.apache.ibatis.datasource.pooled.PooledDataSource :Returned connection 795372831 to pool.
 ```
+
+##### properties文件配置
+优先级:程序>properties文件>properties子元素
+
+- Setting配置项的说明
+![配置属性1](./ssm/settings_1.png)
+![配置属性2](./ssm/settings_2.png)
+
+
+##### 映射器（Mappers）的引入方法
+1.用文件路径引入
+```xml
+    <mappers>
+        <mapper resource="RoleMapper.xml"/>
+    </mappers>
+```
+2.用包名引入
+```xml
+    <mappers>
+        <package name="Example"/>
+    </mappers>
+```
+3.用类注册器引入
+```xml
+    <mappers>
+        <mapper class="Example.RoleMapper"/>
+    </mappers>
+```
+4.URL引入
+```xml
+    <mappers>
+        <mapper url="file:///F:/javaCode/mybatis/src/main/resources/RoleMapper.xml"/>
+    </mappers>
+```
+
+#### 映射器
+
+- 映射器的配置元素`select` `insert` `update` `delete` `sql` `resultMap` `cache` `cache-ref`
+
+##### `select`
+配置:  
+id:接口的方法名，如果命名空间和方法不唯一会抛出异常
+
+
+parameterType:可以给类的全名，或者别名，但别名必须在mybatis注册过
+
+
+resultTyoe:查询后的数据类型，可以使用全类名或者别名
+
+resultMap:映射集的引用（可以配置映射规则、级联、typeHandle等）
+
+flushCache:调用SQL后是否清空之前查询的本地缓存和二级缓存（默认false）
+
+useCache:是否使用缓存（默认true）
+
+timeout:超时时间
+
+fetchsize:获取记录的总条数
+
+statementType:告诉Mybatis使用哪个statement(默认PREPARED)
+
+select传需要多个参数的解决方法：
+- 使用map接口  
+    1.修改映射文件
+    ```xml
+    <select id="findRoleByMap" parameterType="map" resultType="role">
+    select id,name,birth,money from test where birth like concat('%',#{birth},'%') and money >#{money}
+    </select>
+    ```
+    ```java
+    public class Main {
+    public static void main(String[] args) {
+        Logger log = Logger.getLogger(Main.class);
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = SqlSessionFactoryUtil.openSqlSession();
+            Example.RoleMapper roleMapper = sqlSession.getMapper(Example.RoleMapper.class);
+            Map<String,Object> map= new HashMap<String, Object>();
+            map.put("birth","1");
+            map.put("money",10);
+            List<Role> list=roleMapper.findRoleByMap(map);
+            for (Role s :list)
+            {
+                log.info(s.getName()+"::"+s.getBirth()+"::"+s.getMoney());
+            }
+            
+            } finally {
+                if (sqlSession != null)
+                    sqlSession.close();
+            }
+        }
+    }
+    ```
+- 使用注解  
+    1.修改接口
+    ```java
+    public List<Role> findRoleByMap(@Param("birth")String birth,@Param("money")Float money);
+    ```
+    2.xml文件修改
+    ```xml
+    <select id="findRoleByMap" resultType="role">
+        select id,name,birth,money from test where birth like concat('%',#{birth},'%') and money >#{money}
+    </select>
+    ```
+    3.直接传递两个参数即可实现调用
+- 通过Java Bean传递多个参数  
+    1.新增查询类
+    ```java
+    package Example;
+
+    public class RoleParams {
+        private int id;
+        private String name;
+        private String birth;
+        private float money;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getBirth() {
+            return birth;
+        }
+
+        public void setBirth(String birth) {
+            this.birth = birth;
+        }
+
+        public float getMoney() {
+            return money;
+        }
+
+        public void setMoney(float money) {
+            this.money = money;
+        }
+    }
+    ```
+    2.修改接口方法参数为查询类
+    ```java
+    public List<Role> findRoleByBean(RoleParams params);
+    ```
+    3.创建查询类对象并通过set方法给对象赋值
+    ```java
+    RoleParams params=new RoleParams();
+            params.setBirth("199");
+            params.setMoney(10);
+    ```
+    4.进行查询
+    ```java
+    List<Role> list = roleMapper.findRoleByBean(params);
+    for (Role s : list) {
+            log.info(s.getName() + "::" + s.getBirth() + "::" + s.getMoney());
+            }
+    ```
+- 混合查询  
+同理将上述的对象参数以注解的方式添加到查询中，在查询中使用类名.变量名进引用，可以实现多个参数对象的查询。
+
+`select元素可以使用resultmap进行映射，需要在映射文件中声明相应的映射关系`
+
+```xml
+<resultMap id="roleMapper" type="role">
+        <result property="id" column="id"/>
+        <result property="name" column="name" jdbcType="VARCHAR" javaType="string"/>
+        <result property="birth" column="birth" typeHandler="Example.MytypeHandler"/>
+    </resultMap>
+```
+然后进行引用
+```xml
+<select id="getRole" parameterType="int" resultType="role" resultMap="roleMapper">
+        select id,name,birth,money from test where id=#{id}
+</select>
+```
+##### 分页参数RowBounds
+- 分页参数的使用需要新建一个RowBounds对象，通过将对象传入方法的参数中即可使用（但是不需要在配置文件中进行配置）  
+RowBounds构造函数
+```java
+public RowBounds(int offset, int limit) {
+        this.offset = offset;
+        this.limit = limit;
+    }
+```
+limit是限制条数，offset是偏移量即从第几个元素开始选取，使用此对象可以限制
+
+
+##### 级联
+
+###### mybatis中的级联分3类
+1.鉴别器  
+2.一对一  
+3.一对多  

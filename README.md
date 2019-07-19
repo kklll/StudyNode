@@ -30,4 +30,7 @@
 ### Ubuntu的踩坑记录
 - [Ubuntu的踩坑记录](./Tools/ubuntu.md)
 
+### Sql学习
+- [Sql学习](./sql.md)
+
 ### 如有谬误，希望大家批评指出！
