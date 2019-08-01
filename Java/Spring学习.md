@@ -1160,3 +1160,214 @@ sqlMapConfig.xml
 </bean>
 ```
 即可实现自动扫描，但是建议将mapper接口类与实现文件放在同一个包下。
+
+##### spring数据库事务管理器
+需要在xml配置文件中加入
+```xml
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+```
+还需要加入
+```xml
+<bean id="transaction" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource2"/>
+```
+这是通过xml文件配置，也可以通过Java代码进行配置
+###### xml配置过程
+0.配置数据源  
+1.配置数据源事务管理器（如上）   
+2.配置事务拦截器
+```xml
+<bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager" ref="transaction"/>
+        <!--        配置事务属性-->
+        <property name="transactionAttributes">
+            <props>
+                <!--                使用正则匹配业务方法-->
+                <prop key="insert*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+                <prop key="save*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+                <prop key="add*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+                <prop key="select*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+                <prop key="del*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+                <prop key="remove*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+                <prop key="update*">PROPAGATION_REQUIRED,ISOLATION_READ_UNCOMMITTED</prop>
+            </props>
+        </property>
+    </bean>
+```
+3.指名事务拦截器拦截哪些类
+```xml
+<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames">
+            <list>
+                <value>*serverImp</value>
+            </list>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionInterceptor</value>
+            </list>
+        </property>
+</bean>
+```
+###### 注解配置过程 
+1.配置数据源  
+2.配置事务管理器  
+3.配置使用注解定义事务  
+```xml
+<!--    定义事务使用注解方式-->
+<tx:annotation-driven transaction-manager="transaction"/>
+```
+
+示例代码:  
+Person类和接口就不写了  
+主程序配置文件:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+<!--    <context:annotation-config/>-->
+<!--    <context:component-scan base-package="com.learn.test.*"/>-->
+    <!--    扫描Mapper Bean-->
+    <bean class="com.learn.test.Mapper2Imp" id="mapper2Imp"/>
+<!--    <context:component-scan base-package="com.learn.test"/>-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.learn.test"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+    <!--    事务管理器-->
+    <bean id="transaction" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource2"/>
+    </bean>
+    <!--    定义事务使用注解方式-->
+    <tx:annotation-driven transaction-manager="transaction"/>
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2"/>
+        <property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+    </bean>
+    <bean id="dataSource2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://deepblue.datsec.cn:3306/learn"/>
+        <property name="username" value="root"/>
+        <property name="password" value="anzhuoshiyanshi"/>
+    </bean>
+    <bean id="dataSource1" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/jdbc"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+        <!--        最大连接数-->
+        <property name="maxTotal" value="255"/>
+        <!--        最大等待数量-->
+        <property name="maxIdle" value="5"/>
+        <!--        最大等待时间-->
+        <property name="maxWaitMillis" value="1000"/>
+    </bean>
+</beans>
+```
+插入list的接口
+```java
+package com.learn.test;
+
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+
+public interface Mapper2 {
+    public int insertRoleList(List<Person> roleList);
+}
+```
+实现类
+```java
+package com.learn.test;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Component
+public class Mapper2Imp implements Mapper2 {
+    Logger logger = Logger.getLogger(Mapper2.class);
+
+    @Autowired
+    RoleMapper roleMapper = null;
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public int insertRoleList(List<Person> roleList) {
+        int count = 0;
+        for (Person p : roleList) {
+            try {
+                if (p==null)
+                    throw new Exception();
+                count += roleMapper.insertRole(p);
+            } catch (Exception e) {
+                logger.info(e.toString());
+            }
+        }
+        return count;
+    }
+}
+```
+测试类:
+```java
+   @Test
+    public void testForManager(){
+        ApplicationContext applicationContext=new ClassPathXmlApplicationContext("data-config.xml");
+        RoleMapper roleMapper=applicationContext.getBean(RoleMapper.class);
+        Person p=new Person();
+        p.setName("呵呵");
+        p.setBirth("2019-7-1");
+        p.setMoney((float) 200.55);
+        Person p2=new Person();
+        p2.setName("呵呵2");
+        p2.setBirth("2019-7-2");
+        p2.setMoney((float) 250);
+        List<Person> list=new ArrayList<>();
+        list.add(p);
+        list.add(p2);
+        list.add(null);
+        list.add(p2);
+//        roleMapper.insertRole(p);
+        Mapper2 mapper2=applicationContext.getBean(Mapper2.class);
+        int count=mapper2.insertRoleList(list);
+        System.out.println(count);
+    }
+```
+
+
+###### 过长占用事务时间的解决方法
+```java
+package com.learn.test;
+
+import org.springframework.stereotype.Controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Controller
+public class RoleController {
+    @Autowired
+    private RoleServer roleServer = null;
+
+    @RequestMapping("/addRole")
+    @ResponseBody
+    public Role addRole(Role role) {
+        roleServer.printRoles();
+        dosomething();
+    }
+}
+```
+这样dosomething就会在事务结束后进行操作

@@ -17,14 +17,14 @@ SELECT column_name(s) FROM table_name AS alias_name
 SELECT column_name AS alias_name FROM table_name
 ```
 ##### join
-Person表
+Person表  
 Id_P | LastName | FirstName | Address | City |  
 -|-|-|-|-
 |1|	Adams|	John|	Oxford |Street|	London|
 |2|	Bush|	George|	Fifth| Avenue	|New York|
 |3	|Carter	|Thomas|	Changan |Street	|Beijing|  
 
-Orders表
+Orders表  
 Id_O	|OrderNo|	Id_P
 -|-|-
 1|	77895	|3
