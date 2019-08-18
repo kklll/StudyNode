@@ -459,3 +459,739 @@ out.println(id);
         System.out.println(cookie);
     }
 ```
+
+
+### 拦截器
+
+使用拦截器必须实现`org.springframework.web.servlet.HandleerIntercepter`接口，拦截器接口有三个方法:  
+1.preHandle    
+处理器执行之前的方法，返回布尔值  
+2.postHandle  
+处理器之后执行的方法，处理器的逻辑完成后执行这个方法   
+3.afterCompletion   
+无论是否存在异常都会执行此方法。  
+
+#### 配置拦截器
+
+```xml
+<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.Interceptor.RoleInterceptor"/>
+        </mvc:interceptor>
+</mvc:interceptors>
+```
+其中 `<mvc:mapping path="/**"/>`表示匹配所有请求，也可以通过正则表达式来匹配比如：`<mvc:mapping path="/index"/>`表示所有以index结尾的请求，也可以通过            `<mvc:exclude-mapping path=""/>`设置不匹配的方法。
+##### 多个拦截器的执行顺序
+
+配置三个拦截器，其中定义为RoleIntercepter，RoleIntercepter2，RoleIntercepter3
+执行结过为:  
+```java
+preHandle 启动
+preHandle2 启动
+preHandle3 启动
+postHandle3 启动
+postHandle2 启动
+postHandle 启动
+afterCompletion3 启动
+afterCompletion2 启动
+afterHandle 启动
+```
+拦截器
+```java
+package com.Interceptor;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RoleInterceptor extends HandlerInterceptorAdapter {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle 启动");
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        super.postHandle(request, response, handler, modelAndView);
+        System.out.println("postHandle 启动");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        super.afterCompletion(request, response, handler, ex);
+        System.out.println("afterHandle 启动");
+    }
+}
+```
+这是当preHandle返回true时的方法调用，可见前置方法在按顺序进行执行，注意后置方法和完成方法是在按照逆序进行执行。  
+
+
+- 将RoleIntercepter2中的前置方法返回值改为false，可以发现，在返回false之后，此拦截器后面的拦截器的前置方法都不会再执行，且控制器后的所有后置方法也不会再进行执行，而且完成方法中只有返回为true的方法会执行。
+
+```java
+preHandle 启动
+preHandle2 启动
+afterHandle 启动
+```
+#### 验证表单
+验证表单需要的jar包
+```
+classmate-1.5.0.jar
+jboss-logging-3.4.0.Final.jar
+hibernate-validator-6.0.14.Final.jar
+Bean Validation API- 2.0.1.Final.jar
+```
+后台验证数据实例  
+参数类  
+```java
+package com.controller;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.*;
+import java.util.Date;
+
+public class TestForSale {
+    @NotNull
+    private int productId;
+
+    @NotNull
+    private int userId;
+
+    @Future//只能是将来的日期
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date date;
+
+    @NotNull
+    @DecimalMin(value = "0.1")
+    private double price;
+
+    @Min(1)
+    @Max(100)
+    @NotNull
+    private int quantity;
+
+    @NotNull
+    @DecimalMax("500000.0")
+    @DecimalMin("1.0")
+    private double amount;
+
+    @Pattern(regexp = "^([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)*@"
+            + "([a-zA-Z0-9]*[-_]?[a-zA-Z0-9]+)+[\\.][A-Za-z]{2,3}([\\.][A-Za-z]{2})?$",message = "邮件不符合模式")
+    private String email;
+
+    @Size(min = 0,max = 256)
+    private String note;
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
+```
+
+jsp文件
+```html
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>validate</title>
+</head>
+<body>
+
+<form action = "./testfor">
+    <!--
+    <form action = "./validate/validator.do">
+    -->
+    <table>
+        <tr>
+            <td>产品编号：</td>
+            <td><input name="productId" id="productId"/></td>
+        </tr>
+        <tr>
+            <td>用户编号：</td>
+            <td><input name="userId" id="userId"/></td>
+        </tr>
+        <tr>
+            <td>交易日期：</td>
+            <td><input name="date" id="date"/></td>
+        </tr>
+        <tr>
+            <td>价格：</td>
+            <td><input name="price" id="price"/></td>
+        </tr>
+        <tr>
+            <td>数量：</td>
+            <td><input name="quantity" id="quantity"/> </td>
+        </tr>
+        <tr>
+            <td>交易金额：</td>
+            <td><input name="amount" id="amount"/></td>
+        </tr>
+        <tr>
+            <td>用户邮件：</td>
+            <td><input name="email" id="email"/></td>
+        </tr>
+        <tr>
+            <td>备注：</td>
+            <td><textarea id="note"  name="note" cols="20" rows="5"></textarea></td>
+        </tr>
+        <tr><td colspan="2" align="right"> <input type="submit" value="提交"/> </tr>
+    </table>
+    </form>
+</body>
+</html>
+```
+逻辑类(方法)
+```java
+package com.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@Controller
+public class TestMapper {
+    @RequestMapping("/testfor")
+    public ModelAndView forthis(@Valid TestForSale transactional, Errors errors)
+    {
+        if (errors.hasErrors())
+        {
+            List<FieldError> errorList=errors.getFieldErrors();
+            for (FieldError f: errorList)
+            {
+                System.out.println("fied: "+f.getField()+"\t"+" msg: "+f.getDefaultMessage());
+            }
+        }
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.setViewName("jiaoyi");
+        return modelAndView;
+    }
+}
+```
+##### 使用验证器验证数据源
+验证器接口定义在`org.springframework.validation`包下的Validator接口  
+- 建立接口
+```java
+package com.validator;
+
+import com.controller.TestForSale;
+import org.apache.ibatis.transaction.Transaction;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+public class TransactionValidator implements Validator {
+
+    @Override
+    public boolean supports(Class<?> clazz) {
+        System.out.println(TestForSale.class.equals(clazz));
+        return TestForSale.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        TestForSale transaction = (TestForSale) target;
+        double dis = transaction.getAmount() - (transaction.getPrice() * transaction.getQuantity());
+        if (Math.abs(dis) > 0.01)
+            errors.rejectValue("amount", null, "交易金额不匹配");
+    }
+}
+```
+加入验证器
+```java
+package com.controller;
+
+import com.validator.TransactionValidator;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@Controller
+public class TestMapper {
+
+    @InitBinder
+    public void initBinder(DataBinder binder)
+    {
+        //数据绑定加入验证器
+        binder.setValidator(new TransactionValidator());
+    }
+    @RequestMapping("/testfor")
+    public ModelAndView forthis(@Valid TestForSale transactional, Errors errors) {
+        if (errors.hasErrors()) {
+            List<FieldError> errorList = errors.getFieldErrors();
+            for (FieldError f : errorList) {
+                System.out.println("fied: " + f.getField() + "\t" + " msg: " + f.getDefaultMessage());
+            }
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("jiaoyi");
+        return modelAndView;
+    }
+}
+```
+使用InitBinder注解将验证器和控制器绑定到一起，这样就可以对请求表单进行验证
+
+#### 数据模型
+```java
+package com.controller;
+
+import com.Pojo.Person;
+import com.mapper.PersonMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class New_Controller {
+    @Autowired
+    PersonMapper personMapper = null;
+
+    //通过ModelMap进行数据的传递
+    @RequestMapping(value = "/getRoleByModelMap")
+    public ModelAndView getRoleByModelMap(@RequestParam("id") Integer id, ModelMap modelMap) {
+        Person p = personMapper.getRole(id);
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("roleDetails");
+        modelMap.addAttribute("person", p);
+        return mv;
+    }
+
+    //通过Model进行数据的传递
+    @RequestMapping("/getRoleByModel")
+    public ModelAndView getRoleByModel(@RequestParam("id") int id, Model model) {
+        Person p = personMapper.getRole(id);
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("roleDetails");
+        model.addAttribute("person", p);
+        return mv;
+    }
+}
+```
+#### 视图和视图解析器
+
+实例:  
+1.转JSON实例，见之前的返回JSON方法  
+2.返回Excel表（利用POI库）
+自定义导出接口定义
+```java
+package com.Interface;
+
+import org.apache.poi.ss.usermodel.Workbook;
+
+import java.util.Map;
+
+public interface ExcelExportService {
+    public void makeWorkBook(Map<String, Object> model, Workbook workbook);
+}
+```
+定义Excel视图
+```java
+package com.View;
+
+import com.Interface.ExcelExportService;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.view.document.AbstractXlsView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+public class ExcelView extends AbstractXlsView {
+    //文件名
+    private String fileName = null;
+    //导出视图自定义接口
+    private ExcelExportService excelExportService = null;
+
+    //构造方法1
+    public ExcelView(ExcelExportService excelExportService) {
+        this.excelExportService = excelExportService;
+    }
+
+    //构造方法2
+    public ExcelView(String viewName, ExcelExportService excelExportService) {
+        this.setBeanName(viewName);
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public ExcelExportService getExcelExportService() {
+        return excelExportService;
+    }
+
+    public void setExcelExportService(ExcelExportService excelExportService) {
+        this.excelExportService = excelExportService;
+    }
+
+
+    @Override
+    protected void buildExcelDocument(Map<String, Object> model, Workbook workbook,
+                                      HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (excelExportService == null) {
+            throw new RuntimeException("导出服务接口不能为空");
+        }
+        //文件名不为空,为空则使用请求路径中的字符串为文件名
+        if (!StringUtils.isEmpty(fileName)) {
+            String reqCharset = request.getCharacterEncoding();
+            reqCharset = reqCharset == null ? "UTF-8" : reqCharset;
+            fileName = new String(fileName.getBytes(reqCharset), "ISO8859-1");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        }
+        excelExportService.makeWorkBook(model, workbook);
+    }
+}
+```
+服务端
+```java
+    @RequestMapping("/export")
+    public ModelAndView export() {
+        //模型和视图
+        ModelAndView mv = new ModelAndView();
+        //excel视图
+        ExcelView ev = new ExcelView(excelExportService());
+        ev.setFileName("juese.xls");
+        PersonParam personParam = new PersonParam();
+        PageParam pageParam = new PageParam();
+        pageParam.setStart(0);
+        pageParam.setLimit(1000);
+        personParam.setPageParam(pageParam);
+        List<Person> list = personMapper.findRoles();
+        mv.addObject("personList", list);
+        mv.setView(ev);
+        return mv;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private ExcelExportService excelExportService() {
+        return (Map<String, Object> model, Workbook workbook) -> {
+            //获取用户列表
+            List<Person> personList = (List<Person>) model.get("personList");
+            //生成sheet
+            Sheet sheet = workbook.createSheet("所有角色");
+            Row title = sheet.createRow(0);
+            title.createCell(0).setCellValue("id");
+            title.createCell(1).setCellValue("name");
+            title.createCell(2).setCellValue("birth");
+            title.createCell(3).setCellValue("money");
+            for (int i = 0; i < personList.size(); i++) {
+                Person p = personList.get(i);
+                int rowIdx = i + 1;
+                Row row = sheet.createRow(rowIdx);
+                row.createCell(0).setCellValue(p.getId());
+                row.createCell(1).setCellValue(p.getName());
+                row.createCell(2).setCellValue(p.getBirth());
+                row.createCell(3).setCellValue(p.getMoney());
+            }
+        };
+    }
+```
+### 文件上传
+Spring MVC的文件上传是通过MultipartResolver实现的，对于MultipartResolver而言有两个实现类`CommonsMultipartResolver` `StandarServeletMutipartResolver`其中CommonsMultipartResolver是需要依赖第三方包`jakarta Common FileUpload 项目`而StandarServeletMutipartResolver则是在`spring mvc 3.1`后的产物，不需要依赖第三方包。  
+无论在项目中使用哪一种方法，都需要在spring容器中注册MultipartResolver  
+方法一:(通过@Bean注解)
+```java
+package com.Interceptor;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+
+public class Init {
+    @Bean(name = "multipartResolver")
+    public MultipartResolver initMultipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
+}
+```
+方法二：(通过配置spring MVC初始化器)
+```java
+package com.Other;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.ServletRegistration;
+import javax.servlet.MultipartConfigElement;
+
+public class MyWebAppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
+    //spring IOC容器配置
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        //配置spring的Java配置文件数组
+        return new Class<?>[]{};
+    }
+
+    //Servlet的映射关系配置
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[0];
+    }
+
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"*"};
+    }
+
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        String filePath="F:/uploads";
+        long singMax= (long) (5*Math.pow(2,20));
+        long totalMax= (long) (10*Math.pow(2,20));
+        registration.setMultipartConfig(new MultipartConfigElement(filePath,singMax,totalMax,0));
+    }
+}
+```
+方法三（XML注解）:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <!-- 配置Spring IoC配置文件路径 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+    <!-- 配置ContextLoaderListener用以初始化Spring IoC容器 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- 配置DispatcherServlet -->
+    <servlet>
+        <!-- 注意：Spring MVC框架会根据servlet-name配置，找到/WEB-INF/dispatcher-servlet.xml作为配置文件载入Web工程中 -->
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 使得Dispatcher在服务器启动的时候就初始化 -->
+        <load-on-startup>2</load-on-startup>
+
+        <!--        MultipartResolver参数-->
+        <multipart-config>
+            <location>e:/upload/</location>
+            <max-file-size>5242880</max-file-size>
+            <max-request-size>10485760‬</max-request-size>
+            <file-size-threshold>0</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <!-- Servlet拦截配置 -->
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+</web-app>
+```
+##### 文件上传步骤
+1.将Bean加入spring IOC容器中（可以使用多种方式，比如xml配置《如上代码》，或者注释，本例使用注释方法）  
+```java
+package com.Interceptor;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+
+public class Init {
+    @Bean(name = "multipartResolver")
+    public MultipartResolver initMultipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
+}
+```
+2.配置`multipartResoulver`
+```xml
+<!--        MultipartResolver参数-->
+        <multipart-config>
+            <location>F:/upload/</location>
+            <max-file-size>5242880</max-file-size>
+            <max-request-size>10485760</max-request-size>
+            <file-size-threshold>0</file-size-threshold>
+        </multipart-config>
+```
+3.进行请求映射配置
+```java
+@RequestMapping(value = "/file")
+    public ModelAndView upload(MultipartFile file) {
+        //请求转换
+//        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+//        获取上传的文件
+//        MultipartFile file = multipartHttpServletRequest.getFile("file");
+        //设置视图
+        if (file==null)
+        {
+            ModelAndView mv = new ModelAndView();
+            mv.setViewName("fileUpload");
+            return mv;
+        }
+        ModelAndView mv = new ModelAndView();
+        mv.setView(new MappingJackson2JsonView());
+        //获取原始文件名
+        String fileName = file.getOriginalFilename();
+        //目标文件
+        file.getContentType();
+        File dest = new File(fileName);
+        try {
+            //保存文件
+            file.transferTo(dest);
+            mv.addObject("success", true);
+            mv.addObject("msg", "上传文件成功");
+
+        } catch (IllegalStateException | IOException e) {
+            mv.addObject("success", false);
+            mv.addObject("msg", "上传文件失败");
+            e.printStackTrace();
+        }
+        return mv;
+    }
+```
+需要注意当`第一次访问无参数的时候需要额外进行考虑`。
+
+#### 转换器的使用
+实例:将消息转换为json消息  
+首先需要将Json转换器添加到Http请求转换器中
+```java
+    @Bean("requestMappingHandlerAdapter")
+    public HandlerAdapter initHandler() {
+        //创建转换器
+        RequestMappingHandlerAdapter requestMappingHandlerAdapter=new RequestMappingHandlerAdapter();
+        //http-》Json转换器
+        MappingJackson2HttpMessageConverter jsonConverter=new MappingJackson2HttpMessageConverter();
+        MediaType mediaType=MediaType.APPLICATION_JSON_UTF8;
+        List<MediaType> mediaTypes =new ArrayList<MediaType>();
+        mediaTypes.add(mediaType);
+        //加入转换器支持的转换格式
+        jsonConverter.setSupportedMediaTypes(mediaTypes);
+        //往适配器加入Json转换器
+        requestMappingHandlerAdapter.getMessageConverters().add(jsonConverter);
+        return requestMappingHandlerAdapter;
+    }
+```
+也可以使用xml进行配置
+```xml
+<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="jsonConverter"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+</bean>
+```
+配置转换器之后只需要在映射方法上加入注解`ResponseBody`即可实现转换为Json格式
+```java
+    @ResponseBody
+    @RequestMapping("/forjson")
+    public Person forJson(@Param("id")Integer id)
+    {
+        Person person=personMapper.getRole(id);
+        return person;
+    }
+```
+
+#### 一对一转换器（Conerter）
+spring-core的部分转换器
+转换器 |说明
+-|-
+characterToNumber|将字符转换为数字
+IntegerToEnum|整数转换为枚举类型
+ObjectToStringConverter|将对象转换为字符串
+SerializingConverter|序列化转换器
+DeserializingConverter|反序列化转换器
+StringToBooleanConverter|将字符串转换为布尔值
+StringToEnum|将字符串转换为枚举格式
+StringToCurrencyConverter|将字符串转换为金额
+EnumToStrongConverter|将枚举转换为字符串
+

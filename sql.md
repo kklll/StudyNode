@@ -24,14 +24,16 @@ Id_P | LastName | FirstName | Address | City |
 |2|	Bush|	George|	Fifth| Avenue	|New York|
 |3	|Carter	|Thomas|	Changan |Street	|Beijing|  
 
-Orders表  
+Orders表    
+
+
 Id_O	|OrderNo|	Id_P
 -|-|-
 1|	77895	|3
 2	|44678|	3
 3	|22456|	1
 4	|24562|	1
-5	|34764|	65
+5	|34764|	65  
 
 `引用的sql语句:`  
 SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
@@ -128,20 +130,25 @@ DROP PRIMARY KEY
 一个表中的 FOREIGN KEY 指向另一个表中的 PRIMARY KEY。
 
 例子：  
-"Persons" 表：
+"Persons" 表：  
+
 Id_P|	LastName|	FirstName	|Address	|City
 -| - |- |- |-
 1	|Adams	|John|	Oxford Street	|London
 2	|Bush	|George|	Fifth Avenue	|New York
-3	|Carter	|Thomas|	Changan Street|	Beijing
+3	|Carter	|Thomas|	Changan Street|	Beijing  
 
-"Orders" 表：
-Id_O|	OrderNo|	Id_P
--|-|-
+
+"Orders" 表：  
+
+Id_O|OrderNo|Id_P
+-|-|-  
 1	|77895|	3
 2	|44678|	3
 3	|22456|	1
-4	|24562|	1
+4	|24562|	1  
+
+
 "Orders" 中的 "Id_P" 列指向 "Persons" 表中的 "Id_P" 列。
 
 "Persons" 表中的 "Id_P" 列是 "Persons" 表中的 PRIMARY KEY。
