@@ -1182,7 +1182,8 @@ public class Init {
 ```
 
 #### 一对一转换器（Conerter）
-spring-core的部分转换器
+spring-core的部分转换器 
+
 转换器 |说明
 -|-
 characterToNumber|将字符转换为数字
@@ -1193,5 +1194,6 @@ DeserializingConverter|反序列化转换器
 StringToBooleanConverter|将字符串转换为布尔值
 StringToEnum|将字符串转换为枚举格式
 StringToCurrencyConverter|将字符串转换为金额
-EnumToStrongConverter|将枚举转换为字符串
+EnumToStrongConverter|将枚举转换为字符串  
+
 
