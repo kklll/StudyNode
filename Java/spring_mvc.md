@@ -1,5 +1,5 @@
 <center>Spring MVC</center>
-
+[TOC]
 #### spring mvc的入门实例
 web.xml
 ```xml
@@ -1133,7 +1133,54 @@ public class Init {
 ```
 需要注意当`第一次访问无参数的时候需要额外进行考虑`。
 
-#### 转换器的使用
+### 文件下载
+```java
+    @RequestMapping("/download_")
+    public ModelAndView index() {
+        ModelAndView mv=new ModelAndView();
+        mv.setViewName("download");
+        return mv;
+    }
+
+    @RequestMapping("/download")
+    public ResponseEntity<byte[]> fileDownload(HttpServletRequest request, String filename) throws Exception {
+        if (filename == null) {
+
+        }
+        //指定文件下载路径
+        String path = "F:\\学习资料\\ssm\\mvc\\web\\WEB-INF\\upload";
+        //目标文件
+        File target = new File(path + File.separator + filename);
+        //设置响应头
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", filename);
+        //定义以流的方式返回下载数据
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        //使用Spring MVC的ResponseEntity对象封装返回下载数据
+        return new ResponseEntity<byte[]>(FileUtil.readAsByteArray(target), headers, HttpStatus.OK);
+    }
+```
+文件下载html文件
+```html
+<%--
+  Created by IntelliJ IDEA.
+  User: DeepBlue
+  Date: 2019/8/18
+  Time: 19:28
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>文件下载</title>
+</head>
+<body>
+<a href="${pageContext.request.contextPath}/download?filename=1.jpg">文件下载</a>
+</body>
+</html>
+```
+
+### 转换器的使用
 实例:将消息转换为json消息  
 首先需要将Json转换器添加到Http请求转换器中
 ```java
@@ -1197,3 +1244,256 @@ StringToCurrencyConverter|将字符串转换为金额
 EnumToStrongConverter|将枚举转换为字符串  
 
 
+##### 自定义转换器
+1.首先创建自定义转换器类，实现Converter接口的方法。
+```java
+package com.Converter;
+
+import com.Pojo.Person;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.util.StringUtils;
+
+public class StringToMy implements Converter<String, Person> {
+    @Override
+    public Person convert(String s) {
+        //判断空串
+        if (StringUtils.isEmpty(s)) {
+            return null;
+        }
+        if (s.indexOf("-") == -1) {
+            return null;
+        }
+        String[] arr = s.split("-");
+        if (arr.length != 3) {
+            return null;
+        }
+        Person person = new Person();
+        person.setId(Integer.parseInt(arr[0]));
+        person.setName(arr[1]);
+        person.setBirth(arr[2]);
+        person.setMoney(Float.parseFloat(arr[3]));
+        return person;
+    }
+}
+```
+2.注册自定义的转换器
+```java
+package com.Other;
+
+import com.Converter.StringToMy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.support.FormattingConversionServiceFactoryBean;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Register {
+    //自定义转换器列表
+    private List<Converter> myConverter = null;
+    //依赖注入FormattingConversionServiceFactoryBean
+    @Autowired
+    //此类在MVC初始化时载入
+    FormattingConversionServiceFactoryBean fcsfb = null;
+
+    @Bean(name = "myConverter")
+    public List<Converter> init() {
+        if (myConverter == null) {
+            myConverter = new ArrayList<>();
+        }
+        //自定义的角色转换器
+        Converter personConverter=new StringToMy();
+        myConverter.add(personConverter);
+        //向转换服务类注册转换器哦
+        fcsfb.getObject().addConverter(personConverter);
+        return myConverter;
+    }
+}
+```
+同时也可以通过xml进行配置
+```xml
+    <!--    自定义转换器-->
+    <!--    第一句的意思为指定转换服务类，然后配置器属性加载对应的转换器-->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="com.Converter.StringToMy"/>
+            </list>
+        </property>
+    </bean>
+```
+然后就可以进行测试了
+```java
+    @ResponseBody
+    @RequestMapping("/insertPerson")
+    public Map<String, Object> insert(Person person) {
+        Map<String, Object> result = new HashMap<>();
+        boolean updateFlag = (personMapper.updateRole(person) == 1);
+        result.put("success", updateFlag);
+        if (updateFlag == true) {
+            result.put("msg", "更新成功");
+        } else
+            result.put("msg", "更新失败");
+        return result;
+    }
+```
+#### 数组和集合转换器
+上面的转换器只能是一对一的转换器，只能从一个类型转换到另一个类型，这就出现了弊端，所以出现了数组集合转换器`ConditionnalGenericConverter`
+
+此处省略代码
+
+#### 使用格式化器（Formatter）
+网页代码
+```html
+<%--
+  Created by IntelliJ IDEA.
+  User: DeepBlue
+  Date: 2019/8/18
+  Time: 17:22
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>时间</title>
+</head>
+<body>
+<form id="form" action="/date">
+    <table>
+        <tr>
+            <td>日期</td>
+            <td>
+                <label for="date"></label><input id="date" name="date1" type="text" value="2019-01-20">
+            </td>
+        </tr>
+        <tr>
+            <td>日期</td>
+            <td>
+                <label for="amount"></label><input id="amount" name="amount1" type="text" value="200000">
+            </td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+            <td align="right"><input id="commit" type="submit" value="提交"></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
+```
+逻辑代码
+```java
+    @RequestMapping("/date")
+    public ModelAndView format(@RequestParam("date1") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
+                               @RequestParam("amount1") @NumberFormat(pattern = "#,###.##") Double amount) {
+        if (date==null)
+        {
+            ModelAndView mv = new ModelAndView();
+            mv.setViewName("date");
+            return mv;
+        }
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("date", date);
+        mv.addObject("amount", amount);
+        return mv;
+    }
+```
+
+#### 为控制器添加通知
+
+与`Spring AOP`一样`Spring MVC`也能给控制器加入通知主要涉及四个注解
+- `@ControllerAdvice`作用于类，用以表示全局性的控制器的拦截器，将用于对应的控制器
+- `@InitBinder`是一个允许构建POJO参数的方法，允许在构造控制器参数的时候加入一个自定义构造器
+- `@ExceptionHandler`通过它可以注册一个控制器异常，当控制器异常发生时，就会跳转到该方法上
+- `ModelAttribute`针对数据模型的注解，先于控制器方法运行，当标注方法返回对象时，会保存在数据模型中。
+
+1.通知类的定义
+```java
+package com.advice;
+
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import sun.util.calendar.BaseCalendar;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@ControllerAdvice(basePackages = {"com.controller"})
+public class MyAdvice {
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        //针对日期的格式化，其中CustomDateEditor是客户自定义的编辑器
+        //Boolean参数表示是否允许为空
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), false));
+    }
+
+    @ModelAttribute
+    public void populateModel(Model model) {
+        model.addAttribute("projectName", "test");
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public String exception() {
+        return "exception";
+    }
+}
+```
+2.测试代码
+```java
+@RequestMapping("/advice")
+    @ResponseBody
+    public Map<String, Object> testForAdvice(Date date, @NumberFormat(pattern = "##,##.00")
+            BigDecimal amount, Model model) {
+        Map<String, Object> map = new HashMap<>();
+        //由于@ModelAttribute会在控制器之前运行，所以，这样也会取到数据
+        map.put("projectName", model.asMap().get("projectName"));
+        map.put("date", new SimpleDateFormat("yyyy-MM-dd").format(date));
+        map.put("amount", amount);
+        return map;
+    }
+
+    //异常测试
+    @RequestMapping("/error")
+    public void exception() {
+        throw new RuntimeException("异常跳转");
+    }
+```
+当然，控制器也可以使用注解`@InitBinder``@ExceptionHandler`使用这个注解可添加数据绑定和异常处理，但是不指定ControllerAdvicee的话指定的注释只是在本Controller有效而不是对basePackges有效  
+测试用例：
+```java
+@Controller
+public class Test {
+    @Autowired
+    private PersonMapper personMapper = null;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        //针对日期的格式化，其中CustomDateEditor是客户自定义的编辑器
+        //Boolean参数表示是否允许为空
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), false));
+    }
+
+    @ModelAttribute("person")
+    public Person initPerson(@RequestParam(value = "id", required = false) Integer id) {
+        if (id == null || id < 1) {
+            return null;
+        }
+        Person person = personMapper.getRole(id);
+        return person;
+    }
+
+    @RequestMapping("/testss")
+    @ResponseBody
+    public Person tsdsjab(@ModelAttribute("person") Person person) {
+        return person;
+    }
+}
+```

@@ -1,5 +1,5 @@
 ## <center>SQL学习及记录</center>
-
+[TOC]
 #### 下面的例子都是以mysql为例
 - select distinct * from test; distinct筛选重复元素
 - Order By DESC 倒序排列
@@ -26,14 +26,14 @@ Id_P | LastName | FirstName | Address | City |
 
 Orders表    
 
-
-Id_O	|OrderNo|	Id_P
+Id_O|OrderNo|Id_P
 -|-|-
-1|	77895	|3
-2	|44678|	3
-3	|22456|	1
-4	|24562|	1
-5	|34764|	65  
+1|77895|3
+2|44678|3
+3|22456|1
+4|24562|1
+5|34764|65  
+
 
 `引用的sql语句:`  
 SELECT Persons.LastName, Persons.FirstName, Orders.OrderNo
@@ -65,13 +65,13 @@ FULL JOIN: 只要其中一个表中存在匹配，就返回行
     ORDER BY Persons.LastName  
       
 
-    LastName|	FirstName|	OrderNo
+    LastName|FirstName|OrderNo
     -|-|-
-    Adams	|John|	22456
-    Adams	|John|	24562
-    Carter|	Thomas|	77895
-    Carter|	Thomas|	44678
-    Bush	|George	 |
+    Adams|John|22456
+    Adams|John|24562
+    Carter|Thomas|77895
+    Carter|Thomas|44678
+    Bush|George|  
 
 
 ##### UNION 操作符
@@ -132,21 +132,21 @@ DROP PRIMARY KEY
 例子：  
 "Persons" 表：  
 
-Id_P|	LastName|	FirstName	|Address	|City
--| - |- |- |-
-1	|Adams	|John|	Oxford Street	|London
-2	|Bush	|George|	Fifth Avenue	|New York
-3	|Carter	|Thomas|	Changan Street|	Beijing  
+Id_P|LastName|FirstName|Address|City
+-|-|-|-|-
+1|Adams|John|Oxford Street|London
+2|Bush|George|Fifth Avenue|New York
+3|Carter|Thomas|Changan Street|Beijing  
 
 
-"Orders" 表：  
+"Orders" 表：   
 
 Id_O|OrderNo|Id_P
--|-|-  
-1	|77895|	3
-2	|44678|	3
-3	|22456|	1
-4	|24562|	1  
+-|-|-
+1|77895|3
+2|44678|3
+3|22456|1
+4|24562|1
 
 
 "Orders" 中的 "Id_P" 列指向 "Persons" 表中的 "Id_P" 列。
@@ -266,8 +266,9 @@ ALTER TABLE table_name DROP INDEX index_name
 ALTER TABLE Persons AUTO_INCREMENT=100
 ```
 
-#### MySQL Date 函数
-函数|	描述
+#### MySQL Date 函数  
+
+函数|描述
 -|-
 NOW()	|返回当前的日期和时间
 CURDATE()	|返回当前的日期
@@ -278,6 +279,7 @@ DATE_ADD()	|给日期添加指定的时间间隔
 DATE_SUB()	|从日期减去指定的时间间隔
 DATEDIFF()|	返回两个日期之间的天数
 DATE_FORMAT()	|用不同的格式显示日期/时间
+
 
 MySQL 使用下列数据类型在数据库中存储日期或日期/时间值：
 

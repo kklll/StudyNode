@@ -1,5 +1,5 @@
 #<center>Git常用技巧文档</center>
-
+[TOC]
 ## git commit加入表情
 
  [Git表情](https://github.com/kklll/Project2/blob/master/Git/git_em.md) 【在此URL】
