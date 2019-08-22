@@ -1,5 +1,6 @@
 ## <center>Spring框架的学习</center>
 [TOC]
+
 Spring的两大重要特性:  
 - AOP 面向切片编程
 - IOC 控制反转
@@ -679,17 +680,17 @@ public class Main {
 
 XML配置AOP的元素：
 
-配置元素|用途|备注
--|-|-
-aop:aspect|定义一个切面|-
-aop:before|定义前置通知|-
-aop:after|定义后置通知|-
-aop:around|定义环绕方式|-
-aop:after-returning|定义返回通知|-
-aop:after-throwing|定义异常通知|-
-aop:config|顶层AOP配置元素|AOP的配置以此为开始
-aop:declare-parents|给通知额外的接口，以增强功能|- 
-aop:pointcut|定义切点|-
+| 配置元素            | 用途                         | 备注                |
+| ------------------- | ---------------------------- | ------------------- |
+| aop:aspect          | 定义一个切面                 | -                   |
+| aop:before          | 定义前置通知                 | -                   |
+| aop:after           | 定义后置通知                 | -                   |
+| aop:around          | 定义环绕方式                 | -                   |
+| aop:after-returning | 定义返回通知                 | -                   |
+| aop:after-throwing  | 定义异常通知                 | -                   |
+| aop:config          | 顶层AOP配置元素              | AOP的配置以此为开始 |
+| aop:declare-parents | 给通知额外的接口，以增强功能 | -                   |
+| aop:pointcut        | 定义切点                     | -                   |
 
 同上代码的xml配置文件
 ```xml

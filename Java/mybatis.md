@@ -1,5 +1,17 @@
 ## <center>mybatis</center>
-[TOC]
+- [<center>mybatis</center>](#centermybatiscenter)
+    - [Mybatis](#mybatis)
+      - [XML配置](#xml%e9%85%8d%e7%bd%ae)
+      - [代码创建](#%e4%bb%a3%e7%a0%81%e5%88%9b%e5%bb%ba)
+      - [利用mybatis实现简单的jdbc](#%e5%88%a9%e7%94%a8mybatis%e5%ae%9e%e7%8e%b0%e7%ae%80%e5%8d%95%e7%9a%84jdbc)
+      - [properties文件配置](#properties%e6%96%87%e4%bb%b6%e9%85%8d%e7%bd%ae)
+      - [映射器（Mappers）的引入方法](#%e6%98%a0%e5%b0%84%e5%99%a8mappers%e7%9a%84%e5%bc%95%e5%85%a5%e6%96%b9%e6%b3%95)
+    - [映射器](#%e6%98%a0%e5%b0%84%e5%99%a8)
+      - [`select`](#select)
+      - [分页参数RowBounds](#%e5%88%86%e9%a1%b5%e5%8f%82%e6%95%b0rowbounds)
+      - [级联](#%e7%ba%a7%e8%81%94)
+        - [mybatis中的级联分3类](#mybatis%e4%b8%ad%e7%9a%84%e7%ba%a7%e8%81%94%e5%88%863%e7%b1%bb)
+    - [动态SQL](#%e5%8a%a8%e6%80%81sql)
 #### Mybatis
 
 - Mybatis的组件`构造器` `工厂接口` `会话` `映射器`

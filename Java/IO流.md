@@ -1,5 +1,14 @@
 #### IO流
-[TOC]
+
+- [IO流](#io%e6%b5%81)
+  - [字符流](#%e5%ad%97%e7%ac%a6%e6%b5%81)
+    - [装饰设计模式](#%e8%a3%85%e9%a5%b0%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f)
+  - [字节流](#%e5%ad%97%e8%8a%82%e6%b5%81)
+  - [键盘录入数据](#%e9%94%ae%e7%9b%98%e5%bd%95%e5%85%a5%e6%95%b0%e6%8d%ae)
+    - [FIle 类](#file-%e7%b1%bb)
+  - [properties（属性）类](#properties%e5%b1%9e%e6%80%a7%e7%b1%bb)
+
+
 IO流体系
 ![io流体系](https://upload-images.jianshu.io/upload_images/3985563-38c3ea4562d6dbe3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/687/format/webp)
 

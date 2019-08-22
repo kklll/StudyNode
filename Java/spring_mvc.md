@@ -1,5 +1,49 @@
-<center>Spring MVC</center>
-[TOC]
+<center>Spring MVC</center> 
+
+
+ * [spring mvc的入门实例](#spring%20mvc%E7%9A%84%E5%85%A5%E9%97%A8%E5%AE%9E%E4%BE%8B)
+       * [参数的传递以及mybaties的综合](#%E5%8F%82%E6%95%B0%E7%9A%84%E4%BC%A0%E9%80%92%E4%BB%A5%E5%8F%8Amybaties%E7%9A%84%E7%BB%BC%E5%90%88)
+         * [传递json信息](#%E4%BC%A0%E9%80%92json%E4%BF%A1%E6%81%AF)
+         * [@SessionAttributes和@SessionAttribute](#%40SessionAttributes%E5%92%8C%40SessionAttribute)
+         * [注解@cookieValue和@RequestHeader](#%E6%B3%A8%E8%A7%A3%40cookieValue%E5%92%8C%40RequestHeader)
+     * [拦截器](#%E6%8B%A6%E6%88%AA%E5%99%A8)
+       * [配置拦截器](#%E9%85%8D%E7%BD%AE%E6%8B%A6%E6%88%AA%E5%99%A8)
+         * [多个拦截器的执行顺序](#%E5%A4%9A%E4%B8%AA%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F)
+       * [验证表单](#%E9%AA%8C%E8%AF%81%E8%A1%A8%E5%8D%95)
+         * [使用验证器验证数据源](#%E4%BD%BF%E7%94%A8%E9%AA%8C%E8%AF%81%E5%99%A8%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E6%BA%90)
+       * [数据模型](#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B)
+       * [视图和视图解析器](#%E8%A7%86%E5%9B%BE%E5%92%8C%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E5%99%A8)
+     * [文件上传](#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0)
+         * [文件上传步骤](#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%AD%A5%E9%AA%A4)
+     * [文件下载](#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD)
+     * [转换器的使用](#%E8%BD%AC%E6%8D%A2%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8)
+       * [一对一转换器（Conerter）](#%E4%B8%80%E5%AF%B9%E4%B8%80%E8%BD%AC%E6%8D%A2%E5%99%A8%EF%BC%88Conerter%EF%BC%89)
+         * [自定义转换器](#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BD%AC%E6%8D%A2%E5%99%A8)
+       * [数组和集合转换器](#%E6%95%B0%E7%BB%84%E5%92%8C%E9%9B%86%E5%90%88%E8%BD%AC%E6%8D%A2%E5%99%A8)
+       * [使用格式化器（Formatter）](#%E4%BD%BF%E7%94%A8%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%99%A8%EF%BC%88Formatter%EF%BC%89)
+       * [为控制器添加通知](#%E4%B8%BA%E6%8E%A7%E5%88%B6%E5%99%A8%E6%B7%BB%E5%8A%A0%E9%80%9A%E7%9F%A5)
+     * [处理异常](#%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8)
+       * [自定义异常](#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8)
+     * [国际化](#%E5%9B%BD%E9%99%85%E5%8C%96)
+       * [1.MessageSource接口](#1.MessageSource%E6%8E%A5%E5%8F%A3)
+       * [2.创建CookieLocaleResolver或SessionLocaleResolve  ](#2.%E5%88%9B%E5%BB%BACookieLocaleResolver%E6%88%96SessionLocaleResolve%20%20)
+       * [3.国际化拦截器](#3.%E5%9B%BD%E9%99%85%E5%8C%96%E6%8B%A6%E6%88%AA%E5%99%A8)
+       * [国际化的开发](#%E5%9B%BD%E9%99%85%E5%8C%96%E7%9A%84%E5%BC%80%E5%8F%91)
+   * [Redis概述](#Redis%E6%A6%82%E8%BF%B0)
+       * [在spring中使用Redis](#%E5%9C%A8spring%E4%B8%AD%E4%BD%BF%E7%94%A8Redis)
+       * [   配置JedisConnectionFactory](#%20%20%20%E9%85%8D%E7%BD%AEJedisConnectionFactory)
+       * [配置Spring Redis Template](#%E9%85%8D%E7%BD%AESpring%20Redis%20Template)
+       * [Redis的六种数据类型](#Redis%E7%9A%84%E5%85%AD%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
+   * [Redis数据结构以及常用命令](#Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4)
+     * [字符串](#%E5%AD%97%E7%AC%A6%E4%B8%B2)
+       * [使用Spring测试Redis字符串操作](#%E4%BD%BF%E7%94%A8Spring%E6%B5%8B%E8%AF%95Redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C)
+     * [哈希](#%E5%93%88%E5%B8%8C)
+       * [Spring操作hash结构的演示](#Spring%E6%93%8D%E4%BD%9Chash%E7%BB%93%E6%9E%84%E7%9A%84%E6%BC%94%E7%A4%BA)
+     * [链表（Linked-list）](#%E9%93%BE%E8%A1%A8%EF%BC%88Linked-list%EF%BC%89)
+       * [使用Spring操作Redis的链表结构](#%E4%BD%BF%E7%94%A8Spring%E6%93%8D%E4%BD%9CRedis%E7%9A%84%E9%93%BE%E8%A1%A8%E7%BB%93%E6%9E%84)
+
+
+
 #### spring mvc的入门实例
 web.xml
 ```xml
@@ -1496,4 +1540,681 @@ public class Test {
         return person;
     }
 }
+```
+### 处理异常
+spring中一部分异常默认的映射码
+
+Spring异常|HTTP状态码|备注
+-|-|-
+BindException|400|数据绑定异常
+ConversionNotSupportedException|500|数据转换异常
+HttpMediaTypeNotAcceptableException|406|HTTP媒体类型不可接受异常
+HttpMediaTypeNotSupportedException|415|HTTP媒体类型不支持异常
+HttpMessageNotReadableException|400|HTTP消息不可读异常
+HttpMessageNotWritableException|500|HTTP消息不可写异常
+HttpRequestMethodNotSupportedException|405|请求找不到异常
+MethodArgumentNotValidException|400|控制器方法参数无效异常
+MissingServletRequestParameterException|400|缺失参数异常
+MissingServletRequestPartException|400|方法采用了"文件上传头"但实际不是该请求异常
+NoSuchRequestHandlingMethodException|404|无请求处理器异常
+TypeMismatchException|400|POJO类型出错异常
+
+#### 自定义异常
+定义部分（使用`@ResponseStatus`）
+```java
+package com.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.NOT_FOUND,reason = "找不到角色信息异常")
+public class MyException extends RuntimeException{
+
+}
+```
+使用部分
+```java
+package com.Converter;
+
+import com.Pojo.Person;
+import com.exception.MyException;
+import com.mapper.PersonMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Controller
+public class Test {
+    @Autowired
+    private PersonMapper personMapper = null;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        //针对日期的格式化，其中CustomDateEditor是客户自定义的编辑器
+        //Boolean参数表示是否允许为空
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(new SimpleDateFormat("yyyy-MM-dd"), false));
+    }
+
+    @ModelAttribute("person")
+    public Person initPerson(@RequestParam(value = "id", required = false) Integer id) {
+        if (id == null || id < 1) {
+            return null;
+        }
+        Person person = personMapper.getRole(id);
+        return person;
+    }
+
+    @RequestMapping("/testss")
+    @ResponseBody
+    public Person tsdsjab(@ModelAttribute("person") Person person) {
+        return person;
+    }
+
+    @RequestMapping("/myerror")
+    @ResponseBody
+    public Person myError(int id) {
+        Person person = personMapper.getRole(id);
+        if (person == null) {
+            throw new MyException();
+        }
+        return person;
+    }
+
+    @ExceptionHandler(MyException.class)
+    public String re() {
+        return "exception";
+    }
+}
+```
+### 国际化
+国际化过程：  
+首先：DispatchServelet会解析一个LocaleResover接口对象，通过它来确定用户的区域。  
+一般使用两个实现类来实现国际化
+1.`CookieLocaleResolver`（通过Cookie来进行用户地区标识）
+2.`SessionLocaleResolver`（通过Session来进行用户地区标识）  
+
+为了实现修改国际化，Spring MVC实现了国际化拦截器--LocaleChangeInterceptor。  
+
+但是在实现国际化之前需要加载国际化文件，在SpringMVC中就就是实现MessageSource接口
+#### 1.MessageSource接口
+MessageSource接口实为了加载消息所实现的接口，我们可以用它来记载国际化配置文件
+ 
+其中`ResourceBundleMessageSource`和`ReloadableResourceBundleMessageSource`使用较多。
+ResourceBundleMessageSource和ReloadableResourceBundleMessageSource的区别是ResourceBundleMessageSource使用的是JDK提供的ResourceBundle，他只是把文件放在对应的文件路径下，不具备加载功能，需要重启系统才能加载，而ReloadableResourceBundleMessageSource则不需要
+
+1.创建ResourceBundleMessageSource实例(注意Beanname必须为"messageSource")
+```java
+    @Bean("messageSource")
+    public MessageSource initMessage() {
+        ResourceBundleMessageSource msgsrc = new ResourceBundleMessageSource();
+        //设置编码
+        msgsrc.setDefaultEncoding("UTF-8");
+        //设置文件路径，如果有classPath从ClassPath算起
+        msgsrc.setBasename("msg");
+        return msgsrc;
+    }
+
+    @Bean("messageSource")
+    public MessageSource initMessageSource2() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename("classpath:msg");
+        //缓存时间设置，缓存时间结束后重新刷新
+        messageSource.setCacheSeconds(3600);
+        //任意一个都可以
+        messageSource.setCacheMillis(3600 * 1000);
+        return messageSource;
+    }
+```
+xml配置
+```xml
+<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="basename" value="msg"/>
+    </bean>
+    
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="basename" value="classpath:msg"/>
+        <property name="cacheSeconds" value="3600"/>
+</bean>
+```
+#### 2.创建CookieLocaleResolver或SessionLocaleResolve  
+```java
+    @Bean("localeResolver")
+    public LocaleResolver initCookie() {
+        CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+        //名称
+        cookieLocaleResolver.setCookieName("lang");
+        //设置超时Cookie超时时间
+        cookieLocaleResolver.setCookieMaxAge(1800);
+        //设置默认
+        cookieLocaleResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        return cookieLocaleResolver;
+    }
+
+    @Bean("localeResolver")
+    public LocaleResolver initSession() {
+        SessionLocaleResolver sessionLocaleResolver=new SessionLocaleResolver();
+        sessionLocaleResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        return sessionLocaleResolver;
+    }
+```
+XML同理，就不写了
+#### 3.国际化拦截器
+通过参数来改变国际化的值时，我们可以使用Spring提供的的拦截器`LocaleChangeInterceptor`，其配置为  
+```xml
+    <mvc:interceptor>
+            <mvc:mapping path="/message/**"/>
+            <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+                <property name="paramName" value="language"/>
+            </bean>
+    </mvc:interceptor>
+```
+
+#### 国际化的开发
+开发国际化首先需要两个国际化的属性文件
+msg_en_US.properties
+```properties
+welcome=the project name is guojihua
+```
+msg_zh_CN.properties
+```properties
+welcome=汉语
+```
+然后通过参数language来设置国际化时区
+
+## Redis概述
+redis下载[下载地址](https://github-production-release-asset-2e65be.s3.amazonaws.com/3402186/bb47f4a2-3fac-11e6-9e71-9a4261699bd5?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20190820%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20190820T122205Z&X-Amz-Expires=300&X-Amz-Signature=f641bddeb78d638e1cd310fadf9bff85a88e41857e60e2c3e5e5bc8bfbce5082&X-Amz-SignedHeaders=host&actor_id=36097012&response-content-disposition=attachment%3B%20filename%3DRedis-x64-3.2.100.zip&response-content-type=application%2Foctet-stream)下载后可以通过Windows版的.exe文件进行启动  
+
+在JAVA程序中使用Redis程序需要下载`Redis.jar`包，加入工程中
+
+Redis测试程序
+```java
+package com.advice;
+
+import redis.clients.jedis.Jedis;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Jedis jedis = new Jedis("127.0.0.1", 6379);
+        int i = 0;
+        try {
+            long start = System.currentTimeMillis();
+            while (true) {
+                long end = System.currentTimeMillis();
+                if (end - start >= 1000) {
+                    break;
+                }
+                i++;
+                jedis.set("test" + i, i + "");
+            }
+
+        } finally {
+            jedis.close();
+        }
+        System.out.println("每秒操作数:" + i + "次");
+    }
+}
+```
+- Redis连接池的使用
+```java
+JedisPoolConfig jedisPoolConfig=new JedisPoolConfig();
+//设置最大空闲数
+jedisPoolConfig.setMaxIdle(50);
+//最大连接数
+jedisPoolConfig.setMaxTotal(100);
+//最大等待毫秒数
+jedisPoolConfig.setMaxWaitMillis(20000);
+//使用配置创建连接池
+JedisPool pool=new JedisPool(jedisPoolConfig,"127.0.0.1");
+Jedis jedis=pool.getResource();
+```
+#### 在spring中使用Redis
+需要添加包`spring-data-redis.jar`后配置`JedisPoolConfig`对象
+```xml
+    <!--RedisConfig配置-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxWaitMillis" value="20000"/>
+        <property name="maxIdle" value="50"/>
+        <property name="maxTotal" value="100"/>
+    </bean>
+```
+在使用RedisTemplate之前需要配置spring所提供的连接工厂，在spring-Data-Redis中提供了四种工厂模型:  
+- JredisConnectionFactory
+- JedisConnectionFactory
+  - LettuceConnectionFactory
+- SrpConnectionFactory
+虽然这四种工厂模式都是可以使用的但是要根据环境测试，验证哪个工厂环境是性能最好的。  
+
+####    配置JedisConnectionFactory
+```xml
+    <!--配置工厂-->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="localhost"/>
+        <property name="port" value="6379"/>
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+```
+由于普通的链接使用没有办法把Java对象直接存入Redis，而需要我们自己进行序列化，序列化后的对象取出都是问题，spring提供了对象序列化的封装:  
+- GenericJacson2JsonRedisSerializer,通用的Json2.jar的包，将Redis对象的序列化器
+- Jackson2JsonRedisSerializer<T>，通过Jackson2.jar包进行转换
+- JdkSerializationRedisSerializer<T>，使用Jdk的序列化器进行序列化
+- OxmSerializer，使用spring O/X对象和xml相互转换
+- StringRedisSerializer，使用字符串序列化
+- GenericToStringSerializer，通过通用的字符串序列化进行相互转换
+
+上面的序列化容器是将对象序列化后存入到Redis容器中，也可以把容器中的序列化对象取出，为此Spring提供的RedisTemplate还有两个属性
+- key-Serializer，键序列化器
+- value-Serializer，值序列化器
+
+
+#### 配置Spring Redis Template
+```xml
+    <!--spring Redis Template配置-->
+    <bean id="jdkSerializationRedisSerializer"
+          class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer" ref="jdkSerializationRedisSerializer"/>
+    </bean>
+```
+这样就就创建了一个RedisTemplate对象  
+例子：(使用Redis保存一个对象)  
+- 首先被保存的对象要实现可序列化接口
+```java
+package com.Pojo;
+
+import java.io.Serializable;
+
+public class Person implements Serializable {
+    private int id;
+    private String name;
+    private String birth;
+    private float money;
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", birth='" + birth + '\'' +
+                ", money=" + money +
+                '}';
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBirth() {
+        return birth;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public float getMoney() {
+        return money;
+    }
+
+    public void setMoney(float money) {
+        this.money = money;
+    }
+}
+```
+使用RedisTemplate存储对象
+```java
+package com.controller;
+
+
+import com.Pojo.Person;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
+
+class Test {
+    public static void main(String[] args) {
+        ApplicationContext applicationContext=new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate=applicationContext.getBean(RedisTemplate.class);
+        Person person=new Person();
+        person.setMoney((float) 100.22);
+        person.setBirth("2019-1-1");
+        person.setName("张三");
+        person.setId(1);
+        redisTemplate.opsForValue().set("person",person);
+        Person person1= (Person) redisTemplate.opsForValue().get("person");
+        System.out.println(person1.getMoney());
+    }
+}
+```
+因为使用了连接池所以set和get两个操作可能来自两个不同的Redis连接，为了使两个操作来自一个链接可以使用SessionCallback或者RedisCallback，由于使用RedisCallback是来自底层，使用不太友好所以使用SessionCallback接口
+```java
+    @org.junit.Test
+    public void test() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        Person person = new Person();
+        person.setMoney((float) 100.22);
+        person.setBirth("2019-1-1");
+        person.setName("张三");
+        person.setId(1);
+        SessionCallback callback=new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                redisOperations.boundValueOps("person").set(person);
+                return redisOperations.boundValueOps("person").get();
+            }
+        };
+        Person savedPerson= (Person) redisTemplate.execute(callback);
+        System.out.println(savedPerson.getBirth());
+    }
+```
+#### Redis的六种数据类型
+
+数据类型|储存的值
+-|-
+STRING(字符串)|可以保存字符串，整数和浮点小数，如果是数的话可以进行计算
+LIST(列表)|数据结构为链表，内部结构为字符串
+SET(集合)|无序的收集器，每个元素都是独一无二的
+HASH(散列表)|键值对应的无序列表
+ZSET(有序集合)|有序的集合，可以包含字符串、证书、浮点数、分值、元素的排列根据分值大小来决定
+HyperLogLog(基数)|作用是计算重复的值，以确定存储的数量
+
+
+## Redis数据结构以及常用命令
+### 字符串
+字符串是Redis里面最基本的数据结构，犹如Java的Map结构，让Redis通过键找到值。   
+一些基本命令：  
+
+命令|说明|
+-|-
+set key value|设置键值对
+get key |获取键值对
+del key|通过key删除键值对
+strlen key|求key指向value的字符串长度
+getset key value|修改原来key的对应值，并将旧值返回
+getrange key start end |获取子串
+append key value|将新的字符串value加入到原字符串的结尾  
+
+- 打开命令行测试Redis:  
+打开redis-cli.exe  
+
+#### 使用Spring测试Redis字符串操作
+```java
+    @org.junit.Test
+    public void testString() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate=applicationContext.getBean(RedisTemplate.class);
+        redisTemplate.opsForValue().set("key","value");
+        redisTemplate.opsForValue().set("key2","value2");
+        String value= (String) redisTemplate.opsForValue().get("key");
+        System.out.println(value);
+        redisTemplate.delete("key");
+        int length= Math.toIntExact(redisTemplate.opsForValue().size("key2"));
+        System.out.println(length);
+        String old= (String) redisTemplate.opsForValue().getAndSet("key2","new_value");
+        System.out.println(old);
+        String value2= (String) redisTemplate.opsForValue().get("key2");
+        System.out.println(value2);
+        int newline=redisTemplate.opsForValue().append("key2","haha");
+        System.out.println(newline);
+        System.out.println(redisTemplate.opsForValue().get("key2"));
+    }
+```
+上面演示了字符串的操作，但是String类型不但支持字符串类型，还支持数字，另外提供了对这些数字的一些功能。  
+- Redis支持的简单运算：  
+
+命令|说明|备注
+-|-|-
+incr key|在原字段上加一|只能对整数操作
+incrby key increment|在原字段上加整数(increment)|只能对整数操作
+decr key|在原字段上减一|只能对整数操作
+decrby key decrement|在原字段上减去整数(decrement)|只能对整数操作
+incrbyfloat keyincrement|在原字段上加入浮点数(keyincrement)|都可以进行操作
+
+
+下面进行测试(需要注意的是需要将Spring Redis Template中的value的序列化器改为`stringRedisSerializer`)
+```java
+@org.junit.Test
+    public void testForCal() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        redisTemplate.opsForValue().set("i", "9" );
+        print(redisTemplate, "i");
+        redisTemplate.opsForValue().increment("i",1);
+        print(redisTemplate,"i");
+        redisTemplate.getConnectionFactory().getConnection().decr(redisTemplate.getKeySerializer().serialize("i"));
+        print(redisTemplate,"i");
+        redisTemplate.getConnectionFactory().getConnection().decrBy(redisTemplate.getKeySerializer().serialize("i"),6);
+        print(redisTemplate,"i");
+        redisTemplate.opsForValue().increment("i",2.3);
+        print(redisTemplate,"i");
+
+    }
+
+    public static void print(RedisTemplate redisTemplate, String key) {
+        String result= (String) redisTemplate.opsForValue().get(key);
+        System.out.println(result);
+    }
+```
+### 哈希
+哈希数据结构相当于我们Java中的Map  
+Redis Hash结构命令
+命令|说明|备注
+-|-|-
+hdel key field1 [field2...]|删除hash结构某个字段|可以删除多个
+hexists key field |判断是否存在field字段|有=1，无=0
+hgetall key|获取所有hash结构中的键|返回键和值
+hincrby key field increment|给定某个字段加上一个整数|该字段为整数
+hincrbyfloat key field increment|给hash结构某字段加上一个浮点数|要求该字段是数字
+hkeys key|返回hash所有的键|-
+hlen key|返回hash中键值对的个数|-
+hmget key field1 [field2]|返回中指定的键的值，可以是多个|依次返回
+hmset key filed1 value1[field2 value2 ..]|向hash结构设置多个键值对|-
+hset key field value | 向hash结构设置键值对|单个
+hsernx field value |向hash结构设置键值对，如果键不存在|-
+hvals key|获取hash结构的所有值|-
+
+#### Spring操作hash结构的演示
+- 首先需要将默认的序列化器指定为`stringRedisSerializer`
+```xml
+    <!--spring Redis Template配置-->
+    <bean id="jdkSerializationRedisSerializer"
+          class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="defaultSerializer" ref="stringRedisSerializer"/>
+        <property name="keySerializer" ref="stringRedisSerializer"/>
+        <property name="valueSerializer" ref="stringRedisSerializer"/>
+    </bean>
+```
+```java
+    @org.junit.Test
+    public void testForHash() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        String key = "hash";
+        Map<String, String> map = new HashMap<>();
+        map.put("f1", "value1");
+        map.put("f2", "value2");
+        //放入数据，相当于hmset
+        redisTemplate.opsForHash().putAll(key, map);
+        //相当于hset
+        redisTemplate.opsForHash().put(key, "f3", "3");
+        printHash(redisTemplate, key, "f3");
+        boolean exists = redisTemplate.opsForHash().hasKey(key, "f3");
+        System.out.println(exists);
+        //相当于hgetAll命令
+        Map keyValueMap = redisTemplate.opsForHash().entries(key);
+        //相当于hincyby
+        redisTemplate.opsForHash().increment(key, "f3", 2);
+        printHash(redisTemplate, key, "f3");
+        //相当于hincyfloat
+        redisTemplate.opsForHash().increment(key, "f3", 0.88);
+        printHash(redisTemplate, key, "f3");
+        //相当于hvals
+        List<String> list = redisTemplate.opsForHash().values(key);
+        //相当于hkeys
+        Set keylist = redisTemplate.opsForHash().keys(key);
+        List<String> fields = new ArrayList<>();
+        fields.add("f1");
+        fields.add("f2");
+        //相当与hmget命令
+        List valueList2 = redisTemplate.opsForHash().multiGet(key, keylist);
+        boolean success = redisTemplate.opsForHash().putIfAbsent(key, "f4", "value4");
+        System.out.println(success);
+        Long result = redisTemplate.opsForHash().delete(key, "f1", "f2");
+        System.out.println(result);
+    }
+
+    public void printHash(RedisTemplate redisTemplate, String key, String field) {
+        String index = (String) redisTemplate.opsForHash().get(key, field);
+        System.out.println(index);
+    }
+```
+
+### 链表（Linked-list）
+Redis链表为双向链表   
+Redis关于链表的操作命令:  
+
+命令|说明|备注
+-|-|-
+lpush key node1[node2...]|把节点node1加入到链表的最左边|如果是node1、node2、... noden那么顺序为noden...nide2、node1
+rpush key node1[node2...]|把节点node1加入到链表的最右面|同上
+lindex key index|读取下表为index的节点|返回节点字符串，以0开始计算
+llen key|求链表的长度|返回链表节点长度
+lpop key|删除左边第一个节点并将其值返回|-
+rpop key|删除右边第一个节点并将其值返回|-
+linsert key befor\|after pivot node|插入一个节点node，并且可以指定在pivot节点的前面还是后面|弱国list不存在，报错，如果没有pivot则会插入失败返回-1
+lpushx list node|如果存在key为list的链表，则插入节点node,并做作为从左到右的第一个节点|如果list不存在则报错
+rpushx list node|如果存在key为list的链表，则插入节点node,并做作为从左到右的最后一个节点|如果list不存在则报错
+lrange list start end|获取链表list从start开始到end下标的节点值|包含end和start
+lrem list count value|如果count为0，则删除所有值等于value的节点；如果count不为0，则先对count取abs(count)，然后从左到右删除不大于abs(count)个等于value的节点|count为整数，如果为负数则取绝对值
+lset key index node|设置链表下标为index的节点值为node|-
+ltrim key start stop|修剪链表，只保留充start到stop区间的节点，其他的都删除掉|包含start到end的下表的节点会保留
+
+
+- 上面这些命令是线程不安全的，尤其是当操作数据量比较大时的链表结构时常常会遇到这样的问题。为了克服这些问题，Redis提供了链表的阻塞命令，他们在运行的时候会给链表加锁。保证数据的安全性
+    
+- 链表的阻塞命令
+
+命令|说明|备注
+-|-|-
+blpop key timeout|移除获取列表的第一个元素，如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止|相对于lpop命令，它的操作是线程安全的
+brpop|移除获取列表的最后一个元素，如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止|相对于rpop，它的操作是进程安全的。
+rpoppush key set dest|按从左到右的顺寻，将一个链表的最后一个元素除移，并插入到目标链表最左边|不能设置超时时间
+brpoplpush key src dest|按从左到右的顺序，将一个链表的最后一个元素除移并插入到目标链表最左边，并可以设置超时时间|可以设置超时时间
+
+#### 使用Spring操作Redis的链表结构
+```java
+@org.junit.Test
+    public void testForLinked() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        try {
+            //删除链表
+            redisTemplate.delete("list");
+            redisTemplate.opsForList().leftPush("list", "node3");
+            List<String> nodeList = new ArrayList<>();
+            for (int i = 2; i >= 1; i--) {
+                nodeList.add("node" + i);
+            }
+            redisTemplate.opsForList().leftPushAll("list", nodeList);
+            redisTemplate.opsForList().rightPush("list", "node4");
+            //获取节点值
+            String node = (String) redisTemplate.opsForList().index("list", 0);
+            long size = redisTemplate.opsForList().size("list");
+            //从左边弹出节点
+            String lpop = (String) redisTemplate.opsForList().leftPop("list");
+            //右边弹出
+            String rpop = (String) redisTemplate.opsForList().rightPop("list");
+            //需要底层命令才能操作linsert命令
+            //使用linsert命令在node2前插入一个节点
+            redisTemplate.getConnectionFactory().getConnection().lInsert("list".getBytes("UTF-8"),
+                    RedisListCommands.Position.BEFORE,
+                    "node2".getBytes("UTF-8"), "before_node".getBytes("UTF-8"));
+            redisTemplate.opsForList().leftPushIfPresent("list","head");
+            redisTemplate.opsForList().rightPushIfPresent("list","end");
+            //从左到右，或者下表从0到10的节点
+            List valueList=redisTemplate.opsForList().range("list",0,10);
+            nodeList.clear();
+            for (int i = 0; i <= 3; i++) {
+                nodeList.add("node");
+            }
+            redisTemplate.opsForList().leftPushAll("list",nodeList);
+            //删除三个节点，从左到右
+            redisTemplate.opsForList().remove("list",3,"node");
+            redisTemplate.opsForList().set("list",0,"new_head_list");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        printLinked(redisTemplate,"list");
+    }
+
+    public static void printLinked(RedisTemplate redisTemplate, String key) {
+        Long size = redisTemplate.opsForList().size(key);
+        List valueList=redisTemplate.opsForList().range(key,0,size);
+        System.out.println(valueList);
+        System.out.println("size=" + size);
+    }
+```
+阻塞命的测试
+```java
+    @org.junit.Test
+    public void testList() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        redisTemplate.delete("list1");
+        redisTemplate.delete("list2");
+        List<String> nodeList = new ArrayList<>();
+        for (int i = 0; i <= 5; i++) {
+            nodeList.add("node" + i);
+        }
+        redisTemplate.opsForList().leftPushAll("list1", nodeList);
+        //spring使用超时时间作为阻塞命令区分，等价于blpop命令，并且可以设置时间参数
+        redisTemplate.opsForList().leftPop("list1", 1, TimeUnit.SECONDS);
+        redisTemplate.opsForList().rightPop("list1", 1, TimeUnit.SECONDS);
+        nodeList.clear();
+        for (int i = 1; i <= 3; i++) {
+            nodeList.add("data" + i);
+        }
+        redisTemplate.opsForList().leftPushAll("list2", nodeList);
+        //相当于rpoplpush命令，弹出list1最右边的节点，插入到list2的最左边
+        redisTemplate.opsForList().rightPopAndLeftPush("list1", "list2");
+        //相当于brpoplpush命令，注意在spring中使用超时参数区分
+        redisTemplate.opsForList().rightPopAndLeftPush("list1", "list2",
+                1, TimeUnit.SECONDS);
+        printLinked(redisTemplate, "list1");
+        printLinked(redisTemplate, "list2");
+    }
 ```

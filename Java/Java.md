@@ -1,7 +1,20 @@
 
 # javastudy 
 
-
+  - [import](#import)
+    - [java常用包:](#java%e5%b8%b8%e7%94%a8%e5%8c%85)
+  - [extends](#extends)
+    - [继承](#%e7%bb%a7%e6%89%bf)
+    - [转型](#%e8%bd%ac%e5%9e%8b)
+    - [instanceof运算符](#instanceof%e8%bf%90%e7%ae%97%e7%ac%a6)
+  - [* Object类是所有类的父类。](#object%e7%b1%bb%e6%98%af%e6%89%80%e6%9c%89%e7%b1%bb%e7%9a%84%e7%88%b6%e7%b1%bb)
+    - [类的复用](#%e7%b1%bb%e7%9a%84%e5%a4%8d%e7%94%a8)
+  - [### 包装类](#%e5%8c%85%e8%a3%85%e7%b1%bb)
+    - [==和equal方法](#%e5%92%8cequal%e6%96%b9%e6%b3%95)
+    - [final修饰符](#final%e4%bf%ae%e9%a5%b0%e7%ac%a6)
+    - [抽象类](#%e6%8a%bd%e8%b1%a1%e7%b1%bb)
+  - [接口](#%e6%8e%a5%e5%8f%a3)
+      - [this关键词的使用](#this%e5%85%b3%e9%94%ae%e8%af%8d%e7%9a%84%e4%bd%bf%e7%94%a8)
 ##### 最近整理笔记修改了笔记，如需转载请注明出处
 
 - [Java多线程](./多线程.md)
@@ -28,7 +41,8 @@
 
 - [SSM框架](./SSM框架学习.md)
 
-[TOC]
+
+
 ![pic](./javax.jpg)
 
 
