@@ -1,51 +1,65 @@
-<center>Spring MVC</center> 
+<center>Spring MVC</center>   
 
-
- * [spring mvc的入门实例](#spring%20mvc%E7%9A%84%E5%85%A5%E9%97%A8%E5%AE%9E%E4%BE%8B)
-       * [参数的传递以及mybaties的综合](#%E5%8F%82%E6%95%B0%E7%9A%84%E4%BC%A0%E9%80%92%E4%BB%A5%E5%8F%8Amybaties%E7%9A%84%E7%BB%BC%E5%90%88)
-         * [传递json信息](#%E4%BC%A0%E9%80%92json%E4%BF%A1%E6%81%AF)
-         * [@SessionAttributes和@SessionAttribute](#%40SessionAttributes%E5%92%8C%40SessionAttribute)
-         * [注解@cookieValue和@RequestHeader](#%E6%B3%A8%E8%A7%A3%40cookieValue%E5%92%8C%40RequestHeader)
-     * [拦截器](#%E6%8B%A6%E6%88%AA%E5%99%A8)
-       * [配置拦截器](#%E9%85%8D%E7%BD%AE%E6%8B%A6%E6%88%AA%E5%99%A8)
-         * [多个拦截器的执行顺序](#%E5%A4%9A%E4%B8%AA%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F)
-       * [验证表单](#%E9%AA%8C%E8%AF%81%E8%A1%A8%E5%8D%95)
-         * [使用验证器验证数据源](#%E4%BD%BF%E7%94%A8%E9%AA%8C%E8%AF%81%E5%99%A8%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E6%BA%90)
-       * [数据模型](#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B)
-       * [视图和视图解析器](#%E8%A7%86%E5%9B%BE%E5%92%8C%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E5%99%A8)
-     * [文件上传](#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0)
-         * [文件上传步骤](#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%AD%A5%E9%AA%A4)
-     * [文件下载](#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD)
-     * [转换器的使用](#%E8%BD%AC%E6%8D%A2%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8)
-       * [一对一转换器（Conerter）](#%E4%B8%80%E5%AF%B9%E4%B8%80%E8%BD%AC%E6%8D%A2%E5%99%A8%EF%BC%88Conerter%EF%BC%89)
-         * [自定义转换器](#%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BD%AC%E6%8D%A2%E5%99%A8)
-       * [数组和集合转换器](#%E6%95%B0%E7%BB%84%E5%92%8C%E9%9B%86%E5%90%88%E8%BD%AC%E6%8D%A2%E5%99%A8)
-       * [使用格式化器（Formatter）](#%E4%BD%BF%E7%94%A8%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%99%A8%EF%BC%88Formatter%EF%BC%89)
-       * [为控制器添加通知](#%E4%B8%BA%E6%8E%A7%E5%88%B6%E5%99%A8%E6%B7%BB%E5%8A%A0%E9%80%9A%E7%9F%A5)
-     * [处理异常](#%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8)
-       * [自定义异常](#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8)
-     * [国际化](#%E5%9B%BD%E9%99%85%E5%8C%96)
-       * [1.MessageSource接口](#1.MessageSource%E6%8E%A5%E5%8F%A3)
-       * [2.创建CookieLocaleResolver或SessionLocaleResolve  ](#2.%E5%88%9B%E5%BB%BACookieLocaleResolver%E6%88%96SessionLocaleResolve%20%20)
-       * [3.国际化拦截器](#3.%E5%9B%BD%E9%99%85%E5%8C%96%E6%8B%A6%E6%88%AA%E5%99%A8)
-       * [国际化的开发](#%E5%9B%BD%E9%99%85%E5%8C%96%E7%9A%84%E5%BC%80%E5%8F%91)
-   * [Redis概述](#Redis%E6%A6%82%E8%BF%B0)
-       * [在spring中使用Redis](#%E5%9C%A8spring%E4%B8%AD%E4%BD%BF%E7%94%A8Redis)
-       * [   配置JedisConnectionFactory](#%20%20%20%E9%85%8D%E7%BD%AEJedisConnectionFactory)
-       * [配置Spring Redis Template](#%E9%85%8D%E7%BD%AESpring%20Redis%20Template)
-       * [Redis的六种数据类型](#Redis%E7%9A%84%E5%85%AD%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
-   * [Redis数据结构以及常用命令](#Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4)
-     * [字符串](#%E5%AD%97%E7%AC%A6%E4%B8%B2)
-       * [使用Spring测试Redis字符串操作](#%E4%BD%BF%E7%94%A8Spring%E6%B5%8B%E8%AF%95Redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C)
-     * [哈希](#%E5%93%88%E5%B8%8C)
-       * [Spring操作hash结构的演示](#Spring%E6%93%8D%E4%BD%9Chash%E7%BB%93%E6%9E%84%E7%9A%84%E6%BC%94%E7%A4%BA)
-     * [链表（Linked-list）](#%E9%93%BE%E8%A1%A8%EF%BC%88Linked-list%EF%BC%89)
-       * [使用Spring操作Redis的链表结构](#%E4%BD%BF%E7%94%A8Spring%E6%93%8D%E4%BD%9CRedis%E7%9A%84%E9%93%BE%E8%A1%A8%E7%BB%93%E6%9E%84)
-
+* [spring mvc的入门实例](#spring mvc的入门实例)
+       * [参数的传递以及mybaties的综合](#参数的传递以及mybaties的综合)
+         * [传递json信息](#传递json信息)
+         * [@SessionAttributes和@SessionAttribute](#@SessionAttributes和@SessionAttribute)
+         * [注解@cookieValue和@RequestHeader](#注解@cookieValue和@RequestHeader)
+     * [拦截器](#拦截器)
+       * [配置拦截器](#配置拦截器)
+         * [多个拦截器的执行顺序](#多个拦截器的执行顺序)
+       * [验证表单](#验证表单)
+         * [使用验证器验证数据源](#使用验证器验证数据源)
+       * [数据模型](#数据模型)
+       * [视图和视图解析器](#视图和视图解析器)
+     * [文件上传](#文件上传)
+         * [文件上传步骤](#文件上传步骤)
+     * [文件下载](#文件下载)
+     * [转换器的使用](#转换器的使用)
+       * [一对一转换器（Conerter）](#一对一转换器（Conerter）)
+         * [自定义转换器](#自定义转换器)
+       * [数组和集合转换器](#数组和集合转换器)
+       * [使用格式化器（Formatter）](#使用格式化器（Formatter）)
+       * [为控制器添加通知](#为控制器添加通知)
+     * [处理异常](#处理异常)
+       * [自定义异常](#自定义异常)
+     * [国际化](#国际化)
+       * [1.MessageSource接口](#1.MessageSource接口)
+       * [2.创建CookieLocaleResolver或SessionLocaleResolve  ](#2.创建CookieLocaleResolver或SessionLocaleResolve  )
+       * [3.国际化拦截器](#3.国际化拦截器)
+       * [国际化的开发](#国际化的开发)
+   * [Redis概述](#Redis概述)
+       * [在spring中使用Redis](#在spring中使用Redis)
+       * [   配置JedisConnectionFactory](#   配置JedisConnectionFactory)
+       * [配置Spring Redis Template](#配置Spring Redis Template)
+       * [Redis的六种数据类型](#Redis的六种数据类型)
+   * [Redis数据结构以及常用命令](#Redis数据结构以及常用命令)
+     * [字符串](#字符串)
+       * [使用Spring测试Redis字符串操作](#使用Spring测试Redis字符串操作)
+     * [哈希](#哈希)
+       * [Spring操作hash结构的演示](#Spring操作hash结构的演示)
+     * [链表（Linked-list）](#链表（Linked-list）)
+       * [使用Spring操作Redis的链表结构](#使用Spring操作Redis的链表结构)
+     * [集合](#集合)
+     * [有序集合](#有序集合)
+       * [使用spring操作有序集合](#使用spring操作有序集合)
+     * [基数(HyperLogLog)](#基数(HyperLogLog))
+       * [在spring中操作基数](#在spring中操作基数)
+     * [Redis的一些常用技术   ](#Redis的一些常用技术   )
+       * [Redis的基础事务](#Redis的基础事务)
+       * [在Spring中使用Redis事务命令](#在Spring中使用Redis事务命令)
+       * [使用Watch命令监控事务](#使用Watch命令监控事务)
+       * [流水线](#流水线)
+         * [使用流水线操作Redis命令](#使用流水线操作Redis命令)
+       * [发布订阅](#发布订阅)
+       * [超时命令](#超时命令)
+         * [使用Spring操作Redis命令](#使用Spring操作Redis命令)
 
 
 #### spring mvc的入门实例
 web.xml
+
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
@@ -2218,3 +2232,522 @@ brpoplpush key src dest|按从左到右的顺序，将一个链表的最后一�
         printLinked(redisTemplate, "list2");
     }
 ```
+### 集合
+Redis的集合不是线性结构，而是哈希结构，他得内部会根据hash分子来查找元素。
+- 集合命令  
+
+命令|说明|备注
+-|-|-
+sadd key member1[memeber2,member3...]|给键key增加成员|可以同时增加多个
+sdiff key1 [key2]|找出两个集合之间的差集|如果是单个参数，则返回全部
+dcard key|统计键位key的集合成员数|-
+sdiffstore des key1 [key2]|先按sdiff命令的规则，找出key1和key2key2两个集合的差集，然后将其保存到des集合中|-
+sinter key1 [key2]|求key1和key2的交集|参数如果是单key，那么redis就返回这个key的所有元素
+sinterstore des key1 [key2]|先按sinter命令规则，找出交集，然年后保存到des中|-
+sismember key member|判断member是不是key集合中的成员|如果是返回1，否则返回0
+smembers key|返回集合所有成员|如果数据量大的话，要考虑迭代遍历问题
+smove src des member|将member元素从src移动到des集合中|-
+spop key|随机弹出一个元素|弹出的元素是无序的
+srandmember key [count]|随机弹出集合中count个元素，如果count为负数，则先求绝对值|count必须为整数，不填则默认为1
+srem key member1[member2..]|移除集合中的元素，可以是多个|可以通过此命令减少数据数量，使运行更高效
+sunion key1 [key2]|求两个集合的并集|如果是单个蚕食，则返回所有元素
+sunionstore des key1 key2|先执行sunion，然后保存到键为des的集合中|-
+
+- Spring操作Redis集合  
+
+```java
+@org.junit.Test
+    public void testForSet() {
+        ApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        Set set = null;
+        //将元素加入列表
+        redisTemplate.boundSetOps("set1").add("v1", "v2", "v3", "v4", "v5", "v6");
+        redisTemplate.boundSetOps("set2").add("v0", "v2", "v4", "v6", "v8");
+        //求集合长度
+        redisTemplate.boundSetOps("set1").size();
+        //求差集
+        set = redisTemplate.opsForSet().difference("set1", "set2");
+        System.out.println(set);
+        //求并集
+        set = redisTemplate.opsForSet().intersect("set1", "set2");
+        System.out.println(set);
+        //判断是否存在集合中的元素
+        boolean exists = redisTemplate.opsForSet().isMember("set1", "v1");
+        System.out.println(exists);
+        set = redisTemplate.opsForSet().members("set1");
+        System.out.println(set);
+        //随机弹出一个元素从集合中
+        String val = (String) redisTemplate.opsForSet().pop("set1");
+        System.out.println(val);
+        String val2 = (String) redisTemplate.opsForSet().randomMember("set1");
+        System.out.println(val2);
+        //随机获取两个集合的元素
+        List list = redisTemplate.opsForSet().randomMembers("set1", 2);
+        System.out.println(list);
+        //删除一个集合的元素，参数可以是多个
+        redisTemplate.opsForSet().remove("set1", "v1");
+        //求并集
+        set = redisTemplate.opsForSet().union("set1", "set2");
+        System.out.println(set);
+        //求两个集合的差集，并将结果保存到diff_set中
+        redisTemplate.opsForSet().differenceAndStore("set1", "set2", "diff_set");
+        System.out.println(redisTemplate.opsForSet().members("diff_set"));
+        //求两个集合的交集
+        redisTemplate.opsForSet().intersectAndStore("set1", "set2", "inter_set");
+        System.out.println(redisTemplate.opsForSet().members("inter_set"));
+        //两个集合的并集，并保存
+        redisTemplate.opsForSet().unionAndStore("set1", "set2", "union_set");
+        System.out.println(redisTemplate.opsForSet().members("union_set"));
+    }
+```
+### 有序集合
+
+有序集合和集合类似，只能说它是有序的，和无序集合相比起来最大的特点是除了值之外还会有一个分数。  
+- redis有序集合的部分命令
+ 
+命令|说明|备注
+-|-|-
+zadd key score1 value1 [score2 value2 ...]|向有序集合key，增加一个或多个成员|如果不存在key，则创建key
+zcard key|获取有序集合的成员数|-
+zcount key min max|根据分数返回相应成员|默认为包含min和max，如果不需要包含则再分数前加(，注意不支持[表示
+zincyby key increment member|给有序集合成员值为member的分数增加increment|-
+zinterstore desKey numkeys key1[key2 key3..]|求多个有序集合的交集，比那个将结果保存在deskey中|numkeys是一个正式，表示多少个有序集合
+zlexcount key min max|求有序集合key成员值在min和max的范围内的值|这里范围是key的成员值，Redis借助数据取键的表示方法"["表示包含"("表示不包含该值
+zrange key start stop [withscores]|按照分值的大小（从大到小）返回成员，加入start和stop则截取一段，输入可选项whthscores则连分数一起返回|将star和end在内的值返回
+zrank key mamber|按从小到大求有序集合的排行|排名第一为0，第二为1
+zrangebylex key min max[limit offset count]|根据值的大小，从小到大排序，通过字典区间返回有序集合的成员|包含min，max关系同上
+ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT]|通过分数返回有序集合指定区间内的成员|包含min，max关系同上
+ZREMRANGEBYSCORE key min max|移除有序集合中给定的分数区间的所有成员|-
+ZREMRANGEBYRANK key start stop |移除有序集合中给定的排名区间的所有成员|-
+ZREMRANGEBYLEX key min max|移除有序集合中给定的字典区间的所有成员|-
+ZREVRANGE key start stop [WITHSCORES]|返回有序集中指定区间内的成员，通过索引，分数从高到底|与zrange相同，只不过是从高到低排序
+ZREVRANGEBYSCORE key max min [WITHSCORES] |返回有序集中指定分数区间内的成员，分数从高到低排序|-
+ZREVRANK key member|返回有序集合中指定成员的排名，有序集成员按分数值递减(从大到小)排序|-
+ZSCORE key member|返回有序集中，成员的分数值|-
+ZUNIONSTORE destination numkeys key [key ...]|计算给定的一个或多个有序集的并集，并存储在新的 key 中|-
+
+- spring-data-redis对有序集合的封装  
+在spring中使用Redis的有序集合，需要注意的是Spring对有序集合的元素的值和分数的范围(range)和限制(limit)进行了封装  
+#### 使用spring操作有序集合
+```java
+    @org.junit.Test
+    public void testZset() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        // Spring提供接口TypedTuple操作有序集合
+        Set<TypedTuple> set1 = new HashSet<TypedTuple>();
+        Set<TypedTuple> set2 = new HashSet<TypedTuple>();
+        int j = 9;
+        for (int i = 1; i <= 9; i++) {
+            j--;
+            // 计算分数和值
+            Double score1 = Double.valueOf(i);
+            String value1 = "x" + i;
+            Double score2 = Double.valueOf(j);
+            String value2 = j % 2 == 1 ? "y" + j : "x" + j;
+            // 使用Spring提供的默认TypedTuple——DefaultTypedTuple
+            TypedTuple typedTuple1 = new DefaultTypedTuple(value1, score1);
+            set1.add(typedTuple1);
+            TypedTuple typedTuple2 = new DefaultTypedTuple(value2, score2);
+            set2.add(typedTuple2);
+        }
+        // 将元素插入有序集合zset1
+        redisTemplate.opsForZSet().add("zset1", set1);
+        redisTemplate.opsForZSet().add("zset2", set2);
+        // 统计总数
+        Long size = null;
+        size = redisTemplate.opsForZSet().zCard("zset1");
+        // 计分数为score，那么下面的方法就是求3<=score<=6的元素
+        size = redisTemplate.opsForZSet().count("zset1", 3, 6);
+        Set set = null;
+        // 从下标一开始截取5个元素，但是不返回分数,每一个元素是String
+        set = redisTemplate.opsForZSet().range("zset1", 1, 5);
+        printSet(set);
+        // 截取集合所有元素，并且对集合按分数排序，并返回分数,每一个元素是TypedTuple
+        set = redisTemplate.opsForZSet().rangeWithScores("zset1", 0, -1);
+        printTypedTuple(set);
+        // 将zset1和zset2两个集合的交集放入集合inter_zset
+        size = redisTemplate.opsForZSet().intersectAndStore("zset1", "zset2", "inter_zset");
+        // 区间
+        Range range = Range.range();
+        range.lt("x8");// 小于
+        range.gt("x1");// 大于
+        set = redisTemplate.opsForZSet().rangeByLex("zset1", range);
+        printSet(set);
+        range.lte("x8");// 小于等于
+        range.gte("x1");// 大于等于
+        set = redisTemplate.opsForZSet().rangeByLex("zset1", range);
+        printSet(set);
+        // 限制返回个数
+        Limit limit = Limit.limit();
+        // 限制返回个数
+        limit.count(4);
+        // 限制从第五个开始截取
+        limit.offset(5);
+        // 求区间内的元素，并限制返回4条
+        set = redisTemplate.opsForZSet().rangeByLex("zset1", range, limit);
+        printSet(set);
+        // 求排行，排名第1返回0，第2返回1
+        Long rank = redisTemplate.opsForZSet().rank("zset1", "x4");
+        System.err.println("rank = " + rank);
+        // 删除元素，返回删除个数
+        size = redisTemplate.opsForZSet().remove("zset1", "x5", "x6");
+        System.err.println("delete = " + size);
+        // 按照排行删除从0开始算起，这里将删除第排名第2和第3的元素
+        size = redisTemplate.opsForZSet().removeRange("zset2", 1, 2);
+        // 获取所有集合的元素和分数，以-1代表全部元素
+        set = redisTemplate.opsForZSet().rangeWithScores("zset2", 0, -1);
+        printTypedTuple(set);
+        // 删除指定的元素
+        size = redisTemplate.opsForZSet().remove("zset2", "y5", "y3");
+        System.err.println(size);
+        // 给集合中的一个元素的分数加上11
+        Double dbl = redisTemplate.opsForZSet().incrementScore("zset1", "x1", 11);
+        redisTemplate.opsForZSet().removeRangeByScore("zset1", 1, 2);
+        set = redisTemplate.opsForZSet().reverseRangeWithScores("zset2", 1, 10);
+        printTypedTuple(set);
+    }
+
+    /**
+     * 打印TypedTuple集合
+     */
+    public static void printTypedTuple(Set<
+            TypedTuple> set) {
+        if (set != null && set.isEmpty()) {
+            return;
+        }
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()) {
+
+            TypedTuple val = (TypedTuple) iterator.next();
+            System.err.print("{value = " + val.getValue() + ", score = " + val.getScore() + "}\n");
+        }
+    }
+
+    /**
+     * 打印普通集合
+     */
+    public static void printSet(Set set) {
+        if (set != null && set.isEmpty()) {
+            return;
+        }
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()) {
+            Object val = iterator.next();
+            System.out.print(val + "\t");
+        }
+        System.out.println();
+    }
+```
+
+
+### 基数(HyperLogLog)
+
+基数的作用是评估需要准备多少个储存空间去存储数据，但是技术的算法一般会存在一些误差  
+- Redis的基数命令
+
+命令|说明|备注
+-|-|-
+pfadd key element|添加指定元素到HyperLogLog中|如果已经存储元素则返回0
+pfcount key|返回hyperLogLog的基数值|-
+pfmerge desKey key1 [key2 key3...]|合并多个基数，并将其保存到desKey中|-
+
+#### 在spring中操作基数
+```java
+    @org.junit.Test
+    public void TestForHyperLogLog() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        redisTemplate.opsForHyperLogLog().add("log","a","b","c");
+        redisTemplate.opsForHyperLogLog().add("log2","a");
+        redisTemplate.opsForHyperLogLog().add("log2","z");
+        Long size=redisTemplate.opsForHyperLogLog().size("log");
+        System.out.println(size);
+        size=redisTemplate.opsForHyperLogLog().size("log2");
+        System.out.println(size);
+        redisTemplate.opsForHyperLogLog().union("des_key","log1","log2");
+        size=redisTemplate.opsForHyperLogLog().size("des_key");
+        System.out.println(size);
+    }
+```
+
+### Redis的一些常用技术   
+为了应对Redis并发下的数据一致的问题，为了保证异性数据安全性，Redis提供了事务方案，Redis使用的事务时MuITI-EXEC的命令组合，它可以提供两个重要的保证：  
+- 事务是被隔离的操作，，事务中的方法会被Redis进行序列化并顺序执行，事务在执行过程中不会被其他客户端的命令打断
+- 事务时原子性的操作，要么都执行，要么都不执行  
+在使用Rdis事务的过程中会经过三个过程：  
+1.开启事务  
+2.命令进入队列  
+3.执行事务  
+
+- Redis的事务命令  
+  
+
+命令|说明|备注
+-|-|-
+multi|开启事务命令，之后的命令进入队列不会被立马执行|在生存期间，所有的命令都会在队列
+watch key1 [key2...]|监听某些键，当被监听的键在事务执行前被修改，则事务会被回滚|使用乐观锁
+unwatch key1 [key2...]|取消监听某些键|-
+exec |执行事务，如果被监听的键没有被修改，则执行命令，否则回滚|在执行事务队列存储的命令前，REdis会检测被监听的键值是否发达生变化
+discard|回滚事务|回滚进入队列的事务命令，之后就不能再使用exec进行提交了
+
+
+#### Redis的基础事务
+
+![pic](./ssm/redis_1.jpg)
+
+在事务中如果使用了`discard`进行了回滚，则不能进行再次提交
+
+
+#### 在Spring中使用Redis事务命令
+```java
+    @org.junit.Test
+    public void TestForAffair() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        SessionCallback sessionCallback = (RedisOperations ops) -> {
+            ops.multi();
+            ops.boundValueOps("key1").set("value1");
+//            注意命令进入了队列但是没有被执行，所以此时value的值时null
+            String value = (String) redisTemplate.boundValueOps("key1").get();
+            System.out.println("在队列的时候：value=" + value);
+            //此时使用List来接受之前队列中执行完成后的所有命令的结果
+            List list = ops.exec();
+            value = (String) redisTemplate.opsForValue().get("key1");
+            System.out.println("执行后的value:" + value);
+            return value;
+        };
+        //上面为Lambda表达式，下面的是接口实现逻辑
+        SessionCallback sessionCallback1=new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations ops) throws DataAccessException {
+                ops.multi();
+                ops.boundValueOps("key1").set("value1");
+//            注意命令进入了队列但是没有被执行，所以此时value的值时null
+                String value = (String) redisTemplate.boundValueOps("key1").get();
+                System.out.println("在队列的时候：value=" + value);
+                //此时使用List来接受之前队列中执行完成后的所有命令的结果
+                List list = ops.exec();
+                value = (String) redisTemplate.opsForValue().get("key1");
+                System.out.println("执行后的value:" + value);
+                return value;
+            }
+        };
+        String value = (String) redisTemplate.execute(sessionCallback);
+        System.out.println(value);
+    }
+```
+Rdis事务中如果出现错误就会回滚整个事务，而不是回滚出错的事务。
+#### 使用Watch命令监控事务
+在Redis食物中，watch命令可以决定事务是执行还是回滚，一般在执行事务之前，使用watch来监控键值对，当执行事务的时候，如果被监控的键值对发生了变化则会回滚事务，否则执行事务，然后取消监控。  
+
+
+#### 流水线
+为了解决希望在没有任何附加条件的情况下去使用队列批量执行一系列的命令，从而提高系统性能。
+
+##### 使用流水线操作Redis命令
+进行测试
+```java
+ @org.junit.Test
+    public void TestForPipe() {
+        Jedis jedis = getPool().getResource();
+        long start = System.currentTimeMillis();
+        //开启流水线
+        Pipeline pipeline = jedis.pipelined();
+        //测试10万读/写两个操作
+        for (int i = 0; i < 100000; i++) {
+            int j = i + 1;
+            pipeline.set("pipeline_key" + j, "pipeline_value" + j);
+            pipeline.get("pipeline_key" + j);
+        }
+//        pipeline.sync();//这里只执行同步，不返回结果
+//        pipeline.syncAndReturnAll();//将执行的命令同步且全部返回（List）;
+        List list=pipeline.syncAndReturnAll();
+        long end=System.currentTimeMillis();
+        System.out.println("耗时"+(end-start)+"毫秒");
+    }
+```
+在Redis中执行那个流水线和事务的方法如出一辙都比较简单，使用RedisTemplate的`executePipelined`方法  
+```java
+    @org.junit.Test
+    public void TestPipe() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate=applicationContext.getBean(RedisTemplate.class);
+        SessionCallback callback=new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations operations) throws DataAccessException {
+                for (int i = 0; i < 100000; i++) {
+                    int j=i+1;
+                    operations.boundValueOps("pipeline_key"+j).set("pipeline_value"+j);
+                    operations.boundValueOps("pipeline_key"+j).get();
+                }
+                    return null;
+            }
+        };
+        long start=System.currentTimeMillis();
+        List resultList=redisTemplate.executePipelined(callback);
+        long end=System.currentTimeMillis();
+        System.out.println(end-start);
+    }
+```
+#### 发布订阅
+当我们使用银行卡进行消费的时候，一行往往会通过微信，短信或者邮件的方法进行信息的发送。同时Reis也支持订阅消息
+
+比如监听一个chat的渠道我们先打开一个客户端，然后输入命令
+```cmd
+SUBSCRIBE chat
+```
+这个时候客户端就会订阅了名叫chat渠道的消息  
+这个时候我们在打开另外一个客户端2，输入：
+```cmd
+publish chat "hahah!"
+```
+这个时候客户端2就会给chat信道发布一个消息，客户端依旧会接收到订阅的消息  
+下面我们演示在Spring中进行订阅模式的使用:  
+首先定义订阅监听类  
+```java
+package com.Inter;
+
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.core.RedisTemplate;
+
+public class RedisMessageListener implements MessageListener {
+    RedisTemplate redisTemplate;
+    @Override
+    public void onMessage(Message message, byte[] pattern) {
+        byte[] body=message.getBody();
+        String msgBody= (String) getRedisTemplate().getValueSerializer().deserialize(body);
+        System.out.println(msgBody);
+        //获取信道
+        byte[] channel=message.getChannel();
+        //转换为字符串
+        String channelString= (String) getRedisTemplate().getStringSerializer().deserialize(channel);
+        System.out.println(channelString);
+        String byteString=new String(pattern);
+        System.out.println(byteString);
+    }
+
+    public RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public void setRedisTemplate(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+}
+```
+然后配置Bean  
+```xml
+<bean id="redisMsgListener" class="com.Inter.RedisMessageListener">
+        <property name="redisTemplate" ref="redisTemplate"/>
+</bean>
+```
+有了监听类还需要有叫你听容器，接下来配置监听容器,再RedisMssageListenerContainer,可以用于监听Redis的发布订阅消息
+```xml
+<!--    监听容器-->
+    <bean id="topicContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer"
+          destroy-method="destroy">
+        <!--    连接工厂-->
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <!--        连接池,需要连接池的生存才能进行监听-->
+        <property name="taskExecutor">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+                <property name="poolSize" value="3"/>
+            </bean>
+        </property>
+        <!--        配置监听者-->
+        <property name="messageListeners">
+            <map>
+                <entry key-ref="redisMsgListener">
+                    <!--                    监听类-->
+                    <bean class="org.springframework.data.redis.listener.ChannelTopic">
+                        <constructor-arg value="chat"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+```
+测试发布订阅
+```java
+    @org.junit.Test
+    public void TestForListener() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        String channel="chat";
+        redisTemplate.convertAndSend(channel,"i am good !");
+    }
+```
+#### 超时命令
+与JVM一样Redis也具有GC机制，在谈论Redis的GC命令时需要介绍Redis的超时命令。  
+
+命令|说明|备注
+-|-|-
+persist|持久化key，取消超时时间|移除key的超时时间
+ttl key|查看key的超时时间|以秒计算，-1表示没有超时时间，如果不存在key或者key已经超时则为-2
+expire key seconds|设置超时时间戳|以秒为单位
+pptl key milliseconds|查看key的超时时间戳|以毫秒为单位
+expireat key timestamp|设置超时时间点|用uninx时间戳确定
+pexpire key|设置键超时的时间|以毫秒为单位
+pexpireat key stamptimes|设置超时时间点|以毫秒为单位的uninx时间戳
+
+##### 使用Spring操作Redis命令
+```java
+    @org.junit.Test
+    public void testForTimeout() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        RedisTemplate redisTemplate = applicationContext.getBean(RedisTemplate.class);
+        redisTemplate.execute((RedisOperations ops) ->
+        {
+            ops.boundValueOps("key1").set("value1");
+            String keyValue = (String) ops.boundValueOps("key1").get();
+            System.out.println(keyValue);
+            Long expSecond = ops.getExpire("key1");
+            System.out.println(expSecond);
+            boolean b=false;
+            b=ops.expire("key1",120L,TimeUnit.SECONDS);
+            System.out.println(b);
+            b=ops.persist("key1");
+            System.out.println(b);
+            long l=0L;
+            l=ops.getExpire("key1");
+            System.out.println(l);
+            long now=System.currentTimeMillis();
+            Date date=new Date();
+            date.setTime(now+120000);
+            ops.expireAt("key",date);
+            return null;
+        });
+```
+
+
+### Redis配置
+
+#### Redis基础配置文件
+
+- windows:redis.windows.conf  
+- linux:redis.conf  
+
+对于快照模式的备份，配置如下:  
+```
+save 900 1
+save 300 10
+save 60 10000
+```
+含义为:  
+当九百秒执行一个写命令的时候，启用快照备份
+当三百秒执行十个个写命令的时候，启用快照备份
+.......
+```
+stop-writes-on-bgsave-error yes
+```
+意思为当执行save命令的时候，禁止写入命令
+
+
+```
+rdbchecksum yes
+```
+此命令为是否检查是否对rbd文件进行校验

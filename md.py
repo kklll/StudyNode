@@ -43,7 +43,7 @@ class Catalo:
             title_size = len(resault)
             space_num = (title_size - 1) * 2
             content = re.sub(r2, '', item)
-            url = parse.quote(content)  # url编码
+            url = content  # url编码
             repl = f'{" " * space_num} * [{content}](#{url})'
             resault = re.sub(r,repl, resault)
             print(resault)
