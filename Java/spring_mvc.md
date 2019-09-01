@@ -2751,3 +2751,566 @@ stop-writes-on-bgsave-error yes
 rdbchecksum yes
 ```
 此命令为是否检查是否对rbd文件进行校验
+
+
+- Redis的使用一般有主从式和哨兵模式，一般情况下使用哨兵模式，因为哨兵模式下的配置可以实现当主服务器断线后的自动重新选举从服务器为主服务器，减少配置的繁琐
+
+### Spring缓存机制和Redis的结合
+
+#### 使用Spring缓存机制整合Redis
+1.首先先定义一个简单的角色POJO
+```java
+package com.Pojo;
+
+import java.io.Serializable;
+
+public class Person implements Serializable {
+    private int id;
+    private String name;
+    private String birth;
+    private float money;
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", birth='" + birth + '\'' +
+                ", money=" + money +
+                '}';
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBirth() {
+        return birth;
+    }
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
+
+    public float getMoney() {
+        return money;
+    }
+
+    public void setMoney(float money) {
+        this.money = money;
+    }
+}
+```
+2.创建mybatis的映射文件
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.PersonMapper">
+    <sql id="roles">id,name,birth,money</sql>
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="id">
+        insert into person(name,birth,money)value (#{name},#{birth},#{money})
+    </insert>
+    <delete id="deleteRole" parameterType="int">
+        delete from person where id=#{id}
+    </delete>
+    <update id="updateRole" parameterType="person">
+        update person
+        <set>
+            <if test="name!=null and name!=''">
+                name =#{name },
+            </if>
+            <if test="birth!=null and birth!=''">
+                birth=#{birth},
+            </if>
+            <if test="money!=null and money!=''">
+                money=#{money}
+            </if>
+            where id=#{id}
+        </set>
+    </update>
+    <select id="getRole" parameterType="int" resultType="person">
+        select * from person where id =#{id}
+    </select>
+
+    <select id="findRoles"  resultType="Person">
+        select * from person
+    </select>
+
+</mapper>
+```
+3.角色的接口
+```java
+package com.mapper;
+
+import com.Pojo.Person;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+
+@Repository
+public interface PersonMapper {
+    public int insertRole(Person role);
+
+    public int updateRole(Person role);
+
+    public int deleteRole(@Param("id") int id);
+
+    public Person getRole(@Param("id") int id);
+
+    public List<Person> findRoles();
+}
+```
+其中的`@Repository`注释表示该接口为持久层的接口，通过扫描和注解联合就完成了映射器的内容  
+3.POJO服务接口
+```java
+package com.server;
+
+
+import com.Pojo.Person;
+
+import java.util.List;
+
+public interface PersonServer {
+    public int insertRole(Person role);
+
+    public int updateRole(Person role);
+
+    public int deleteRole(int id);
+
+    public Person getRole(int id);
+
+    public List<Person> findRoles();
+}
+```
+4.通过Java配置定义数据库和相关的扫描内容
+```java
+package com.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+
+
+@Configuration
+//定义扫描的包
+@ComponentScan("com.*")
+//使用事务驱动管理器
+@EnableTransactionManagement
+public class RootConfig implements TransactionManagementConfigurer {
+    //由于在xml文件中进行了配置，则使用自动装配
+    @Autowired
+    private DataSource dataSource = null;
+
+
+    /*
+    配置数据库
+     */
+    //由于配置过数据库的配置此处省略配置
+
+    /*
+    配置SqlSessionFactoryBean
+     */
+    //此处也进行了配置，省略
+
+    /*
+    配置自动包扫描
+     */
+    //也进行了配置此处省略
+
+
+    /*
+    注解驱动配置，当使用@Transactional注释的时候产生数据库事务
+     */
+    @Bean
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        DataSourceTransactionManager manager=new DataSourceTransactionManager();
+        manager.setDataSource(dataSource);
+        return manager;
+    }
+}
+```
+上面未配置的配置在xml文件中
+```xml
+<!--    数据源-->
+<bean id="dataSource2" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://deepblue.datsec.cn:3306/learn?characterEncoding=UTF-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="xxx"/>
+        <property name="maxTotal" value="255"/>
+        <property name="maxIdle" value="5"/>
+        <property name="maxWaitMillis" value="10000"/>
+</bean>
+<!--    sqlSessionFactory-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactory">
+        <property name="dataSource" ref="dataSource2"/>
+        <property name="configLocation" value="classpath:/mybatis/configx.xml"/>
+    </bean>
+<!--    自动包扫描-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.mapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+```
+5.配置mybatis
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--        全局缓存-->
+        <setting name="cacheEnabled" value="true"/>
+        <!--        主键回填-->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!--        配置默认的执行器，SIMPLE没特别之处，REUSE执行预处理语句，BATCH执行器重用语句和批量更新-->
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <!--        延迟加载-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--        超时时间-->
+        <setting name="defaultStatementTimeout" value="25000"/>
+    </settings>
+    <typeAliases>
+        <package name="com.Pojo"/>
+    </typeAliases>
+<!--    <mappers>-->
+<!--                <mapper resource="com/learn/test/PersonMapper.xml"/>-->
+<!--    </mappers>-->
+</configuration>
+```
+此处使用了自动扫描映射器所以未配置`mapper`属性  
+
+#### Spring的缓存管理器
+Spring使用了CacheManager来定义缓存管理器，这样各个不同的缓存就可以实现它并提供功能了
+```java
+package com.config;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+@EnableCaching
+public class RedisConfig {
+
+    @Bean(name = "redisTemplate")
+    public RedisTemplate initRedisTemplate() {
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        //最大空闲数
+        jedisPoolConfig.setMaxIdle(50);
+        //最大连接数
+        jedisPoolConfig.setMaxTotal(100);
+        //最大等待毫秒
+        jedisPoolConfig.setMaxWaitMillis(20000);
+        //创建Jedis连接工厂
+        JedisConnectionFactory connectionFactory = new JedisConnectionFactory(jedisPoolConfig);
+        connectionFactory.setHostName("localhost");
+        connectionFactory.setPort(6379);
+        //调用后初始化方法，没有将抛出异常
+        connectionFactory.afterPropertiesSet();
+        //Jedis序列化器
+        RedisSerializer jdkSerializer = new JdkSerializationRedisSerializer();
+        RedisSerializer stringSerializer = new StringRedisSerializer();
+        //定义RedisTemplate
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setDefaultSerializer(stringSerializer);
+        redisTemplate.setKeySerializer(stringSerializer);
+        redisTemplate.setValueSerializer(jdkSerializer);
+        redisTemplate.setHashKeySerializer(stringSerializer);
+        redisTemplate.setHashValueSerializer(jdkSerializer);
+        return redisTemplate;
+    }
+
+    @Bean(name = "redisCacheManager")
+    public CacheManager initCacheManager(@Autowired RedisTemplate redisTemplate) {
+        RedisCacheManager cacheManager = new RedisCacheManager(redisTemplate);
+        //设置超时时间，秒
+        cacheManager.setDefaultExpiration(600);
+        //设置缓存名称
+        List<String> cacheNames = new ArrayList<>();
+        cacheNames.add("redisCacheManager");
+        cacheManager.setCacheNames(cacheNames);
+        return cacheManager;
+    }
+}
+```
+- 上面的配置在xml中也可以完成，此处省略  
+
+这样配置后就可以使用注解的方式使用缓存了，这里的缓存注解有四个xml夜里可以使用
+- `Cacheable`  
+表明在进入方法之前，spring先去缓存服务器中找该key-value，如果找到了，那么不会调用该方法，而是读取缓存值，如果没找到，则执行方法，将结果缓存到Redis缓存服务器中  
+- `CachePut`  
+Spring会直接调用方法，将方法的返回值缓存到缓存服务器  
+- `CacheEvict`  
+移除缓存值  
+
+- `Caching`  
+这是一个分组注解，它能运用到其他缓存的注解  
+
+- 一般而言，对于查询我们会使用`@Cacheable`对于插入和修改我们使用`@CachePut`对于删除我们使用`CacheEvict`
+
+#### 缓存注解
+
+- @Cacheable和@CachePut属性  
+
+属性|配置类型|描述
+-|-|-
+value|String[]|使用缓存的名字
+condition|String|spring表达式，如果返回值为false，则不会将缓存应用到方法上，true则会
+key|String|spring表达式，通过它来计算对应缓存的key
+unless|String|spring表达式，返回true，则不会将方法结果放到缓存上
+
+
+其中，value是一个数组，可以设置多个缓存管理器，key是用来缓存的键
+
+- 表达式值的引用  
+
+表达式|描述|备注
+-|-|-
+\#root.args|定义给缓存方法的参数|不常用
+\#root.caches|该方执行上级对应的缓存名称，是一个数组|同上
+\#root.target|执行缓存的目标文件|同上
+\#root.targetClass|目标对象的类|同上
+\#root.method|缓存方法|同上
+\#root.methodName|缓存方法的名称|同上
+\#resulte|方法返回值结果集,还可以用Spring表达式进一步读取属性|该表达式不能用于@Cacheable，因为可能不会被执行，这样就没返回值了
+\#Argument|任意方法的参数，也可以用方法本身的名称或者下标定义|比如getRole(int id)方法，要获取id这个参数，可以写为#id,#a0，\#p0，建议写id
+
+为了直观看到现象，我们使用log4j来打印，log4j配置如图:  
+```properties
+log4j.rootLogger=DEBUG , stdout
+log4j.logger.org.springframework=DEBUG
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p %d %C :%m%n
+```
+- 此处记录整合所需要的各版本jar包，避免以后踩坑，MAVEN文件
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.learn</groupId>
+    <artifactId>MySSM</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>MySSM Maven Webapp</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <properties>
+        <!-- spring版本号 -->
+        <spring.version>5.1.9.RELEASE</spring.version>
+        <!-- mybatis版本号 -->
+        <mybatis.version>3.5.2</mybatis.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <!-- spring核心包 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- mybatis核心包 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+
+        <!-- mybatis/spring包 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <!-- 导入Mysql数据库链接jar包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
+        </dependency>
+        <!-- 导入dbcp的jar包，用来在applicationContext.xml中配置数据库 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <!-- JSTL标签类 -->
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <!--    spring Data Redis-->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>1.8.3.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <!--        log4j-->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.28</version>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <finalName>MySSM</finalName>
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+            <plugins>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+</project>
+```
