@@ -3283,7 +3283,7 @@ log4j.appender.stdout.layout.ConversionPattern=%5p %d %C :%m%n
                     <version>3.8.0</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
+                    <artifactId>maven-surefire-plugin</artifa除一
                     <version>2.22.1</version>
                 </plugin>
                 <plugin>
@@ -3313,4 +3313,145 @@ log4j.appender.stdout.layout.ConversionPattern=%5p %d %C :%m%n
         </resources>
     </build>
 </project>
+```
+
+#### 缓存删除注解
+
+Redis的删除缓存注解`@CacheEvict`主要是为了除移对应的键值对，对于删除的操作。查看参数:    
+
+属性|类型|描述
+-|-|-
+value|String[]|要使用的缓存的名称
+key|String|制定Spring表达式返回缓存的key
+condition|String|制定spring表达式，如果返回true执行，否则不执行
+allEntries|Boolean|如果为True，则删除服务器上所有缓存的键值对，默认为false,谨慎使用。
+beforeInvocation|Boolean|指定在方法前除移缓存，如果为true，则在方法前删除缓存，如果false，则在方法后删除缓存。
+
+
+缓存删除注解的使用:  
+```java
+@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    @CacheEvict(value = "redisCacheManager", key = "'redis_person_'+#id")
+    @Override
+    public int deleteRole(int id) {
+        return personMapper.deleteRole(id);
+    }
+```
+
+
+#### 不适宜使用缓存的方法
+
+比如文件中的public List<Person> findRoles()方法就不适用于使用缓存来进行装载，因为使用缓存的前提是-高命中率，而该方法是根据备注等信息来查询信息，数据多样化，不能做到高命中率，所以不适用Redis高速缓存来缓存这些数据。
+
+#### Redis的实例
+- 使用RedisTemplate实现Redis的各种操作
+1.首先需要定义接口
+```java
+package com.inter;
+
+public interface RedisTemplateServer {
+    /*
+    执行多个命令
+     */
+    public void execMultiCommand();
+    /*
+    执行Redis事务
+     */
+    public void execTransaction();
+    /*
+    执行Redis流水线
+     */
+    public void execPipeline();
+}
+```
+然后实现该借口来实现自己想要的功能  
+```java
+package com.imp;
+
+import com.inter.RedisTemplateServer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+
+@Service
+public class RedisTemplateImp implements RedisTemplateServer {
+
+    @Autowired
+    private RedisTemplate redisTemplate=null;
+    /*
+    使用SessionCallBack接口来实现多个命令在同一个Redis连接中执行
+     */
+    @Override
+    public void execMultiCommand() {
+        Object obj=redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations ops) throws DataAccessException {
+                ops.boundValueOps("key1").set("abc");
+                ops.boundHashOps("hash").put("hash-key-1","hash-value-1");
+                return ops.boundValueOps("key1").get();
+            }
+        });
+        System.out.println(obj);
+    }
+
+    /*
+    失误在一个Redis连接中执行
+     */
+    @Override
+    public void execTransaction() {
+        List list= (List) redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations ops) throws DataAccessException {
+                ops.watch("key1");
+                //开启事务
+                ops.multi();
+                //此时所有的命令都会放到队列中，不会立即执行
+                ops.boundValueOps("key1").set("abc");
+                ops.boundHashOps("hash").put("hash-key-1", "hash-value-1");
+                List result = ops.exec();
+                return result;
+            }
+        });
+        System.out.println(list);
+    }
+
+    @Override
+    public void execPipeline() {
+        List list=redisTemplate.executePipelined(new SessionCallback<Object>() {
+            @Override
+            public <K, V> Object execute(RedisOperations<K, V> ops) throws DataAccessException {
+                ops.opsForValue().set((K)"key",(V)"value");
+                ops.opsForHash().put((K)"hash","key-hash-1","value-hash-1");
+                ops.opsForValue().get("key1");
+                return null;
+            }
+        });
+        System.out.println(list);
+    }
+}
+```
+
+### SSM框架+Redis实践应用
+
+- 对数据库的优化  
+1.比如更新用户的生日，可以使用以下两个命令的任意一条
+```sql
+update t_user set birthday=#{birthday} where id=#{id}
+update t_user set birthday=#{birthday} where iusername=#{username}
+```
+这两条逻辑都是正确的，但是优先选择使用主键进行更新，因为在MYSQL的运行过程中，第二条语句会将整个表都锁住，影响并发，而如果使用主键的话则只会锁住该行，从而提高并发量
+
+同时，可以使用连接查询来代替子查询，比如查询一个没有分配角色的用户
+```sql
+select u.id from t_user u where u.id not in (select ur.user_id from t_user_role ur);
+```
+这是一个not in语句，查询效率十分的低下，这个not in语句可以修改为：
+```sql
+select  u.id from t_user u left join t_user_role ur on u.id =ur.id where ur.user_id is null;
 ```
