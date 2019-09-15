@@ -256,7 +256,7 @@ ApplicationContext.xml
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://deepblue.datsec.cn:3306/learn"/>
         <property name="username" value="root"/>
-        <property name="password" value="anzhuoshiyanshi"/>
+        <property name="password" value="xx"/>
         <property name="maxTotal" value="255"/>
         <property name="maxIdle" value="5"/>
         <property name="maxWaitMillis" value="10000"/>
@@ -293,7 +293,7 @@ controller
         List<Person> list = personMapper.findRoles(personParam);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject(list);
-        modelAndView.setView(new MappingJackson2JsonView());
+        modelAndView.setView(new MappingJackson2JsonView());    
         return modelAndView;
     }
 ```
@@ -3455,3 +3455,633 @@ select u.id from t_user u where u.id not in (select ur.user_id from t_user_role 
 ```sql
 select  u.id from t_user u left join t_user_role ur on u.id =ur.id where ur.user_id is null;
 ```
+
+#### 搭建抢红包开发环境
+1.搭建Service和DAO层  
+-首先需要进行抢红包数据库的建立表操作
+```sql
+create table T_RED_PACKET
+(
+   id                   int(12)                        not null auto_increment,
+   user_id              int(12)                        not null,
+   amount               decimal(16,2)                  not null,
+   send_date            timestamp                      not null,
+   total                int(12)                        not null,
+   unit_amount          decimal(12)                    not null,
+   stock                int(12)                        not null,
+   version              int(12) default 0              not null,
+   note                 varchar(256)                    null,
+   primary key clustered (id)
+);
+
+create table T_USER_RED_PACKET 
+(
+   id                   int(12)                        not null auto_increment,
+   red_packet_id        int(12)                        not null,
+   user_id              int(12)                        not null,
+   amount               decimal(16,2)                  not null,
+   grab_time            timestamp                      not null,
+   note                 varchar(256)                   null,
+    primary key clustered (id)
+);
+
+insert into T_RED_PACKET(user_id, amount, send_date, total, unit_amount, stock, note)
+ values(1, 200000.00, now(), 20000, 10.00, 20000,'20万元金额，2万个红包，每个10元');
+```
+2.建立角色POJO
+```java
+package com.pojo;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class RedPacket implements Serializable {
+    private long id;
+    private long userId;
+    private double amount;
+    private Timestamp sendDate;
+    private int total;
+    private double unitAmount;
+    private int stock;
+    private int version;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public Timestamp getSendDate() {
+        return sendDate;
+    }
+
+    public void setSendDate(Timestamp sendDate) {
+        this.sendDate = sendDate;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public double getUnitAmount() {
+        return unitAmount;
+    }
+
+    public void setUnitAmount(double unitAmount) {
+        this.unitAmount = unitAmount;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    private String note;
+}
+------------------------------------------------------
+package com.pojo;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class UserRedPacket implements Serializable {
+    private long id;
+    private long redPacketId;
+    private long userId;
+    private double amount;
+    private Timestamp grabTime;
+    private String note;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getRedPacketId() {
+        return redPacketId;
+    }
+
+    public void setRedPacketId(long redPacketId) {
+        this.redPacketId = redPacketId;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public Timestamp getGrabTime() {
+        return grabTime;
+    }
+
+    public void setGrabTime(Timestamp grabTime) {
+        this.grabTime = grabTime;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
+```
+可以看出这两个一个是红包信息，另一个是抢红包信息  
+
+3.此时需要进行开发红包服务接口
+```java
+package com.dao;
+
+import com.pojo.RedPacket;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RedPacketDao {
+    /*
+     * 获取红包信息
+     * @Return 红包具体信息
+     */
+    public RedPacket getRedPacket(long id);
+
+    /*
+    扣减红包
+     */
+    public int decreaseRedPacket(long id);
+}
+```
+- 配置文件
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.RedPacketDao">
+    <!--    查询红包信息-->
+    <select id="getRedPacket" parameterType="long" resultMap="com.pojo.RedPacket">
+        select id,user_id as userId,amount,send_date as sendDate,total,unit_amount as
+         unitAmount,stock,version,note from T_RED_PACKET where id=#{id}
+    </select>
+    <!--    扣除红包的操作-->
+    <update id="decreaseRedPacket">
+        update T_RED_PACKET set stock=stock-1 where id=#{id}
+    </update>
+</mapper>
+```
+4.设置抢红包的DAO
+```java
+package com.dao;
+
+import com.pojo.UserRedPacket;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRedPacketDao {
+    /*
+    抢红包
+     */
+    public int grapRedPacket(UserRedPacket userRedPacket);
+}
+```
+- 配置mapper文件
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserRedPacketDao">
+    <insert id="grapRedPacket" useGeneratedKeys="true" keyProperty="id" parameterType="com.pojo.UserRedPacket">
+        insert into T_USER_RED_PACKET(red_packet_id,user_id,amount,grab_time,note)
+        value (#{redPacketId},#{userId},#{amount},#{grabTime},#{note})
+    </insert>
+</mapper>
+```
+此时DAO配置基本结束。    
+5.接下来进行Sevice的开发  
+```java
+package com.server;
+
+import com.pojo.RedPacket;
+
+public interface RedPacketService {
+    /*
+    获取红包
+     */
+    public RedPacket getRedPacket(long id);
+
+    /*
+    扣除红包
+     */
+    public int decreaseRedPacket(long id);
+}
+-----------------------------------------------
+package com.server;
+
+public interface UserRedPacketService {
+    /*
+    保存抢红包的信息
+    userId 抢红包的用户编号
+    RedPacketId 红包编号
+     */
+    public int grapRedPacket(long redPacketId,long userId);
+}
+```
+- 接下来进行红包服务类的实现
+```java
+package com.imp;
+
+import com.dao.RedPacketDao;
+import com.pojo.RedPacket;
+import com.server.RedPacketService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class RedPacketServiceImp implements RedPacketService {
+    @Autowired
+    private RedPacketDao redPacketDao=null;
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    public RedPacket getRedPacket(long id) {
+        return redPacketDao.getRedPacket(id);
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    public int decreaseRedPacket(long id) {
+        return redPacketDao.decreaseRedPacket(id);
+    }
+}
+---------------------------------------------------------
+package com.imp;
+
+import com.dao.RedPacketDao;
+import com.dao.UserRedPacketDao;
+import com.pojo.RedPacket;
+import com.pojo.UserRedPacket;
+import com.server.UserRedPacketService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class UserRedPacketServiceImp implements UserRedPacketService {
+    @Autowired
+    private UserRedPacketDao userRedPacketDao = null;
+    @Autowired
+    private RedPacketDao redPacketDao = null;
+    //失败的表示
+    private static final int FAILED = 0;
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public int grapRedPacket(long redPacketId, long userId) {
+        //获取红包信息
+        RedPacket redPacket = redPacketDao.getRedPacket(redPacketId);
+        //当前红包数量大于0
+        if (redPacket.getStock() > 0) {
+            UserRedPacket userRedPacket = new UserRedPacket();
+            userRedPacket.setRedPacketId(redPacketId);
+            userRedPacket.setUserId(userId);
+            userRedPacket.setAmount(redPacket.getUnitAmount());
+            userRedPacket.setNote("抢到红包" + redPacketId);
+            int result = userRedPacketDao.grapRedPacket(userRedPacket);
+            return result;
+        }
+        //如果不满足，返回失败
+        return FAILED;
+    }
+}
+```
+6.使用全注解开发SSM环境
+- 首先进行WebAppInitializer的配置  
+- RootConfig.java
+```java
+package com.init;
+
+
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+
+@Configuration
+@ComponentScan(value = "com.*", includeFilters = {
+        @ComponentScan.Filter(type = FilterType.ANNOTATION, value = {Service.class})})
+//启用事务管理器
+@EnableTransactionManagement
+//实现TransactionManagementConfigurer,配置注解驱动
+public class RootConfig implements TransactionManagementConfigurer {
+    private DataSource dataSource = null;
+
+
+    /*
+    数据库
+     */
+    @Bean(name = "dataSource")
+    public DataSource initDataSource() {
+        if (dataSource == null) {
+            return dataSource;
+        }
+        Properties properties = new Properties();
+        properties.setProperty("driverClassName", "com.mysql.jdbc.Driver");
+        properties.setProperty("url", "jdbc:mysql://deepblue.datsec.cn:3306/learn");
+        properties.setProperty("username", "root");
+        properties.setProperty("password", "xx");
+        properties.setProperty("maxTotal", "255");
+        properties.setProperty("maxIdle", "5");
+        properties.setProperty("maxWaitMillis", "10000");
+        try {
+            dataSource = BasicDataSourceFactory.createDataSource(properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dataSource;
+    }
+
+    /*
+    配置SqlSessionFactoryBean
+     */
+    @Bean(name = "sqlSessionFactory")
+    public SqlSessionFactoryBean initSqlSessionFactory() {
+        SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
+        sqlSessionFactory.setDataSource(initDataSource());
+        Resource resource = new ClassPathResource("mybatis-config.xml");
+        sqlSessionFactory.setConfigLocation(resource);
+        return sqlSessionFactory;
+    }
+
+    /*
+    自动扫描，发现mybatis-mapper文件
+     */
+    @Bean
+    public MapperScannerConfigurer initMapperScannerConfigurer() {
+        MapperScannerConfigurer msc = new MapperScannerConfigurer();
+        msc.setBasePackage("com.*");
+        msc.setSqlSessionFactoryBeanName("sqlSessionFactory");
+        msc.setAnnotationClass(Repository.class);
+        return msc;
+    }
+
+    /*
+    实现接口方法，注册注解事务，当使用@Transactional时产生数据库事务
+     */
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        DataSourceTransactionManager manager = new DataSourceTransactionManager();
+        manager.setDataSource(initDataSource());
+        return manager;
+    }
+
+}
+```
+- WebConfig.java
+```java
+package com.init;
+
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.servlet.HandlerAdapter;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+//定义springmvc扫描的包
+@ComponentScan(value = "com.*",
+        includeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION, value = Controller.class)})
+//启动Spring MVC配置
+@EnableWebMvc
+public class WebConfig {
+    /*
+    通过注解来配置视图解析器
+     */
+    @Bean(name = "internalResourceViewResolver")
+    public ViewResolver initViewResolver() {
+        InternalResourceViewResolver resourceViewResolver = new InternalResourceViewResolver();
+        resourceViewResolver.setPrefix("/WEB-INF/jsp/");
+        resourceViewResolver.setSuffix(".jsp");
+        return resourceViewResolver;
+    }
+
+    /*
+    初始化RequestMappingHandlerAdapter，加在http的Json转换器
+     */
+
+    @Bean(name = "RequestMappingHandlerAdapter")
+    public HandlerAdapter initHandlerAdapter() {
+        //创建请求映射器
+        RequestMappingHandlerAdapter requestMappingHandlerAdapter = new RequestMappingHandlerAdapter();
+        //json转换器
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        MediaType mediaType = MediaType.APPLICATION_JSON_UTF8;
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(mediaType);
+        //加入转换器支持的类型
+        jsonConverter.setSupportedMediaTypes(mediaTypes);
+        //向适配器中增加json转换器
+        requestMappingHandlerAdapter.getMessageConverters().add(jsonConverter);
+        return requestMappingHandlerAdapter;
+    }
+}
+```
+- WebAppInitializer.java
+```java
+package com.init;
+
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
+
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+    //配置SpringIoc源
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class<?>[]{RootConfig.class};
+    }
+
+    //servlet环境
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[]{WebConfig.class};
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"*"};
+    }
+
+    /*
+    文件上传配置
+     */
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic dynamic) {
+        String filepath = "f:/uploads";
+        //5MB
+        long singMax = (long) (5 * Math.pow(2, 20));
+        //总文件大小
+        long totalMax = (long) (10 * Math.pow(2, 20));
+        dynamic.setMultipartConfig(new MultipartConfigElement(filepath, singMax, totalMax, 0));
+    }
+}
+```
+然后需要在mybatis-config.xml文件中加入两个mapper文件的位置。  
+- 随后进行抢红包控制器的开发
+```java
+package com.controller;
+
+
+import com.mapper.PersonMapper;
+import com.pojo.Person;
+import com.server.UserRedPacketService;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/user")
+public class UserRedPacketController {
+
+    @Autowired
+    private PersonMapper personMapper = null;
+    @Autowired
+    private UserRedPacketService userRedPacketService = null;
+
+    @RequestMapping(value = "/getredpacket")
+    @ResponseBody
+    public Map<String, Object> getRedPacket(@Param("redPacketId") long redPacketId, @Param("userId") long userId) {
+        //抢红包
+        int result = userRedPacketService.grapRedPacket(redPacketId, userId);
+        Map<String, Object> resultMap = new HashMap<>();
+        boolean flag = result > 0;
+        resultMap.put("success", flag);
+        resultMap.put("message", flag ? "抢红包成功" : "抢红包失败");
+        return resultMap;
+    }
+
+    @RequestMapping(value = "/start")
+    public ModelAndView page() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("start");
+        return mv;
+    }
+
+    @RequestMapping(value = "/index")
+    public ModelAndView index() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("index");
+        return mv;
+    }
+    @RequestMapping(value = "/index2")
+    public ModelAndView index2() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("index");
+        return mv;
+    }
+
+    @RequestMapping("/person")
+    public ModelAndView xx() {
+        Person p = personMapper.getRole(1);
+        ModelAndView mv = new ModelAndView();
+        mv.setView(new MappingJackson2JsonView());
+        mv.addObject(p);
+        return mv;
+    }
+}
+```
+通过浏览器访问带Ajax的网站发现，等待网络请求完成后查看数据库发现出现了红包超发的现象。超发现象是由于多线程下的数据不同步造成的，为了解决超发现象，我们主要通过乐观锁和悲观锁进行测试。
+
+#### 乐观锁
