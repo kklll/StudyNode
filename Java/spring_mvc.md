@@ -4099,4 +4099,36 @@ public class UserRedPacketController {
 ```
 通过浏览器访问带Ajax的网站发现，等待网络请求完成后查看数据库发现出现了红包超发的现象。超发现象是由于多线程下的数据不同步造成的，为了解决超发现象，我们主要通过乐观锁和悲观锁进行测试。
 
+#### 悲观锁
+悲观锁是对数据库的事务进行加锁处理，也就是对数据库的更新操作进行加速处理。  
+
+1.首先在mapper文件中进行加锁操作
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.RedPacketDao">
+    <!--    查询红包信息-->
+    <select id="getRedPacket" parameterType="long" resultType="com.pojo.RedPacket">
+        select id,user_id as userId,amount,send_date as sendDate,total,unit_amount as
+         unitAmount,stock,version,note from T_RED_PACKET where id=#{id} for update
+    </select>
+    <!--    扣除红包的操作-->
+    <update id="decreaseRedPacket">
+        update T_RED_PACKET set stock=stock-1 where id=#{id}
+    </update>
+</mapper>
+```
+
+使用`for update`进行锁定之后进行更新操作的时候会将更新的列进行锁定，从而避免超发现象，但是会大幅度的降低性能。
+
+
 #### 乐观锁
+乐观说是一种不会阻塞其他线程进行并发操作的并发机制，他不会使用数据库的数据库的锁进行实现，而是使用CAS原理。
+
+##### CAS原理
+在CAS原理中，对于多线程共同的资源，先保存一个旧值，然后进入线程来执行逻辑，当需要操作数据的时候将旧值与当前值进行比对，如果两个值不同的话就认定该数据发生过改变，则不进行操作或重入。　　
+- 但是使用CAS会出现ABA问题顾名思义就是在一个值被两次改变，变回原值，所以在CAS中要进行多个数据的判定，比如给数据加一个版本号，版本号只能增加不能减少，每操作数据一次就进行版本号的增加操作。这样可以有效的避免ABA问题。　　
+

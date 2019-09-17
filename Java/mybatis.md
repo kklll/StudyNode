@@ -1,17 +1,23 @@
-## <center>mybatis</center>
-- [<center>mybatis</center>](#centermybatiscenter)
-    - [Mybatis](#mybatis)
-      - [XML配置](#xml%e9%85%8d%e7%bd%ae)
-      - [代码创建](#%e4%bb%a3%e7%a0%81%e5%88%9b%e5%bb%ba)
-      - [利用mybatis实现简单的jdbc](#%e5%88%a9%e7%94%a8mybatis%e5%ae%9e%e7%8e%b0%e7%ae%80%e5%8d%95%e7%9a%84jdbc)
-      - [properties文件配置](#properties%e6%96%87%e4%bb%b6%e9%85%8d%e7%bd%ae)
-      - [映射器（Mappers）的引入方法](#%e6%98%a0%e5%b0%84%e5%99%a8mappers%e7%9a%84%e5%bc%95%e5%85%a5%e6%96%b9%e6%b3%95)
-    - [映射器](#%e6%98%a0%e5%b0%84%e5%99%a8)
-      - [`select`](#select)
-      - [分页参数RowBounds](#%e5%88%86%e9%a1%b5%e5%8f%82%e6%95%b0rowbounds)
-      - [级联](#%e7%ba%a7%e8%81%94)
-        - [mybatis中的级联分3类](#mybatis%e4%b8%ad%e7%9a%84%e7%ba%a7%e8%81%94%e5%88%863%e7%b1%bb)
-    - [动态SQL](#%e5%8a%a8%e6%80%81sql)
+<!--961032830987546d0e6d54829fc886f6-->
+
+目录(Catalo)
+
+  * [<center>mybatis</center>](#%3Ccenter%3Emybatis%3C/center%3E)
+      * [Mybatis](#Mybatis)
+        * [ XML配置](#%20XML%E9%85%8D%E7%BD%AE)
+        * [代码创建](#%E4%BB%A3%E7%A0%81%E5%88%9B%E5%BB%BA)
+        * [利用mybatis实现简单的jdbc](#%E5%88%A9%E7%94%A8mybatis%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84jdbc)
+        * [properties文件配置](#properties%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE)
+        * [映射器（Mappers）的引入方法](#%E6%98%A0%E5%B0%84%E5%99%A8%EF%BC%88Mappers%EF%BC%89%E7%9A%84%E5%BC%95%E5%85%A5%E6%96%B9%E6%B3%95)
+      * [映射器](#%E6%98%A0%E5%B0%84%E5%99%A8)
+        * [`select`](#%60select%60)
+        * [分页参数RowBounds](#%E5%88%86%E9%A1%B5%E5%8F%82%E6%95%B0RowBounds)
+        * [级联](#%E7%BA%A7%E8%81%94)
+          * [mybatis中的级联分3类](#mybatis%E4%B8%AD%E7%9A%84%E7%BA%A7%E8%81%94%E5%88%863%E7%B1%BB)
+      * [动态SQL](#%E5%8A%A8%E6%80%81SQL)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
+
 #### Mybatis
 
 - Mybatis的组件`构造器` `工厂接口` `会话` `映射器`

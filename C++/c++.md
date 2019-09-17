@@ -1,3 +1,27 @@
+<!--961032830987546d0e6d54829fc886f6-->
+
+目录(Catalo)
+
+* [<center>c++学习笔记</centert>](#%3Ccenter%3Ec%2B%2B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%3C/centert%3E)
+    * [c++格式化输出：](#c%2B%2B%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA%EF%BC%9A)
+    * [c++参数传递](#c%2B%2B%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92)
+    * [String类：](#String%E7%B1%BB%EF%BC%9A)
+    * [STL序列式容器：](#STL%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%EF%BC%9A)
+      * [(STL array)的用法](#%28STL%20array%29%E7%9A%84%E7%94%A8%E6%B3%95)
+      * [C++ vector的使用](#C%2B%2B%20vector%E7%9A%84%E4%BD%BF%E7%94%A8)
+      * [C++ deque使用、创建及初始化详解](#C%2B%2B%20deque%E4%BD%BF%E7%94%A8%E3%80%81%E5%88%9B%E5%BB%BA%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96%E8%AF%A6%E8%A7%A3)
+      * [list(STL list)使用、创建和初始化](#list%28STL%20list%29%E4%BD%BF%E7%94%A8%E3%80%81%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96)
+      * [forward_list用法详解](#forward_list%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3)
+      * [stack(STL stack)用法详解](#stack%28STL%20stack%29%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3)
+      * [queue(STL queue)用法](#queue%28STL%20queue%29%E7%94%A8%E6%B3%95)
+      * [priority_queue(STL priority_queue)(优先队列)用法](#priority_queue%28STL%20priority_queue%29%28%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%29%E7%94%A8%E6%B3%95)
+    * [map容器（STL map容器）](#map%E5%AE%B9%E5%99%A8%EF%BC%88STL%20map%E5%AE%B9%E5%99%A8%EF%BC%89)
+      * [map](#map)
+      * [C++ hash(STL hash)及其函数模板用法](#C%2B%2B%20hash%28STL%20hash%29%E5%8F%8A%E5%85%B6%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF%E7%94%A8%E6%B3%95)
+  * [c++常见算法及使用](#c%2B%2B%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E5%8F%8A%E4%BD%BF%E7%94%A8)
+    * [C++格式化输出](#C%2B%2B%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
 # <center>c++学习笔记</centert>
 [TOC]
 ### c++格式化输出：

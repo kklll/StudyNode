@@ -1,5 +1,20 @@
-# <center>python学习笔记</center>
-[TOC]
+<!--961032830987546d0e6d54829fc886f6-->
+
+目录(Catalo)
+
+* [<center>python学习笔记</center>](#%3Ccenter%3Epython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%3C/center%3E)
+    * [pytho正则表达式](#pytho%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F)
+* [删除注释](#%E5%88%A0%E9%99%A4%E6%B3%A8%E9%87%8A)
+* [移除非数字的内容](#%E7%A7%BB%E9%99%A4%E9%9D%9E%E6%95%B0%E5%AD%97%E7%9A%84%E5%86%85%E5%AE%B9)
+  * [python小实践](#python%E5%B0%8F%E5%AE%9E%E8%B7%B5)
+    * [trutle库绘制日期](#trutle%E5%BA%93%E7%BB%98%E5%88%B6%E6%97%A5%E6%9C%9F)
+      * [爬取国家医药卫生科学数据共享网--药学科学数据中心药物](#%E7%88%AC%E5%8F%96%E5%9B%BD%E5%AE%B6%E5%8C%BB%E8%8D%AF%E5%8D%AB%E7%94%9F%E7%A7%91%E5%AD%A6%E6%95%B0%E6%8D%AE%E5%85%B1%E4%BA%AB%E7%BD%91--%E8%8D%AF%E5%AD%A6%E7%A7%91%E5%AD%A6%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E8%8D%AF%E7%89%A9)
+      * [与此关联的图片信息](#%E4%B8%8E%E6%AD%A4%E5%85%B3%E8%81%94%E7%9A%84%E5%9B%BE%E7%89%87%E4%BF%A1%E6%81%AF)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
+
+  
+
 - 以下划线开头的标识符是有特殊意义的。以单下划线开头 _foo 的代表不能直接访问的类属性，需通过类提供的接口进行访问，不能用 from xxx import * 而导入；
 - 以双下划线开头的__foo 代表类的私有成员；以双下划线开头和结尾的__foo__ 代表Python 里特殊方法专用的标识，如 __init__() 代表类的构造函数。
 

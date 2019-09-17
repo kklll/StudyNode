@@ -1,3 +1,16 @@
+<!--961032830987546d0e6d54829fc886f6-->
+
+目录(Catalo)
+
+* [ git commit 时 图标使用 --- emoji 指南](#%20git%20commit%20%E6%97%B6%20%E5%9B%BE%E6%A0%87%E4%BD%BF%E7%94%A8%20---%20emoji%20%E6%8C%87%E5%8D%97)
+  * [Git在提交时添加Emoji有什么好处](#Git%E5%9C%A8%E6%8F%90%E4%BA%A4%E6%97%B6%E6%B7%BB%E5%8A%A0Emoji%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84)
+  * [执行 `git commit` 时使用 emoji 为本次提交打上一个 “标签”, 使得此次 commit 的主要工作得以凸现，也能够使得其在整个提交历史中易于区分与查找。](#%E6%89%A7%E8%A1%8C%20%60git%20commit%60%20%E6%97%B6%E4%BD%BF%E7%94%A8%20emoji%20%E4%B8%BA%E6%9C%AC%E6%AC%A1%E6%8F%90%E4%BA%A4%E6%89%93%E4%B8%8A%E4%B8%80%E4%B8%AA%20%E2%80%9C%E6%A0%87%E7%AD%BE%E2%80%9D%2C%20%E4%BD%BF%E5%BE%97%E6%AD%A4%E6%AC%A1%20commit%20%E7%9A%84%E4%B8%BB%E8%A6%81%E5%B7%A5%E4%BD%9C%E5%BE%97%E4%BB%A5%E5%87%B8%E7%8E%B0%EF%BC%8C%E4%B9%9F%E8%83%BD%E5%A4%9F%E4%BD%BF%E5%BE%97%E5%85%B6%E5%9C%A8%E6%95%B4%E4%B8%AA%E6%8F%90%E4%BA%A4%E5%8E%86%E5%8F%B2%E4%B8%AD%E6%98%93%E4%BA%8E%E5%8C%BA%E5%88%86%E4%B8%8E%E6%9F%A5%E6%89%BE%E3%80%82)
+    * [commit 格式](#commit%20%E6%A0%BC%E5%BC%8F)
+    * [commit一共由五部分组成：](#commit%E4%B8%80%E5%85%B1%E7%94%B1%E4%BA%94%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90%EF%BC%9A)
+    * [emoji 指南 --快览](#emoji%20%E6%8C%87%E5%8D%97%20--%E5%BF%AB%E8%A7%88)
+    * [参考](#%E5%8F%82%E8%80%83)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
 #  git commit 时 图标使用 --- emoji 指南
 
 ## Git在提交时添加Emoji有什么好处

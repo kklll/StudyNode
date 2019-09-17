@@ -1,5 +1,22 @@
-## <center>SQL学习及记录</center>
-[TOC]
+<!--961032830987546d0e6d54829fc886f6-->
+
+目录(Catalo)
+
+  * [<center>SQL学习及记录</center>](#%3Ccenter%3ESQL%E5%AD%A6%E4%B9%A0%E5%8F%8A%E8%AE%B0%E5%BD%95%3C/center%3E)
+      * [下面的例子都是以mysql为例](#%E4%B8%8B%E9%9D%A2%E7%9A%84%E4%BE%8B%E5%AD%90%E9%83%BD%E6%98%AF%E4%BB%A5mysql%E4%B8%BA%E4%BE%8B)
+        * [join](#join)
+        * [UNION 操作符](#UNION%20%E6%93%8D%E4%BD%9C%E7%AC%A6)
+        * [select into](#select%20into)
+        * [SQL UNIQUE 约束](#SQL%20UNIQUE%20%E7%BA%A6%E6%9D%9F)
+      * [SQL FOREIGN KEY 约束](#SQL%20FOREIGN%20KEY%20%E7%BA%A6%E6%9D%9F)
+        * [SQL CHECK 约束](#SQL%20CHECK%20%E7%BA%A6%E6%9D%9F)
+        * [SQL DEFAULT 约束](#SQL%20DEFAULT%20%E7%BA%A6%E6%9D%9F)
+      * [SQL CREATE INDEX ](#SQL%20CREATE%20INDEX%20)
+        * [SQL AUTO INCREMENT 字段](#SQL%20AUTO%20INCREMENT%20%E5%AD%97%E6%AE%B5)
+      * [MySQL Date 函数  ](#MySQL%20Date%20%E5%87%BD%E6%95%B0%20%20)
+    * [函数](#%E5%87%BD%E6%95%B0)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
 #### 下面的例子都是以mysql为例
 - select distinct * from test; distinct筛选重复元素
 - Order By DESC 倒序排列
@@ -171,6 +188,8 @@ PRIMARY KEY (Id_O),
 FOREIGN KEY (Id_P) REFERENCES Persons(Id_P)
 )
 ```
+
+
 如果需要命名 FOREIGN KEY 约束，以及为多个列定义 FOREIGN KEY 约束，请使用下面的 SQL 语法：  
 constraint(约束)  
 ```sql

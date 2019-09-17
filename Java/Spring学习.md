@@ -1,5 +1,21 @@
+<!--961032830987546d0e6d54829fc886f6-->
+  * [<center>Spring框架的学习</center>](#%3Ccenter%3ESpring%E6%A1%86%E6%9E%B6%E7%9A%84%E5%AD%A6%E4%B9%A0%3C/center%3E)
+      * [Spring的Bean装配：  ](#Spring%E7%9A%84Bean%E8%A3%85%E9%85%8D%EF%BC%9A%20%20)
+        * [使用xml文件进行装配](#%E4%BD%BF%E7%94%A8xml%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E8%A3%85%E9%85%8D)
+        * [使用注解进行装配](#%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E8%BF%9B%E8%A1%8C%E8%A3%85%E9%85%8D)
+      * [spring表达式注入](#spring%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5)
+        * [Spring AOP实例](#Spring%20AOP%E5%AE%9E%E4%BE%8B)
+        * [环绕通知](#%E7%8E%AF%E7%BB%95%E9%80%9A%E7%9F%A5)
+        * [用xml开发AOP](#%E7%94%A8xml%E5%BC%80%E5%8F%91AOP)
+        * [DBCP的使用（第三方数据连接库）](#DBCP%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5%E5%BA%93%EF%BC%89)
+          * [进行多Mapper文件扫描](#%E8%BF%9B%E8%A1%8C%E5%A4%9AMapper%E6%96%87%E4%BB%B6%E6%89%AB%E6%8F%8F)
+        * [spring数据库事务管理器](#spring%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8)
+          * [xml配置过程](#xml%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B)
+          * [注解配置过程 ](#%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B%20)
+          * [过长占用事务时间的解决方法](#%E8%BF%87%E9%95%BF%E5%8D%A0%E7%94%A8%E4%BA%8B%E5%8A%A1%E6%97%B6%E9%97%B4%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95)
+
+<!--a46263f7a69f33f39fc26f907cdb773a-->
 ## <center>Spring框架的学习</center>
-[TOC]
 
 Spring的两大重要特性:  
 - AOP 面向切片编程
