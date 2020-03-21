@@ -204,3 +204,164 @@ fp.close()
 # print(start)
 
 ```
+
+### 3.0升级版
+```python
+# 671,476,771, 501
+import requests, json, time, re
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from PIL import Image
+from pytesseract import *
+import re
+from bs4 import BeautifulSoup
+banji = [
+    '17070047'
+]
+timeout = 0.3
+xxxx = 0
+i = 0
+b = webdriver.Firefox()
+needlist = ["公益劳动", "金工实习C", "数据库原理及应用", "JAVA程序设计基础", "软件工程", "操作系统", "计算机组成原理", "数值分析"
+    , "数据库课程实验周"]
+with open("C:\\Users\\10129\\Desktop\\name1.CSV", "r") as num:
+    while True:
+        line = num.readline()
+        etc = line.split(",")
+        name = etc[1]
+        xuehao = etc[0]
+        if not name:
+            break
+        ActionChains(b).key_down(Keys.CONTROL).send_keys("t").key_up(Keys.CONTROL).perform()
+        b.get('http://202.207.177.39:8089/')
+        time.sleep(timeout)
+        tupian = b.get_screenshot_as_file("e:\\1.png")
+        region = (671, 476, 771, 501)
+        c = Image.open("e:\\1.png")
+        d = c.crop(region)
+        # d.show()
+        asd = pytesseract.image_to_string(d)
+        asd = asd.replace(' ', '')
+        asd = asd.replace('.', '')
+        asd = asd.replace("'", '')
+        asd = asd.replace(';', '')
+        asd = asd.replace('`', '')
+        asd = asd.replace('/', '')
+        asd = asd.replace('!', '')
+        asd = asd.replace('"', '')
+        asd = asd.replace('<', '')
+        asd = asd.replace('>', '')
+        asd = asd.replace('`', '')
+        asd = asd.replace('"', '')
+        asd = asd.upper()
+        if asd != '':
+            asd = asd
+        else:
+            asd = 'aaaa'
+        b.find_element_by_xpath(
+            '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/input').send_keys(
+            xuehao)
+        b.find_element_by_xpath(
+            '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[2]/td[2]/input').send_keys(
+            xuehao)
+        b.find_element_by_xpath(
+            '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/input').send_keys(
+            asd)
+        b.find_element_by_xpath('//*[@id="btnSure"]').click()
+        # print(b.page_source)
+        ActionChains(b).key_down(Keys.CONTROL).send_keys("w").key_up(Keys.CONTROL).perform()
+        key1 = '<strong><font color="#990000">(.*?)</font></strong><br>'
+        xinxi = re.findall(key1, b.page_source)
+        if xinxi:
+            while '你输入的验证码错误，请您重新输入！' in xinxi:
+                time.sleep(timeout)
+                tupian = b.get_screenshot_as_file("e:\\1.png")
+                region = (671, 476, 771, 501)
+                c = Image.open("e:\\1.png")
+                d = c.crop(region)
+                asd = pytesseract.image_to_string(d)
+                asd = asd.replace(' ', '')
+                asd = asd.replace('.', '')
+                asd = asd.replace("'", '')
+                asd = asd.replace(';', '')
+                asd = asd.replace('`', '')
+                asd = asd.replace('/', '')
+                asd = asd.replace('!', '')
+                asd = asd.replace('"', '')
+                asd = asd.replace('<', '')
+                asd = asd.replace('>', '')
+                asd = asd.replace('`', '')
+                asd = asd.replace('"', '')
+                asd = asd.upper()
+                if asd != '':
+                    asd = asd
+                else:
+                    asd = 'aaaa'
+                b.find_element_by_xpath(
+                    '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[1]/td[2]/input').send_keys(
+                    xuehao)
+                b.find_element_by_xpath(
+                    '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[2]/td[2]/input').send_keys(
+                    xuehao)
+                b.find_element_by_xpath(
+                    '/html/body/table/tbody/tr/td/table[3]/tbody/tr[1]/td[2]/form/table/tbody/tr[2]/td/table/tbody/tr[3]/td[2]/input').send_keys(
+                    asd)
+                b.find_element_by_xpath('//*[@id="btnSure"]').click()
+                key1 = '<strong><font color="#990000">(.*?)</font></strong><br>'
+                xinxi = re.findall(key1, b.page_source)
+            if '您的密码不正确，请您重新输入！' in xinxi:
+                i = i + 1
+                if i == 3:
+                    break
+                ActionChains(b).key_down(Keys.CONTROL).send_keys("w").key_up(Keys.CONTROL).perform()
+                continue
+        req = requests.session()
+        cookies = b.get_cookies()
+        # print(cookies)
+        for cookie in cookies:
+            req.cookies.set(cookie['name'], cookie['value'])
+        req.headers.clear()
+        try:
+            b.delete_all_cookies()
+        except:
+            continue
+        jieguo = req.get('http://202.207.177.39:8089/xjInfoAction.do?oper=xjxx')
+        xingming = '<td class="fieldName" width="180">姓名:&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\t\t<td width="275">\r\n\t\t\t\t\t\t\t\t\t\t&nbsp;(.*?)\r\n\t\t\t\t\t\t\t\t\t\t</td>'
+        xingming1 = re.findall(xingming, jieguo.text)
+        jieguo = req.get(
+            "http://202.207.177.39:8089/gradeLnAllAction.do?type=ln&oper=qbinfo&lnxndm=2018-2019%D1%A7%C4%EA%B4%BA(%C1%BD%D1%A7%C6%DA)#qb_2018-2019学年春(两学期)")
+        # b.close()
+        # print(jieguo.content)
+        soup = BeautifulSoup(jieguo.content, "lxml")
+        tab = soup.select("#user")
+        # print(tab[0])
+        dict = {}
+        for tr in tab[4].select('tr'):
+            if len(tr.select("td")) > 0:
+                # print(tr.select('td'))
+                namex = tr.select('td')[2].get_text(strip=True)
+                grade = tr.select('td')[6].get_text(strip=True)
+                dict[namex] = grade
+        fp = open("C:\\Users\\10129\\Desktop\\成绩.txt", "a+")
+        if xxxx == 0:
+            fp.write(",,")
+            for i in needlist:
+                fp.write(i + ",")
+            fp.write("\r\n")
+        fp.write(name + "," + xuehao + ",")
+        for x in needlist:
+            if (x in dict.keys()):
+                # for i in range(xx.shape[0]):
+                #     if chengji1[i][0] == x:
+                fp.write(dict[x] + ',')
+            else:
+                fp.write(str(-1) + ",")
+        fp.write("\n")
+        fp.flush()
+        xxxx += 1
+        print(dict)
+        dict.clear()
+    fp.close()
+
+```

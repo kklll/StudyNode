@@ -1,3 +1,22 @@
+<!-- TOC -->
+
+- [javastudy](#javastudy)
+                - [最近整理笔记修改了笔记，如需转载请注明出处](#最近整理笔记修改了笔记如需转载请注明出处)
+    - [import](#import)
+        - [java常用包:](#java常用包)
+    - [extends](#extends)
+        - [继承](#继承)
+        - [转型](#转型)
+        - [instanceof运算符](#instanceof运算符)
+        - [类的复用](#类的复用)
+        - [包装类](#包装类)
+        - [==和equal方法](#和equal方法)
+        - [final修饰符](#final修饰符)
+        - [抽象类](#抽象类)
+    - [接口](#接口)
+            - [this关键词的使用](#this关键词的使用)
+
+<!-- /TOC -->
 
 
 # javastudy 
@@ -42,6 +61,11 @@
 
 - [SSM框架](./SSM框架学习.md)
 
+- [java小项目](./小项目.md)
+
+- [java 并发编程笔记](./java并发.md)
+
+- [lombok使用笔记](./lombok.md)
 
 
 ![pic](./javax.jpg)
