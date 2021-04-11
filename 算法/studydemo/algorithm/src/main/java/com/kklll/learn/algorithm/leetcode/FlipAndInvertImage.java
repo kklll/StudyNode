@@ -1,6 +1,5 @@
 package com.kklll.learn.algorithm.leetcode;
 
-import java.util.Arrays;
 
 /**
  * @ClassName FlipAndInvertImage
@@ -11,7 +10,6 @@ import java.util.Arrays;
  **/
 public class FlipAndInvertImage {
     public int[][] flipAndInvertImage(int[][] A) {
-
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < A[0].length / 2; j++) {
                 int temp = A[i][j];
@@ -29,11 +27,4 @@ public class FlipAndInvertImage {
         return A;
     }
 
-    public static void main(String[] args) {
-        FlipAndInvertImage flipAndInvertImage = new FlipAndInvertImage();
-        int[][] ints = flipAndInvertImage.flipAndInvertImage(new int[][]{{1, 1, 0, 1}, {1, 0, 1, 1}, {0, 0, 0, 1}});
-        for (int i = 0; i < ints.length; i++) {
-            System.out.println(Arrays.toString(ints[i]));
-        }
-    }
 }
