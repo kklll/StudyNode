@@ -3,9 +3,6 @@ package main
 import "fmt"
 
 func main() {
-	//var fslice []int32
-	//slice:=[]int32{1,2,3}
-	//fmt.Println(slice)
 	ar := []byte{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'}
 	var a, b []byte
 	a = ar[0:3]

@@ -32,7 +32,7 @@
 - [Python学习笔记](./python/python.md) 
 
 ### Golang笔记
-- [Golang笔记](./go/golang.md) 
+- [Golang笔记](./golang/golang.md) 
 
 ### Java学习笔记
 - [Java学习笔记](./Java/Java.md) 
