@@ -31,6 +31,9 @@
 ### Python学习笔记
 - [Python学习笔记](./python/python.md) 
 
+### Golang笔记
+- [Golang笔记](./go/golang.md) 
+
 ### Java学习笔记
 - [Java学习笔记](./Java/Java.md) 
 
